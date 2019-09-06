@@ -35,10 +35,10 @@ import 'package:pinenacl/public.dart';
 ## Examples
 
 `DartNaCl` comes /w the following examples:
-- [Box](examples/box.dart)
-- [SealedBox](examples/sealedbox.dart)
-- [SecretBox](examples/secretbox.dart)
-- [Signatures](examples/signature.dart)
+- [Box](example/box.dart)
+- [SealedBox](example/sealedbox.dart)
+- [SecretBox](example/secretbox.dart)
+- [Signatures](example/signature.dart)
 
 ### The Public Key Encryption example from [PyNaCl](https://pynacl.readthedocs.io/en/stable/public/#examples)
 
