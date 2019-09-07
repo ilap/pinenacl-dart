@@ -34,7 +34,7 @@ import 'package:pinenacl/public.dart';
 
 ## Examples
 
-`DartNaCl` comes /w the following examples:
+`PineNaCl` comes /w the following examples:
 - `Public Key Encryption` examples
   - [Box](#box) example and its [source code](example/box.dart).
   - [SealedBox](#sealedbox) example and its [source code](example/sealedbox.dart).
