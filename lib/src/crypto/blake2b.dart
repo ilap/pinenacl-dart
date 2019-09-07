@@ -194,9 +194,9 @@ class Blake2b {
       throw Exception(
           'Illegal salt parameter, expected Uint8List of $saltBytes length');
     }
-    if (personal != null && personal.length != personalBytes) {
+    if (personal != null && (personal.isEmpty || personal.length > personalBytes)) {
       throw Exception(
-          'Illegal personalization parameter, expected Uint8List of $personalBytes <= length');
+          'Illegal personalization parameter, expected Uint8List of 0 < $personalBytes <= length');
     }
     // Initialise the context.
     final context = _Context(Uint8List(128), Uint32List(16), 0, 0, outlen);
@@ -210,6 +210,8 @@ class Blake2b {
     // 32-47: salt
     // 48-63: personal
     final params = Uint8List(maxBytes);
+    // In default, t's filled /w zero but, better safe than sorry
+    Utils.listZero(params);
 
     params[0] = outlen;
     if (key != null) {
@@ -225,7 +227,9 @@ class Blake2b {
     }
 
     if (personal != null) {
-      Utils.listCopy(personal, params, 48);
+      // padding if length < $personalBytes
+      final int offset = 48 + personalBytes - personal.length;
+      Utils.listCopy(personal, params, offset);
     }
 
     for (int i = 0; i < 16; i++) {

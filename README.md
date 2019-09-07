@@ -17,7 +17,7 @@ Thes library has the aim of
 1. Add the following into the `pubspec.yaml` of your dart package:
 ``` yaml
 dependencies:
-  slip39: ^0.1.0-dev.1
+  slip39: ^0.1.0
 ```
 
 2. You can install now from the command line with pub:
@@ -35,13 +35,22 @@ import 'package:pinenacl/public.dart';
 ## Examples
 
 `DartNaCl` comes /w the following examples:
-- [Box](example/box.dart)
-- [SealedBox](example/sealedbox.dart)
-- [SecretBox](example/secretbox.dart)
-- [Signatures](example/signature.dart)
+- `Public Key Encryption` examples
+  - [Box](#box) example and its [source code](example/box.dart).
+  - [SealedBox](#sealedbox) example and its [source code](example/sealedbox.dart).
+- `Private Key Encryption` example
+  - [SecretBox](#secretbox) example and its [source code](example/secretbox.dart).
+- `Digital Signatures` example
+  - [Signatures](#signing) example and its [source code](example/signature.dart).
+- `Hashing` example
+  - [Hashing](#hashing) example and its [source code](example/hashing.dart).
 
-### The Public Key Encryption example from [PyNaCl](https://pynacl.readthedocs.io/en/stable/public/#examples)
 
+### `Public Key Encryption` example
+
+Implemented from [PyNaCl's example](https://pynacl.readthedocs.io/en/stable/public/#examples)
+
+#### Box 
 > Imagine Alice wants something valuable shipped to her. Because it’s valuable, she wants to make sure it arrives securely (i.e. hasn’t been opened or tampered with) and that it’s not a forgery (i.e. it’s actually from the sender she’s expecting it to be from and nobody’s pulling the old switcheroo).
 >
 > One way she can do this is by providing the sender (let’s call him Bob) with a high-security box of her choosing. She provides Bob with this box, and something else: a padlock, but a padlock without a key. Alice is keeping that key all to herself. Bob can put items in the box then put the padlock onto it. But once the padlock snaps shut, the box cannot be opened by anyone who doesn’t have Alice’s private key.
@@ -96,11 +105,217 @@ void main() {
 }
 ```
 
+#### SealedBox
+
+> The SealedBox class encrypts messages addressed to a specified key-pair by using ephemeral sender’s keypairs, which will be discarded just after encrypting a single plaintext message.
+> 
+> This kind of construction allows sending messages, which only the recipient can decrypt without providing any kind of cryptographic proof of sender’s authorship.
+> 
+> __Warning__
+>
+> By design, the recipient will have no means to trace the ciphertext to a known author, since the sending keypair itself is not bound to any sender’s identity, and the sender herself will not be able to decrypt the ciphertext she just created, since the private part of the key cannot be recovered after use.
+>
+> -- <cite>[PyNaCl](https://pynacl.readthedocs.io/en/stable/public/#examples)</cite>
+
+
+``` dart
+import 'package:pinenacl/public.dart' show SealedBox, PrivateKey;
+
+void main() {
+
+  // Generate Bob's private key, which must be kept secret
+  final skbob = PrivateKey.generate();
+  final pkbob = skbob.publicKey;
+
+  // Alice wishes to send a encrypted message to Bob,
+  // but prefers the message to be untraceable
+  // she puts it into a secretbox and seals it.
+  final sealedBox = SealedBox(pkbob);
+
+  final message = 'The world is changing around us and we can either get '
+      'with the change or we can try to resist it';
+
+  final encrypted = sealedBox.encrypt(message.codeUnits);
+
+  // Bob unseals the box with his privatekey, and decrypts it.
+  final unsealedBox = SealedBox(skbob);
+
+  final plainText = unsealedBox.decrypt(encrypted);
+  print(String.fromCharCodes(plainText));
+  assert(message == String.fromCharCodes(plainText));
+}
+```
+### A `Secret Key Encryption` example 
+
+Implemented from [PyNaCl's example](https://pynacl.readthedocs.io/en/stable/private/#examples)
+
+#### SecretBox
+> Secret key encryption (also called symmetric key encryption) is analogous to a safe. You can store something secret through it and anyone who has the key can open it and view the contents. SecretBox functions as just such a safe, and like any good safe any attempts to tamper with the contents are easily detected.
+>
+> Secret key encryption allows you to store or transmit data over insecure channels without leaking the contents of that message, nor anything about it other than the length.
+>
+> -- <cite>[PyNaCl](https://pynacl.readthedocs.io/en/stable/secret/#secret-key-encryption)</cite>
+
+``` dart
+import 'package:pinenacl/api.dart';
+import 'package:pinenacl/secret.dart' show SecretBox;
+
+void main() {
+  final key = Utils.randombytes(SecretBox.keyLength);
+  final box = SecretBox(key);
+
+  final message = 'Change is a tricky thing, it threatens what we find familiar with...';
+
+  final encrypted = box.encrypt(message.codeUnits);
+
+  final decrypted = box.decrypt(encrypted);
+
+  final ctext = encrypted.ciphertext;
+
+  assert(ctext.length == message.length + SecretBox.macBytes);
+
+  final plaintext = String.fromCharCodes(decrypted.plaintext);
+  print(plaintext);
+  assert(message == plaintext);
+}
+```
+
+### `Digital Signatures` example 
+
+Implemented from [PyNaCl's example](https://pynacl.readthedocs.io/en/stable/public/#examples)
+
+#### Signing
+> You can use a digital signature for many of the same reasons that you might sign a paper document. A valid digital signature gives a recipient reason to believe that the message was created by a known sender such that they cannot deny sending it (authentication and non-repudiation) and that the message was not altered in transit (integrity).
+> 
+> Digital signatures allow you to publish a public key, and then you can use your private signing key to sign messages. Others who have your public key can then use it to validate that your messages are actually authentic.
+>
+> -- <cite>[PyNaCl](https://pynacl.readthedocs.io/en/stable/signing)</cite>
+
+``` dart
+import 'package:convert/convert.dart';
+import 'package:pinenacl/signing.dart';
+
+void main() {
+  /// 
+  /// Signer’s perspective (SigningKey)
+  ///
+ 
+  // Generate a new random signing key
+  final signingKey = SigningKey.generate();
+
+  final message = 'People see the things they want to see...';
+  // Sign a message with the signing key
+  final signed = signingKey.sign(message.codeUnits);
+
+  //  Obtain the verify key for a given signing key
+  final verifyKey = signingKey.verifyKey;
+
+  // Serialize the verify key to send it to a third party
+  // TODO: implements similar: verifyKey.encode(Bech32Encoder(hrp: 'ed25519_pk'));
+  final verifyKeyHex = hex.encode(verifyKey);
+
+  /// 
+  /// Verifier’s perspective (VerifyKey)
+  /// 
+  // TODO: implements similar: VerifyKey.decode(verifyKeyHex, decoder: HexEncoder());
+  final verifyKey2 = VerifyKey.fromHexString(verifyKeyHex);
+  assert(verifyKey == verifyKey2);
+  print('The "$message" is successfully verified');
+
+  // Check the validity of a message's signature
+  // The message and the signature can either be passed separately or
+  // concatenated together.  These are equivalent:
+  verifyKey.verify(signed);
+  verifyKey.verify(signed.message, signed.signature);
+
+  // Alter the signed message text
+  signed[0] ^= signed[0] + 1;
+
+  try {
+    // Forged message.
+    verifyKey.verify(signed);
+  } on Exception catch(e) {
+    print('Successfully cought: $e');
+  }
+}
+```
+
+### `Hashing` example 
+Implemented from [PyNaCl's example](https://pynacl.readthedocs.io/en/stable/hashing/#examples)
+
+> Cryptographic secure hash functions are irreversible transforms of input data to a fixed length digest.
+> 
+> The standard properties of a cryptographic hash make these functions useful both for standalone usage as data integrity checkers, as well as `black-box` building blocks of other kind of algorithms and data structures.
+> 
+> All of the hash functions exposed in `hashing` can be used as data integrity checkers.
+>
+>
+> As already hinted above, traditional cryptographic hash functions can be used as building blocks for other uses, typically combining a secret-key with the message via some construct like the HMAC one.
+>
+> -- <cite>[PyNaCl](https://pynacl.readthedocs.io/en/stable/signing)</cite>
+
+### Blake2b
+
+> The `blake2b` hash function can be used directly both for `message authentication` and `key derivation`, replacing the HMAC construct and the HKDF one by setting the additional parameters `key`, `salt` and `person`.
+> 
+> __`Warning`__
+>
+> Please note that key stretching procedures like `HKDF` or the one outlined in `Key derivation` are not suited to derive a `cryptographically-strong key` from a `low-entropy input` like a `plain-text password` or to compute a strong long-term stored hash used as password verifier.
+>
+>
+> -- <cite>[PyNaCl](https://pynacl.readthedocs.io/en/stable/hashing)</cite>
+
+#### Hashing
+``` dart
+...
+void main() {
+
+  final hasher = Hash.blake2b;
+
+
+  print('Hash example\nH(\'\'): ${hex.encode(hasher(''))}');
+```
+
+#### Message authentication
+
+> To authenticate a message, using a secret key, the blake2b function must be called as in the following example.
+
+``` dart
+  /// It can ganarate a MAC to be sure that the message is not forged.
+
+  final msg = '256 BytesMessage' * 16;
+
+  // the simplest way to get a cryptographic quality authKey
+  // is to generate it with a cryptographic quality
+  // random number generator
+  final authKey = Utils.randombytes(64);
+  final mac = hasher(msg, key: authKey);
+
+  print('MAC(msg, authKey): ${hex.encode(mac)}.\n');
+```
+
+#### Key derivation
+
+> The blake2b algorithm can replace a key derivation function by following the lines of:
+``` dart
+  print('Key derivation example');
+  final masterKey = Utils.randombytes(64);
+  final derivationSalt = Utils.randombytes(16);
+
+  final personalisation = Uint8List.fromList('<DK usage>'.codeUnits);
+
+  final subKey = hasher('', key: masterKey, salt: derivationSalt, personalisation: personalisation);
+  print('KDF(\'\', masterKey, salt, personalisation): ${hex.encode(subKey)}');
+```
+
+> By repeating the key derivation procedure before encrypting our messages,  and sending the derivationSalt along with the encrypted message, we can expect to never reuse a key, drastically reducing the risks which ensue from such a reuse.
 # TODOS
 
+- [ ] Implement proper Error/Exception handling.
+- [ ] Implement encoding/decoding) classes. 
 - [ ] Add more unit tests.
 - [ ] Refactor to much simpler code.
-- [ ] Simplify the APIs and modules' dependencies.
+- [ ] Simplify or refactor the APIs and modules' dependencies.
 - [ ] Remove [fixnum] and [convert] pakages' dependency.
 
 # Features
@@ -117,9 +332,9 @@ Implemented features:
   - Signatures, curve25519 and ed25519.
 - Hashing
   - SHA512, the default hashing algorithm of the original `TweetNaCl`
-  - BLAKE2b, for KDF and MAC.
+  - BLAKE2b for KDF and MAC (not implemented in `TweetNaCl`) .
 
-## Low-level Functions supported by DartNaCl
+## Low-level Functions supported by `PineNaCl`
 
 This library supports all 25 of the [C NaCl functions](#functions_supported_by_tweetnacl), that can be used to build `NaCl` applications.
 1. crypto_box = crypto_box_curve25519xsalsa20poly1305
