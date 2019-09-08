@@ -1,5 +1,6 @@
-import 'package:convert/convert.dart';
 import 'package:test/test.dart';
+
+import 'package:convert/convert.dart';
 
 import 'package:pinenacl/api.dart';
 import 'package:pinenacl/public.dart';
@@ -143,16 +144,44 @@ void main() {
       expect(() => PublicKey.fromList(_31), throwsException);
 
       // Valid combinations
-      expect(() => Box(myPrivateKey: null, theirPublicKey: null, sharedKey: k32), returnsNormally);
-      expect(() => Box(myPrivateKey: priv, theirPublicKey: priv.publicKey, sharedKey: null), returnsNormally);
+      expect(
+          () => Box(myPrivateKey: null, theirPublicKey: null, sharedKey: k32),
+          returnsNormally);
+      expect(
+          () => Box(
+              myPrivateKey: priv,
+              theirPublicKey: priv.publicKey,
+              sharedKey: null),
+          returnsNormally);
 
       // Invalid combinations
-      expect(() => Box(myPrivateKey: null, theirPublicKey: null, sharedKey: null), throwsException);
-      expect(() => Box(myPrivateKey: priv, theirPublicKey: priv.publicKey, sharedKey: k32), throwsException);
-      expect(() => Box(myPrivateKey: null, theirPublicKey: priv.publicKey, sharedKey: k32), throwsException);
-      expect(() => Box(myPrivateKey: null,theirPublicKey: priv.publicKey, sharedKey: null),throwsException);
-      expect(() => Box(myPrivateKey: priv, theirPublicKey: null, sharedKey: k32),throwsException);
-      expect(() => Box(myPrivateKey: priv, theirPublicKey: null, sharedKey: null),throwsException);
+      expect(
+          () => Box(myPrivateKey: null, theirPublicKey: null, sharedKey: null),
+          throwsException);
+      expect(
+          () => Box(
+              myPrivateKey: priv,
+              theirPublicKey: priv.publicKey,
+              sharedKey: k32),
+          throwsException);
+      expect(
+          () => Box(
+              myPrivateKey: null,
+              theirPublicKey: priv.publicKey,
+              sharedKey: k32),
+          throwsException);
+      expect(
+          () => Box(
+              myPrivateKey: null,
+              theirPublicKey: priv.publicKey,
+              sharedKey: null),
+          throwsException);
+      expect(
+          () => Box(myPrivateKey: priv, theirPublicKey: null, sharedKey: k32),
+          throwsException);
+      expect(
+          () => Box(myPrivateKey: priv, theirPublicKey: null, sharedKey: null),
+          throwsException);
     });
   });
 }

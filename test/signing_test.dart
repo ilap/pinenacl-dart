@@ -4,8 +4,8 @@ import 'dart:convert';
 import 'package:convert/convert.dart';
 import 'package:test/test.dart';
 
-import 'package:pinenacl/signing.dart';
 import 'package:pinenacl/api.dart';
+import 'package:pinenacl/signing.dart';
 
 const _vectors = {
   'seed': '002fdd1f7641793ab064bb7aa848f762e7ec6e332ffc26eeacda141ae33b1783',
@@ -21,7 +21,7 @@ const _vectors = {
 
 void main() {
   group('Secret Key Encryption', () {
-    test('SecretBox basic', () {
+    test('Signatures basic', () {
       final seed = _vectors['seed'];
       //final public = _vectors['public'];
       final message = _vectors['message'];
@@ -67,17 +67,14 @@ void main() {
         assert(hex.encode(signed.signature) == hex.encode(signature));
       });
     });
-
   });
-
-
-    group('Wrong types test', () {
-      test('SigningKey and VerifyKey', () {
-        final sk = SigningKey.generate();
-        final _31 = ByteList(31);
-        expect(() => SigningKey(sk), throwsException);
-        expect(() => SigningKey.fromSeed(_31), throwsException);
-        expect(() => VerifyKey(sk), throwsException);
-      });
+  group('Wrong types test', () {
+    test('SigningKey and VerifyKey', () {
+      final sk = SigningKey.generate();
+      final _31 = ByteList(31);
+      expect(() => SigningKey(sk), throwsException);
+      expect(() => SigningKey.fromSeed(_31), throwsException);
+      expect(() => VerifyKey(sk), throwsException);
     });
+  });
 }

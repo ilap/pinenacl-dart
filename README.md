@@ -17,7 +17,7 @@ Thes library has the aim of
 1. Add the following into the `pubspec.yaml` of your dart package:
 ``` yaml
 dependencies:
-  slip39: ^0.1.0
+  pinenacl: ^0.1.1-dev.1
 ```
 
 2. You can install now from the command line with pub:
