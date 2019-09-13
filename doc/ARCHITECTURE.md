@@ -2,60 +2,23 @@
 
 ## Class diagrams
 
-Base API classes.
+### Base API classes.
  
- ``` plantuml
- @startuml
- abstract class ByteList
- 
- class FixedByteList {
-   int keyLength
- }
- 
- abstract class AsymmetricKey
- abstract class AsymmetricPrivateKey {
-   AsymmetricKey public
-   AsymmetricPrivateKey generate()
- }
- 
- class PrivateKey
- class PublicKey
- 
- abstract class Sign {
-   Verify verifyKey;
-   ByteList sign(List<int> message);
- }
- 
- abstract class Verify {
-   bool verify(ByteList message, Signature signature)
- }
- 
- class SigningKey
- class VerifyKey
- class Signature
- 
- FixedByteList .up.|> ByteList
- AsymmetricPrivateKey -left-|> AsymmetricKey
- AsymmetricPrivateKey .left.> AsymmetricKey
- 
- PrivateKey -up-|> FixedByteList
- PrivateKey -left-|> AsymmetricPrivateKey
- 
- PublicKey -up-|> FixedByteList
- PublicKey .right.|> AsymmetricKey
- 
- SigningKey -up-|> PrivateKey
- SigningKey .left.|> Sign
- 
- VerifyKey -up-|> PublicKey
- VerifyKey .right.|> Verify
- 
- FixedByteList -up-|> Signature
- Sign .left.> Verify
- @enduml
- ```
+ ![PlantUML model](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/ilap/pinenacl-dart/master/doc/api_diagrams.wsd)
 
- ## Tools
+### Boxes
+
+![PlantUML model](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/ilap/pinenacl-dart/master/doc/boxes.wsd)
+
+### Signatures
+
+ ![PlantUML model](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/ilap/pinenacl-dart/master/doc/sigantures.wsd)
+
+### EncryptionMessages
+
+ ![PlantUML model](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/ilap/pinenacl-dart/master/doc/encryption_message.wsd)
+
+## Tools
 
  - Use [Plantext.com](https://www.planttext.com/) or [PlantUML](http://www.plantuml.com/plantuml)'s services
  - Use Plantuml as Proxy see details in [Example](#Example)
