@@ -9,16 +9,6 @@ abstract class AsymmetricPrivateKey implements AsymmetricKey {
   final AsymmetricKey publicKey;
 }
 
-abstract class Sign {
-  Verify get verifyKey;
-  SignedMessage sign(List<int> message);
-}
-
-abstract class Verify {
-  bool verify({Signature signature, ByteList message});
-  bool verifySignedMessage({SignedMessage signedMessage});
-}
-
 class Signature extends ByteList {
   Signature(List<int> bytes) : super(bytes, bytesLength);
   static const bytesLength = TweetNaCl.signatureLength;

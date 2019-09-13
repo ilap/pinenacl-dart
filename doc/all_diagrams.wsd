@@ -1,0 +1,121 @@
+@startuml
+
+abstract class AsymmetricKey 
+
+abstract class AsymmetricPrivateKey implements AsymmetricKey {
+  + final AsymmetricKey publicKey;
+}
+
+class Signature extends ByteList {
+  + Signature(List<int> bytes) : super(bytes, bytesLength);
+  + static const bytesLength = TweetNaCl.signatureLength;
+}
+
+class PublicKey extends ByteList implements AsymmetricKey {
+  + static const int keyLength = TweetNaCl.publicKeyLength;
+}
+
+class PrivateKey extends ByteList implements AsymmetricPrivateKey {
+
+  + factory PrivateKey.generate();
+
+  + static const seedSize = TweetNaCl.seedSize;
+  + static const keyLength = TweetNaCl.secretKeyLength;
+  + final PublicKey publicKey;
+}
+
+abstract class Sign {
+  + Verify get verifyKey;
+  + SignedMessage sign(List<int> message);
+}
+
+abstract class Verify {
+  + bool verify({Signature signature, ByteList message});
+  + bool verifySignedMessage({SignedMessage signedMessage});
+}
+
+class _EncryptionMessage extends ByteList {
+  + ByteList get prefix
+  + ByteList get suffix
+}
+
+class EncryptedMessage extends _EncryptionMessage {
+  + static const nonceLength = 24; 
+  + Uint8List get nonce => prefix;
+  + Uint8List get cipherText => suffix;
+}
+
+class SealedMessage extends _EncryptionMessage {
+  + static const publicLength = 32;
+  + Uint8List get public => prefix;
+  + Uint8List get cipherText => suffix;
+}
+
+class SignedMessage extends _EncryptionMessage {
+  + static const signatureLength = 64;
+  + Uint8List get message => suffix;
+  + Signature get signature => Signature(prefix);
+}
+
+class VerifyKey extends ByteList implements AsymmetricKey, Verify {
+
+}
+
+class SigningKey extends ByteList implements AsymmetricPrivateKey, Sign {
+  + static const seedSize = TweetNaCl.seedSize;
+  + AsymmetricKey get publicKey => verifyKey;
+  + final VerifyKey verifyKey;
+}
+
+abstract class BoxBase extends ByteList implements AsymmetricKey {
+  + Crypting doEncrypt;
+  + Crypting doDecrypt;
+  + ByteList get key;
+
+  + Uint8List decrypt(Uint8List encryptedMessage, {Uint8List nonce})
+  + EncryptedMessage encrypt(List<int> plainText, {List<int> nonce})
+}
+
+class SecretBox extends BoxBase {
+  + static const keyLength = TweetNaCl.keyLength;
+  + static const macBytes = TweetNaCl.macBytes;
+  + ByteList get key => this;
+
+  + Crypting doEncrypt = TweetNaCl.crypto_box_afternm;
+  + Crypting doDecrypt = TweetNaCl.crypto_box_open_afternm;
+}
+
+class Box extends BoxBase {
+  + ByteList get sharedKey => this;
+  + ByteList get key => sharedKey;
+
+  + Crypting doEncrypt = TweetNaCl.crypto_box_afternm;
+  + Crypting doDecrypt = TweetNaCl.crypto_box_open_afternm;
+
+  + static ByteList _beforeNm(...);
+}
+
+class SealedBox extends ByteList implements AsymmetricKey {
+  + final PrivateKey _privateKey;
+
+  - static const _zerobytesLength = TweetNaCl.zerobytesLength;
+  - static const _nonceLength = 24;
+  - static const _pubLength = TweetNaCl.publicKeyLength;
+  - static const _secretLength = TweetNaCl.secretKeyLength;
+  - static const _macBytes = TweetNaCl.macBytes;
+  - static const _sealBytes = _pubLength + _macBytes;
+
+  + Uint8List decrypt(Uint8List ciphertext)
+  + Uint8List encrypt(List<int> plaintext)
+
+  - static void _generateNonce(Uint8List out, Uint8List in1, Uint8List in2)
+  - Uint8List _cryptoBoxSeal(Uint8List message, ByteList pk)
+  - void _cryptoBoxDetached(...)
+  - Uint8List _cryptoBoxSealOpen(Uint8List ciphertext);
+}
+
+SignedMessage --> Signature
+Verify --o SignedMessage
+Sign --o SignedMessage
+
+@enduml

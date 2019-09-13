@@ -1,0 +1,15 @@
+@startuml
+
+title Digital Signature' class diagrams
+
+class VerifyKey extends ByteList implements AsymmetricKey, Verify {
+
+}
+
+class SigningKey extends ByteList implements AsymmetricPrivateKey, Sign {
+  + static const seedSize = TweetNaCl.seedSize;
+  + AsymmetricKey get publicKey => verifyKey;
+  + final VerifyKey verifyKey;
+}
+
+@enduml

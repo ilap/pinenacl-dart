@@ -25,3 +25,7 @@
 - Refactored `EncrytpionMessage` based classes e.g. `EncryptedMessage`, `SealedMessage` and `SignedMessage`.
 - Refactored `SigningKey` and `VerifyKey` by adding `Sign` and `Verify` interfaces.
 - Bumped version to 0.1.1
+
+## 0.1.1-dev.1
+
+- Added Class diagrams.

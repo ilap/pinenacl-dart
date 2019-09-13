@@ -9,6 +9,7 @@ import 'package:pinenacl/crypto/tweetnacl.dart';
 export 'package:pinenacl/crypto/blake2b.dart';
 export 'package:pinenacl/crypto/tweetnacl.dart';
 export 'package:pinenacl/public.dart';
+export 'package:pinenacl/signing.dart';
 export 'package:pinenacl/utils.dart';
 
 part 'src/api/asymmetric.dart';

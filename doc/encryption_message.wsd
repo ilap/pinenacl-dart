@@ -1,0 +1,42 @@
+@startuml
+
+title Digital Signature' class diagrams
+
+abstract class Sign {
+  + Verify get verifyKey;
+  + SignedMessage sign(List<int> message);
+}
+
+abstract class Verify {
+  + bool verify({Signature signature, ByteList message});
+  + bool verifySignedMessage({SignedMessage signedMessage});
+}
+
+class _EncryptionMessage extends ByteList {
+  + ByteList get prefix
+  + ByteList get suffix
+}
+
+class EncryptedMessage extends _EncryptionMessage {
+  + static const nonceLength = 24; 
+  + Uint8List get nonce => prefix;
+  + Uint8List get cipherText => suffix;
+}
+
+class SealedMessage extends _EncryptionMessage {
+  + static const publicLength = 32;
+  + Uint8List get public => prefix;
+  + Uint8List get cipherText => suffix;
+}
+
+class SignedMessage extends _EncryptionMessage {
+  + static const signatureLength = 64;
+  + Uint8List get message => suffix;
+  + Signature get signature => Signature(prefix);
+}
+
+SignedMessage --> Signature
+Verify --o SignedMessage
+Sign --o SignedMessage
+
+@enduml

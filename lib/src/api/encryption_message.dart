@@ -1,5 +1,16 @@
 part of pinenacl.api;
 
+
+abstract class Sign {
+  Verify get verifyKey;
+  SignedMessage sign(List<int> message);
+}
+
+abstract class Verify {
+  bool verify({Signature signature, ByteList message});
+  bool verifySignedMessage({SignedMessage signedMessage});
+}
+
 class _EncryptionMessage extends ByteList {
   _EncryptionMessage._(List<int> message, int prefixLength)
       : this._prefixLength = prefixLength,
