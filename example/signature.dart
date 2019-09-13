@@ -31,15 +31,15 @@ void main() {
   // Check the validity of a message's signature
   // The message and the signature can either be passed separately or
   // concatenated together.  These are equivalent:
-  verifyKey.verify(signed);
-  verifyKey.verify(signed.message, signed.signature);
+  verifyKey.verifySignedMessage(signedMessage: signed);
+  verifyKey.verify(signature: signed.signature, message: signed.message);
 
   // Alter the signed message text
   //signed[0] ^= signed[0] + 1;
 
   try {
     // Forged message.
-    verifyKey.verify(signed);
+    verifyKey.verifySignedMessage(signedMessage: signed);
   } on Exception catch (e) {
     print('Exception\'s successfully cought:\n$e');
   }

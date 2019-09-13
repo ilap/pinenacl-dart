@@ -15,4 +15,3 @@ part 'src/api/asymmetric.dart';
 part 'src/api/box_base.dart';
 part 'src/api/bytelist.dart';
 part 'src/api/encryption_message.dart';
-part 'src/api/signing_key.dart';
