@@ -12,3 +12,16 @@
 
 - Added the `Curve25519`'s official `DH (Diffie-Hellman)` test vector.
 - Added the `Wycheproof`'s X25519 test vectors.
+
+## 0.1.1-dev.2
+
+- Refactored the `EncryptionMessage` classes
+
+## 0.1.1
+
+- Refactored the library for using a simplified API.
+- Refactored `AsymmetricKey` and `AsymmetricPrivateKey` classes.
+- Refactored `ByteList` to be `unmodofiable`
+- Refactored `EncrytpionMessage` based classes e.g. `EncryptedMessage`, `SealedMessage` and `SignedMessage`.
+- Refactored `SigningKey` and `VerifyKey` by adding `Sign` and `Verify` interfaces.
+- Bumped version to 0.1.1

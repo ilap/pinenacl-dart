@@ -8,27 +8,29 @@ import 'poly1305.dart';
 
 class TweetNaCl {
   static const int keyLength = 32;
+
   static const int macBytes = 16;
 
   // Constants
   static const int seedSize = 32;
-  // Constants
-  static const int sealBytes = publicKeyLength + macBytes;
 
-  //Length of public key in bytes.
+  // Length of public key in bytes.
   static const int publicKeyLength = 32;
   // Default length of the secret key in bytes.
   static const int secretKeyLength = 32;
-  //Length of precomputed shared key in bytes.
+  // Length of precomputed shared key in bytes.
   static const int sharedKeyLength = 32;
-  //Length of nonce in bytes.
+  // Length of nonce in bytes.
   static const int nonceLength = 24;
-  //zero bytes in case box
+  // zero bytes in case box
   static const int zerobytesLength = 32;
-  //zero bytes in case open box
+  // zero bytes in case open box
   static const int boxzerobytesLength = 16;
-  //Length of overhead added to box compared to original message.
+  // Length of overhead added to box compared to original message.
   static const int overheadLength = 16;
+
+  // Signature length
+  static const int signatureLength = 64;
 
   static final Uint8List _0 =
       Uint8List.fromList([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); //16

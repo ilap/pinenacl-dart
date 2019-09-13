@@ -1,5 +1,7 @@
+library pinenacl.utils;
+
 import 'dart:typed_data';
-import 'package:pinenacl/src/crypto/tweetnacl.dart';
+import 'package:pinenacl/api.dart';
 
 class Utils {
   static Uint8List randombytes(int len) {

@@ -17,7 +17,7 @@ Thes library has the aim of
 1. Add the following into the `pubspec.yaml` of your dart package:
 ``` yaml
 dependencies:
-  pinenacl: ^0.1.1-dev.1
+  pinenacl: ^0.1.1
 ```
 
 2. You can install now from the command line with pub:
@@ -116,7 +116,6 @@ void main() {
 > By design, the recipient will have no means to trace the ciphertext to a known author, since the sending keypair itself is not bound to any sender’s identity, and the sender herself will not be able to decrypt the ciphertext she just created, since the private part of the key cannot be recovered after use.
 >
 > -- <cite>[PyNaCl](https://pynacl.readthedocs.io/en/stable/public/#examples)</cite>
-
 
 ``` dart
 import 'package:pinenacl/public.dart' show SealedBox, PrivateKey;

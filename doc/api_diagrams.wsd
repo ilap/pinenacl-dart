@@ -1,0 +1,95 @@
+@startuml
+ abstract class ByteList
+ 
+ class FixedByteList {
+   int keyLength
+ }
+ 
+ abstract class AsymmetricKey
+ abstract class AsymmetricPrivateKey {
+   AsymmetricKey public
+   AsymmetricPrivateKey generate()
+ }
+ 
+ class PrivateKey
+ class PublicKey
+ 
+ abstract class Sign {
+   Verify verifyKey;
+   ByteList sign(List<int> message);
+ }
+ 
+ abstract class Verify {
+   bool verify(ByteList message, Signature signature)
+ }
+ 
+ class SigningKey
+ class VerifyKey
+ class Signature
+ 
+ FixedByteList .up.|> ByteList
+ AsymmetricPrivateKey -left-|> AsymmetricKey@startuml
+ abstract class ByteList
+ 
+ class FixedByteList {
+   int keyLength
+ }
+ 
+ abstract class AsymmetricKey
+ abstract class AsymmetricPrivateKey {
+   AsymmetricKey public
+   AsymmetricPrivateKey generate()
+ }
+ 
+ class PrivateKey
+ class PublicKey
+ 
+ abstract class Sign {
+   Verify verifyKey;
+   ByteList sign(List<int> message);
+ }
+ 
+ abstract class Verify {
+   bool verify(ByteList message, Signature signature)
+ }
+ 
+ class SigningKey
+ class VerifyKey
+ class Signature
+ 
+ FixedByteList .up.|> ByteList
+ AsymmetricPrivateKey -left-|> AsymmetricKey
+ AsymmetricPrivateKey .left.> AsymmetricKey
+ 
+ PrivateKey -up-|> FixedByteList
+ PrivateKey -left-|> AsymmetricPrivateKey
+ 
+ PublicKey -up-|> FixedByteList
+ PublicKey .right.|> AsymmetricKey
+ 
+ SigningKey -up-|> PrivateKey
+ SigningKey .left.|> Sign
+ 
+ VerifyKey -up-|> PublicKey
+ VerifyKey .right.|> Verify
+ 
+ FixedByteList -up-|> Signature
+ Sign .left.> Verify
+ @enduml
+ AsymmetricPrivateKey .left.> AsymmetricKey
+ 
+ PrivateKey -up-|> FixedByteList
+ PrivateKey -left-|> AsymmetricPrivateKey
+ 
+ PublicKey -up-|> FixedByteList
+ PublicKey .right.|> AsymmetricKey
+ 
+ SigningKey -up-|> PrivateKey
+ SigningKey .left.|> Sign
+ 
+ VerifyKey -up-|> PublicKey
+ VerifyKey .right.|> Verify
+ 
+ FixedByteList -up-|> Signature
+ Sign .left.> Verify
+ @enduml

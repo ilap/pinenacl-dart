@@ -1,18 +1,14 @@
-library pinenacl.api.signatures;
+part of pinenacl.api;
 
-import "dart:core";
-import 'dart:typed_data';
+class VerifyKey extends ByteList implements AsymmetricKey, Verify {
+  VerifyKey(List<int> list) : super(list, TweetNaCl.publicKeyLength);
 
-import 'package:convert/convert.dart';
+  @override
+  bool verifySignedMessage({SignedMessage signedMessage}) => verify(
+      signature: signedMessage.signature, message: signedMessage.message);
 
-import 'package:pinenacl/api.dart';
-
-class VerifyKey extends ByteList implements AsymmetricKey {
-  VerifyKey([List<int> list]) : super.fromList(list);
-  VerifyKey.fromList(List<int> list) : super.fromList(list);
-  VerifyKey.fromHexString(String hexaString) : super.fromHexString(hexaString);
-
-  bool verify(List<int> message, [List<int> signature]) {
+  @override
+  bool verify({Signature signature, List<int> message}) {
     if (signature != null) {
       if (signature.length != TweetNaCl.signatureLength) {
         throw Exception(
@@ -37,24 +33,18 @@ class VerifyKey extends ByteList implements AsymmetricKey {
   }
 }
 
-class SigningKey extends ByteList implements AsymmetricKey {
+class SigningKey extends ByteList implements AsymmetricPrivateKey, Sign {
+  // Private constructor.
   SigningKey._fromValidBytes(List<int> secret, List<int> public)
-      : this.verifyKey = VerifyKey.fromList(public),
-        super.fromList(secret, secret.length, secret.length);
+      : this.verifyKey = VerifyKey(public),
+        super(secret, secret.length);
 
   factory SigningKey({List<int> seed}) {
-    if (seed is AsymmetricKey) {
-      throw Exception('Seed cannot be any type of AsymmetricKey');
-    }
-    return SigningKey.fromList(seed);
+    return SigningKey.fromSeed(seed);
   }
 
   factory SigningKey.fromHexString(String hexaString) {
     return SigningKey.fromSeed(Uint8List.fromList(hex.decode(hexaString)));
-  }
-
-  factory SigningKey.fromList(List<int> rawKey) {
-    return SigningKey.fromSeed(rawKey);
   }
 
   factory SigningKey.fromSeed(List<int> seed) {
@@ -70,14 +60,19 @@ class SigningKey extends ByteList implements AsymmetricKey {
   }
 
   factory SigningKey.generate() {
-    final secret = TweetNaCl.randombytes(keyLength);
+    final secret = TweetNaCl.randombytes(seedSize);
     return SigningKey.fromSeed(secret);
   }
 
-  static const keyLength = TweetNaCl.secretKeyLength;
   static const seedSize = TweetNaCl.seedSize;
+
+  @override
+  AsymmetricKey get publicKey => verifyKey;
+
+  @override
   final VerifyKey verifyKey;
 
+  @override
   SignedMessage sign(List<int> message) {
     // signed message
     Uint8List sm = Uint8List(message.length + TweetNaCl.signatureLength);

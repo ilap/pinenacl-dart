@@ -6,6 +6,7 @@ import 'package:pinenacl/api.dart';
 import 'package:pinenacl/hashing.dart';
 
 void main() {
+  print('\n### Hashing - Blake2b Example ###\n');
 
   final hasher = Hash.blake2b;
 
@@ -15,6 +16,7 @@ void main() {
   /// # Message authentication
   /// To authenticate a message, using a secret key, the blake2b function must be called as in the following example.
   print('\nMessage authentication');
+
   /// Message authentication example
   /// It can ganarate a MAC to be sure that the message is not forged.
 
@@ -36,9 +38,11 @@ void main() {
 
   final personalisation = Uint8List.fromList('<DK usage>'.codeUnits);
 
-  final subKey = hasher('', key: masterKey, salt: derivationSalt, personalisation: personalisation);
+  final subKey = hasher('',
+      key: masterKey, salt: derivationSalt, personalisation: personalisation);
   print('KDF(\'\', masterKey, salt, personalisation): ${hex.encode(subKey)}');
-  /// By repeating the key derivation procedure before encrypting our messages, 
-  /// and sending the derivationSalt along with the encrypted message, we can expect to never reuse a key, 
+
+  /// By repeating the key derivation procedure before encrypting our messages,
+  /// and sending the derivationSalt along with the encrypted message, we can expect to never reuse a key,
   /// drastically reducing the risks which ensue from such a reuse.
 }

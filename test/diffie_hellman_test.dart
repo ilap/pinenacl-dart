@@ -6,8 +6,6 @@ import 'package:convert/convert.dart';
 import 'package:test/test.dart';
 
 import 'package:pinenacl/api.dart';
-import 'package:pinenacl/public.dart';
-import 'package:pinenacl/src/crypto/tweetnacl.dart';
 
 void _doShared(String sk, String pk, String sharedSecret) {
   final priv = PrivateKey.fromHexString(sk);
@@ -30,61 +28,63 @@ void main() {
     'bpk': 'de9edb7d7b7dc1b4d35b61c2ece435373f8343c85b78674dadfc7e146f882b4f',
     'shr': '4a5d9d5ba4ce2de1728e3bf480350f25e07e21c947d19e3376f09b3c1e161742'
   };
-  group('Secret Key Encryption', () {
-    test('Curve25519 (Diffie-Hellman) official testvector', () {
-      final sharedSecret = officialVector['shr'];
+  group('Digital Signatures #2', () {
+    group('Curve25519 (Diffie-Hellman)', () {
+      test('official testvector', () {
+        final sharedSecret = officialVector['shr'];
 
-      final alicePriv = PrivateKey.fromHexString(officialVector['ask']);
-      final aliceGenPub = alicePriv.publicKey;
-      final alicePub = PublicKey.fromHexString(officialVector['apk']);
+        final alicePriv = PrivateKey.fromHexString(officialVector['ask']);
+        final aliceGenPub = alicePriv.publicKey;
+        final alicePub = PublicKey.fromHexString(officialVector['apk']);
 
-      assert(hex.encode(aliceGenPub) == hex.encode(alicePub));
+        assert(hex.encode(aliceGenPub) == hex.encode(alicePub));
 
-      final bobPriv = PrivateKey.fromHexString(officialVector['bsk']);
-      final bobGenPub = bobPriv.publicKey;
-      final bobPub = PublicKey.fromHexString(officialVector['bpk']);
+        final bobPriv = PrivateKey.fromHexString(officialVector['bsk']);
+        final bobGenPub = bobPriv.publicKey;
+        final bobPub = PublicKey.fromHexString(officialVector['bpk']);
 
-      assert(hex.encode(bobGenPub) == hex.encode(bobPub));
+        assert(hex.encode(bobGenPub) == hex.encode(bobPub));
 
-      final sharedSecret1 = Uint8List(32);
-      final sharedSecret2 = Uint8List(32);
+        final sharedSecret1 = Uint8List(32);
+        final sharedSecret2 = Uint8List(32);
 
-      /// The expected shared secret, the
-      /// K = X25519(a, X25519(b, 9)) = X25519(b, X25519(a, 9))
-      TweetNaCl.crypto_scalarmult(sharedSecret1, bobPriv, alicePub);
-      TweetNaCl.crypto_scalarmult(sharedSecret2, alicePriv, bobPub);
+        /// The expected shared secret, the
+        /// K = X25519(a, X25519(b, 9)) = X25519(b, X25519(a, 9))
+        TweetNaCl.crypto_scalarmult(sharedSecret1, bobPriv, alicePub);
+        TweetNaCl.crypto_scalarmult(sharedSecret2, alicePriv, bobPub);
 
-      assert(hex.encode(sharedSecret1) == hex.encode(sharedSecret2));
-      assert(hex.encode(sharedSecret1) == sharedSecret);
+        assert(hex.encode(sharedSecret1) == hex.encode(sharedSecret2));
+        assert(hex.encode(sharedSecret1) == sharedSecret);
+      });
     });
-  });
 
-  group('Wycheproof', () {
-    final dir = Directory.current;
-    final file = File('${dir.path}/test/wycheproof/X25519.json');
-    final contents = file.readAsStringSync();
-    final x25519 = JsonDecoder().convert(contents);
+    group('Wycheproof', () {
+      final dir = Directory.current;
+      final file = File('${dir.path}/test/wycheproof/X25519.json');
+      final contents = file.readAsStringSync();
+      final x25519 = JsonDecoder().convert(contents);
 
-    final testGroups = x25519['testGroups'][0];
-    final tests = testGroups['tests'];
+      final testGroups = x25519['testGroups'][0];
+      final tests = testGroups['tests'];
 
-    tests.forEach((vector) {
-      final curve = vector['curve'];
-      final comment = vector['comment'];
-      final idx = vector['tcId'];
-      String description = '$curve - $comment ($idx)';
+      tests.forEach((vector) {
+        final curve = vector['curve'];
+        final comment = vector['comment'];
+        final idx = vector['tcId'];
+        String description = '$curve - $comment ($idx)';
 
-      test(description, () {
-        final public = vector['public'];
-        final private = vector['private'];
-        final shared = vector['shared'];
-        final result = vector['result'];
+        test(description, () {
+          final public = vector['public'];
+          final private = vector['private'];
+          final shared = vector['shared'];
+          final result = vector['result'];
 
-        if (result == 'valid' || result == 'acceptable') {
-          _doShared(private, public, shared);
-        } else {
-          expect(() => _doShared(private, public, shared), throwsException);
-        }
+          if (result == 'valid' || result == 'acceptable') {
+            _doShared(private, public, shared);
+          } else {
+            expect(() => _doShared(private, public, shared), throwsException);
+          }
+        });
       });
     });
   });

@@ -87,9 +87,8 @@ class Blake2b {
         (arr[i + 3] << 24));
   }
 
-    /// Compression function. [last] flag indicates last block.
+  /// Compression function. [last] flag indicates last block.
   static void _blake2bCompress(_Context context, last) {
-
     var v = Uint32List(32);
     var m = Uint32List(32);
 
@@ -177,12 +176,12 @@ class Blake2b {
   }
 
   /// Creates a BLAKE2b hashing context.
-  /// 
+  ///
   /// Requires an output length between 1 and 64 bytes
   /// Takes an optional Uint8List key, salte and personalisation parameters
   /// for KDF or MAC.
   static _Context init(int outlen,
-      [Uint8List key,  Uint8List salt, Uint8List personal]) {
+      [Uint8List key, Uint8List salt, Uint8List personal]) {
     if (outlen <= 0 || outlen > maxBytes) {
       throw Exception('Illegal output length, expected 0 < length <= 64');
     }
@@ -194,7 +193,8 @@ class Blake2b {
       throw Exception(
           'Illegal salt parameter, expected Uint8List of $saltBytes length');
     }
-    if (personal != null && (personal.isEmpty || personal.length > personalBytes)) {
+    if (personal != null &&
+        (personal.isEmpty || personal.length > personalBytes)) {
       throw Exception(
           'Illegal personalization parameter, expected Uint8List of 0 < $personalBytes <= length');
     }
@@ -247,7 +247,7 @@ class Blake2b {
   }
 
   /// Updates a BLAKE2b streaming hash.
-  /// 
+  ///
   /// Requires hash [context] and Uint8List [input] (byte array)
   static void update(_Context context, Uint8List input) {
     for (var i = 0; i < input.length; i++) {
@@ -261,7 +261,7 @@ class Blake2b {
   }
 
   /// Completes a BLAKE2b streaming hash.
-  /// 
+  ///
   /// Returns a Uint8List containing the message digest
   static Uint8List finalise(_Context context) {
     context.t += context.c; // mark last block offset
@@ -304,4 +304,21 @@ void main() {
   Blake2b.update(state, List<int>.generate(32, (i) => 2));
   final result = Blake2b.finalise(state);
   print(hex.encode(result));
+
+  // FIXME: Implement similar API
+  /*
+  abstract Digest {
+    Digest init(length, key, salt, personalisation)
+    Digest update(List<int> message);
+    Uint8List finalise(); 
+  }
+  
+  var blake = Blake2b(24);
+  /// Context is unmodifiable, therefore new opject is created
+  /// similar to the copyWith();
+  blake = blake.init();
+  blake = blake.update(message);
+  blake = blake.update(message);
+  var result = blake.finalise();
+  */
 }

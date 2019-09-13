@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:test/test.dart';
 
 import 'package:convert/convert.dart';
@@ -33,12 +34,6 @@ void main() {
     final priv = PrivateKey.fromHexString(
         '5c2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798');
 
-    test('Boxing Test', () {
-      final b1 = Box(myPrivateKey: priv, theirPublicKey: pub);
-      final b2 = Box.fromSharedKey(b1.sharedKey);
-
-      assert(b1.sharedKey == b2.sharedKey);
-    });
     test('Test Box decode', () {
       final b1 = Box(myPrivateKey: priv, theirPublicKey: pub);
       final b2 = Box.decode(b1.sharedKey);
@@ -73,7 +68,7 @@ void main() {
 
       assert(hex.encode(encrypted) == hex.encode(expected));
       assert(hex.encode(encrypted.nonce) == nonce);
-      assert(hex.encode(encrypted.ciphertext) == ciphertext);
+      assert(hex.encode(encrypted.cipherText) == ciphertext);
     });
 
     test('Test Box decryption', () {
@@ -88,7 +83,7 @@ void main() {
       final decrypted =
           box.decrypt(hex.decode(ciphertext), nonce: hex.decode(nonce));
 
-      assert(hex.encode(decrypted.plaintext) == plaintext);
+      assert(hex.encode(decrypted) == plaintext);
     });
 
     test('Test Box encryption and decryption combined', () {
@@ -109,7 +104,7 @@ void main() {
       // NOTE: nonce is retrieved from the EncryptedMessage class
       final decrypted = box1.decrypt(encrypted);
 
-      assert(hex.encode(decrypted.plaintext) == plaintext);
+      assert(hex.encode(decrypted) == plaintext);
     });
 
     test('Test Nonce encryption and decryption combined', () {
@@ -128,8 +123,9 @@ void main() {
 
     test('Test Wrong AsymmetricKey types', () {
       final priv = PrivateKey.generate();
-      final k32 = AsymmetricKey(32);
-      final _31 = ByteList(31);
+      final _31 = Uint8List(31);
+      final _32 = Uint8List(32);
+      final k32 = PublicKey(_32);
 
       // TODO: Generalise and implement proper rrror handling by implementing proper exception classes.
       // expect(() => PrivateKey(priv.publicKey), throwsException);
@@ -140,48 +136,21 @@ void main() {
       // expect(() => PrivateKey(), throwsA(allOf(isArgumentError, predicate((e) => e.message == 'Error'))));
       expect(() => PrivateKey(priv), returnsNormally);
       expect(() => PrivateKey.fromSeed(_31), throwsException);
-      expect(() => PublicKey(), returnsNormally);
-      expect(() => PublicKey.fromList(_31), throwsException);
+      expect(() => PublicKey(_32), returnsNormally);
+      expect(() => PublicKey(_31), throwsException);
 
       // Valid combinations
-      expect(
-          () => Box(myPrivateKey: null, theirPublicKey: null, sharedKey: k32),
-          returnsNormally);
-      expect(
-          () => Box(
-              myPrivateKey: priv,
-              theirPublicKey: priv.publicKey,
-              sharedKey: null),
+      expect(() => Box.decode(k32), returnsNormally);
+      expect(() => Box(myPrivateKey: priv, theirPublicKey: priv.publicKey),
           returnsNormally);
 
       // Invalid combinations
       expect(
-          () => Box(myPrivateKey: null, theirPublicKey: null, sharedKey: null),
+          () => Box(myPrivateKey: null, theirPublicKey: null), throwsException);
+      expect(() => Box(myPrivateKey: null, theirPublicKey: priv.publicKey),
           throwsException);
       expect(
-          () => Box(
-              myPrivateKey: priv,
-              theirPublicKey: priv.publicKey,
-              sharedKey: k32),
-          throwsException);
-      expect(
-          () => Box(
-              myPrivateKey: null,
-              theirPublicKey: priv.publicKey,
-              sharedKey: k32),
-          throwsException);
-      expect(
-          () => Box(
-              myPrivateKey: null,
-              theirPublicKey: priv.publicKey,
-              sharedKey: null),
-          throwsException);
-      expect(
-          () => Box(myPrivateKey: priv, theirPublicKey: null, sharedKey: k32),
-          throwsException);
-      expect(
-          () => Box(myPrivateKey: priv, theirPublicKey: null, sharedKey: null),
-          throwsException);
+          () => Box(myPrivateKey: priv, theirPublicKey: null), throwsException);
     });
   });
 }

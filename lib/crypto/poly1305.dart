@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 import 'package:fixnum/fixnum.dart';
 
-
 /// Port of Andrew Moon's Poly1305-donna-16. Public domain.
 /// https://github.com/floodyberry/poly1305-donna
 class Poly1305 {
@@ -336,15 +335,16 @@ class Poly1305 {
     g[9] &= 0xffff;
 
     /// BACKPORT from [tweetnacl-fast.js ](https://github.com/dchest/tweetnacl-js/releases/tag/v0.14.3)
-    /// 
+    ///
     ///  "The issue was not properly detecting if st->h was >= 2^130 - 5,
     ///  coupled with [testing mistake] not catching the failure.
     ///  The chance of the bug affecting anything in the real world is essentially zero luckily,
     ///  but it's good to have it fixed."
-    /// 
+    ///
     /// change mask = (g[9] >>> ((2 * 8) - 1)) - 1; to as
     mask = (c ^ 1) - 1;
     mask &= 0xffff;
+
     /// END OF BACKPORT
 
     for (i = 0; i < 10; i++) {

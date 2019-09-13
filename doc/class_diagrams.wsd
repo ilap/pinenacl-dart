@@ -1,0 +1,67 @@
+@startuml Class Diagrams
+
+page 1x3
+skinparam pageMargin 10
+skinparam pageExternalColor gray
+skinparam pageBorderColor black
+namespace pinenacl.api {
+
+  class ByteList
+
+  abstract class AsymmetricKey {
+    int keyLength
+  }
+
+  abstract class AsymmetricPrivateKey {
+    AsymmetricKey publicKey;
+    generate()
+  }
+
+  abstract class EncryptionMessage
+  abstract class BlockBase
+
+  ByteList <|- AsymmetricKey
+  AsymmetricKey <|-down- AsymmetricPrivateKey
+  ByteList <|-down- EncryptionMessage
+}
+
+namespace pinenacl.public {
+  class Box
+  class SealedBox
+
+  class SealedMessage {
+    + public
+  }
+
+  pinenacl.api.BlockBase <|-up- Box
+  
+  pinenacl.api.BlocKbase <|-up- SealedBox
+  pinenacl.api.BlocKbase <|-up- SealedMessage
+
+  pinenacl.hash.Hash <|-down- SealedBox
+}
+
+namespace pinenacl.secret {
+  class SecretBox
+  pinenacl.api.ByteList <|- SecretBox
+}
+
+namespace pinenacl.signatures {
+  class SigningKey
+  class VerifyKey
+  pinenacl.api.ByteList <|- SigningKey
+  pinenacl.api.ByteList <|- VerifiKey
+  
+}
+
+namespace pinenacl.hash {
+  class Hash {
+    + blake2b(message)
+    + sha512(message)
+  }
+}
+
+
+
+
+@enduml

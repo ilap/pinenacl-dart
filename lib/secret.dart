@@ -1,9 +1,8 @@
-import "dart:core";
-import 'dart:typed_data';
+library pinenacl.api.secret;
 
-import 'package:pinenacl/src/crypto/tweetnacl.dart';
+import 'dart:core';
 
-import 'api.dart';
+import 'package:pinenacl/api.dart';
 
 /// From: [PyNaCl's readthedocs](https://pynacl.readthedocs.io)
 ///
@@ -35,25 +34,19 @@ import 'api.dart';
 /// Thus large amounts of data should be chunked so that each message is small.
 /// (Each message still needs a unique nonce.) If in doubt, 16KB is a reasonable chunk size.
 ///
-class SecretBox extends BaseBox {
+class SecretBox extends BoxBase {
   SecretBox(List<int> secret) : super.fromList(secret);
   SecretBox.fromHexString(String hexaString) : super.fromHexString(hexaString);
+
   static const keyLength = TweetNaCl.keyLength;
   static const macBytes = TweetNaCl.macBytes;
-  @override
-  AsymmetricKey get key => this;
 
   @override
-  Uint8List doEncrypt(Uint8List ciphertext, Uint8List plaintext, int pLen,
-      Uint8List nonce, Uint8List k) {
-    return TweetNaCl.crypto_secretbox(
-        ciphertext, plaintext, pLen, nonce, k);
-  }
+  ByteList get key => this;
 
   @override
-  Uint8List doDecrypt(Uint8List plaintext, Uint8List ciphertext, int cLen,
-      Uint8List nonce, Uint8List k) {
-    return TweetNaCl.crypto_secretbox_open(
-        plaintext, ciphertext, cLen, nonce, k);
-  }
+  Crypting doEncrypt = TweetNaCl.crypto_box_afternm;
+
+  @override
+  Crypting doDecrypt = TweetNaCl.crypto_box_open_afternm;
 }

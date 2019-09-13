@@ -27,21 +27,21 @@ void main() {
       assert(s == s.key);
     });
 
-    test('SecretBox Encryption', () {
+    test('SecretBox encryption', () {
       final box = SecretBox.fromHexString(_vectors['key']);
 
       final nonce = _vectors['nonce'];
-      final ciphertext = _vectors['ciphertext'];
-      final plaintext = _vectors['plaintext'];
+      final cipherText = _vectors['ciphertext'];
+      final plainText = _vectors['plaintext'];
 
       final encrypted =
-          box.encrypt(hex.decode(plaintext), nonce: hex.decode(nonce));
+          box.encrypt(hex.decode(plainText), nonce: hex.decode(nonce));
 
-      final expected = hex.decode(nonce + ciphertext);
+      final expected = hex.decode(nonce + cipherText);
 
       assert(hex.encode(encrypted) == hex.encode(expected));
       assert(hex.encode(encrypted.nonce) == nonce);
-      assert(hex.encode(encrypted.ciphertext) == ciphertext);
+      assert(hex.encode(encrypted.cipherText) == cipherText);
     });
 
     test('SecretBox decryption', () {
@@ -54,7 +54,7 @@ void main() {
       final decrypted =
           box.decrypt(hex.decode(ciphertext), nonce: hex.decode(nonce));
 
-      assert(hex.encode(decrypted.plaintext) == plaintext);
+      assert(hex.encode(decrypted) == plaintext);
     });
 
     test('SecretBox decryption (no nonce)', () {
@@ -65,8 +65,7 @@ void main() {
       final encrypted = box.encrypt(hex.decode(plaintext));
       final decrypted = box.decrypt(encrypted);
 
-      assert(hex.encode(decrypted.plaintext) == plaintext);
-      //assert(hex.encode(decrypted) == plaintext);
+      assert(hex.encode(decrypted) == plaintext);
     });
   });
 }

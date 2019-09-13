@@ -1,7 +1,7 @@
-import 'package:pinenacl/api.dart';
-import 'package:pinenacl/public.dart' show PrivateKey;
+import 'package:pinenacl/api.dart' show Box, PrivateKey;
 
 void main() {
+  print('\n### Public Key Encryption - Box Example ###\n');
   // Generate Bob's private key, which must be kept secret
   final skbob = PrivateKey.generate();
 
@@ -20,7 +20,8 @@ void main() {
 
   // This is our message to send, it must be a bytestring as Box will treat it
   // as just a binary blob of data.
-  final message = 'There is no conspiracy out there, but lack of the incentives to drive the people towards the answers.';
+  final message =
+      'There is no conspiracy out there, but lack of the incentives to drive the people towards the answers.';
 
   // TweetNaCl can automatically generate a random nonce for us, making the encryption very simple:
   // Encrypt our message, it will be exactly 40 bytes longer than the
@@ -35,7 +36,5 @@ void main() {
   // Decrypt our message, an exception will be raised if the encryption was
   // tampered with or there was otherwise an error.
   final decrypted = aliceBox.decrypt(encrypted);
-  print(String.fromCharCodes(decrypted.plaintext));
-
-  
+  print(String.fromCharCodes(decrypted));
 }
