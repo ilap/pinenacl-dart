@@ -1,5 +1,5 @@
 import 'package:convert/convert.dart';
-import 'package:pinenacl/signing.dart';
+import 'package:pinenacl/api.dart';
 
 void main() {
   print('\n### Digital Signatures - Signing Example ###\n');
@@ -10,6 +10,7 @@ void main() {
   final signingKey = SigningKey.generate();
 
   final message = 'People see the things they want to see...';
+  final forgedMessage = 'people see the things they want to see...';
   // Sign a message with the signing key
   final signed = signingKey.sign(message.codeUnits);
 
@@ -34,12 +35,9 @@ void main() {
   verifyKey.verifySignedMessage(signedMessage: signed);
   verifyKey.verify(signature: signed.signature, message: signed.message);
 
-  // Alter the signed message text
-  //signed[0] ^= signed[0] + 1;
-
   try {
     // Forged message.
-    verifyKey.verifySignedMessage(signedMessage: signed);
+    verifyKey.verify(signature: signed.signature, message: forgedMessage.codeUnits);
   } on Exception catch (e) {
     print('Exception\'s successfully cought:\n$e');
   }

@@ -74,5 +74,8 @@ class ByteList with ListMixin<int> implements Uint8List {
   }
 
   @override
-  Uint8List sublist(int start, [int end]) => _u8l.sublist(start, end);
+  ByteList sublist(int start, [int end]) {
+      final sublist = _u8l.sublist(start, end);
+      return ByteList(sublist, sublist.length);
+  }
 }
