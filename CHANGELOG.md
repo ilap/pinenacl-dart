@@ -26,7 +26,7 @@
 - Refactored `SigningKey` and `VerifyKey` by adding `Sign` and `Verify` interfaces.
 - Bumped version to 0.1.1
 
-## 0.1.1-dev.1
+## 0.1.2-dev.1
 
 - Added Class diagrams.
 - Added ByteList's immutability tests.
