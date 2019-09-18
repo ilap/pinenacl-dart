@@ -1,6 +1,6 @@
 @startuml
 
-title Digital Signature' class diagrams
+title Encryption Messages
 
 abstract class Sign {
   + Verify get verifyKey;
