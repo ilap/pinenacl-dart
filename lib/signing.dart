@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'package:convert/convert.dart';
 
 import 'package:pinenacl/api.dart';
+
 class VerifyKey extends ByteList implements AsymmetricKey, Verify {
   VerifyKey(List<int> list) : super(list, TweetNaCl.publicKeyLength);
   VerifyKey.fromHexString(String hexaString) : super.fromHexString(hexaString);

@@ -37,7 +37,8 @@ void main() {
 
   try {
     // Forged message.
-    verifyKey.verify(signature: signed.signature, message: forgedMessage.codeUnits);
+    verifyKey.verify(
+        signature: signed.signature, message: forgedMessage.codeUnits);
   } on Exception catch (e) {
     print('Exception\'s successfully cought:\n$e');
   }

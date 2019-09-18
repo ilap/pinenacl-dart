@@ -1,3 +1,5 @@
+library pinenacl.crypto.tweetnacl;
+
 import "dart:core";
 import "dart:math";
 import 'dart:typed_data';
@@ -5,6 +7,9 @@ import 'dart:typed_data';
 import 'package:fixnum/fixnum.dart';
 
 import 'poly1305.dart';
+import 'hmac_sha512.dart';
+
+part 'package:pinenacl/crypto/tweetnacl_ext.dart';
 
 class TweetNaCl {
   static const int keyLength = 32;

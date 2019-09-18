@@ -9,7 +9,7 @@ import 'package:pinenacl/hashing.dart';
 
 void main() {
   group('Hashing', () {
-    group('SHA512', () {
+    group('SHA-512', () {
       final dir = Directory.current;
       final file = File('${dir.path}/test/data/sha512_vectors.json');
       final contents = file.readAsStringSync();

@@ -4,7 +4,7 @@
 
 ## 0.1.0
 
-- Added the `byte-length` official SHA512 test vectors.
+- Added the `byte-length` official SHA-512 test vectors.
 - Added `hashing` example
 - Allowed `personalisation` paramater to be less then 16 bytes long by zero-padding to 16 bytes.
 
@@ -31,3 +31,9 @@
 - Added Class diagrams.
 - Added ByteList's immutability tests.
 
+## 0.1.2-dev.2
+
+- Added TweetNaclExt (Extension) class, that implements the HMAC-SHA-512's based `crypto_auth` 
+and `crypto_auth_verify` functions of the `NaCl` library (does not exists in TweetNaCl).
+- Added HMAC-SHA-512.
+- Added HMAC-SHA-512 unit tests.

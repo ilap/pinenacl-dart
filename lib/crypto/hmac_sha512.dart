@@ -1,0 +1,128 @@
+import 'dart:typed_data';
+import 'package:convert/convert.dart';
+
+import 'tweetnacl.dart';
+
+/// https://csrc.nist.gov/csrc/media/publications/fips/198/1/final/documents/fips-198-1_final.pdf
+/// HMAC-SHA-512 implementation
+class HmacSha512 {
+  /// `B` Block size (in bytes) of the input to the Approved hash function.
+  /// B is 128 for SHA-384 and SHA-512
+  static const b = 128;
+
+  /// `H` An Approved hash function.
+  static const h = TweetNaCl.crypto_hash;
+
+  /// `ipad` Inner pad; the byte x‘36’ repeated B times.
+  static const ipad = <int>[
+    0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, // 16*8 = 128
+    0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36,
+    0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36,
+    0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36,
+    0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36,
+    0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36,
+    0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36,
+    0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36,
+    0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36,
+    0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36,
+    0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36,
+    0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36,
+    0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36,
+    0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36,
+    0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36,
+    0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36
+  ];
+
+  /// `L` Block size (in bytes) of the output of the Approved hash function.
+  /// l = 64 for SHA-512
+  static const l = TweetNaClExt.hmacBytes;
+
+  /// `opad `Outer pad; the byte x‘5c’ repeated B times.
+  static const opad = <int>[
+    0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, // 16*8 = 128
+    0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c,
+    0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c,
+    0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c,
+    0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c,
+    0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c,
+    0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c,
+    0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c,
+    0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c,
+    0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c,
+    0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c,
+    0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c,
+    0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c,
+    0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c,
+    0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c,
+    0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c
+  ];
+
+  /// `text` The data on which the HMAC is calculated; text does not include the padded key.
+  /// The length of `text` is n bits, where 0 ≤ n < 2B - 8B.
+  /// `x‘N’` Hexadecimal notation, where each symbol in the string ‘N’ represents 4 binary bits.
+  /// `||` Concatenation.
+  /// `⊕` Exclusive-Or operation.
+  /// `K` Secret key shared between the originator and the intended receiver(s).
+  /// `K0` The key K after any necessary pre-processing to form a B byte key.
+  static void mac(Uint8List out, Uint8List text, Uint8List k) {
+    // It initialises elements with zero.
+    final k0 = Uint8List(b);
+
+    if (k.length == b) {
+      /// Step #1 If the length of K = B: set K0 = K. Go to step 4.
+      _memcopy(k, k0);
+    } else if (k.length > b) {
+      /// Step #2 If the length of K > B: hash K to obtain an L byte string, then append (B-L)
+      /// zeros to create a B-byte string K0 (i.e., K0 = H(K) || 00...00). Go to step 4.
+      h(k0, k);
+    } else if (k.length < b) {
+      /// Step #3 If the length of K < B: append zeros to the end of K to create a B-byte string K0
+      /// (e.g., if K is 20 bytes in length and B = 64, then K will be appended with 44 zero bytes x’00’).
+      _memcopy(k, k0);
+    }
+
+    /// Step #4
+    /// /// Exclusive-Or K0 with ipad to produce a B-byte string: K0 ⊕ ipad.
+
+    final k0i = k0.toList();
+    for (int i = 0; i < k0.length; i++) {
+      k0i[i] = k0i[i] ^ ipad[i];
+    }
+
+    /// Step 5 Append the stream of data 'text' to the string resulting from step 4: (K0 ⊕ ipad) || text.
+    /// Step 6 Apply H to the stream generated in step 5: H((K0 ⊕ ipad) || text).
+    final hk0 = Uint8List(l);
+
+    h(hk0, Uint8List.fromList(k0i + text));
+
+    /// Step 7 Exclusive-Or K0 with opad: K0 ⊕ opad.
+    final k0o = k0.toList();
+    for (int i = 0; i < k0.length; i++) {
+      k0o[i] = k0o[i] ^ opad[i];
+    }
+
+    /// Step 8 Append the result from step 6 to step 7:
+    /// /// (K0 ⊕ opad) || H((K0 ⊕ ipad) || text).
+    final _r = k0o + hk0;
+
+    /// Step 9 Apply H to the result from step 8:
+    /// /// H((K0 ⊕ opad )|| H((K0 ⊕ ipad) || text)).
+    h(out, Uint8List.fromList(_r));
+  }
+
+  static void _memcopy(Uint8List from, Uint8List to, [int toOffset = 0]) {
+    for (int i = 0; i < from.length; i++) {
+      to[i + toOffset] = from[i];
+    }
+  }
+}
+
+void main() {
+  final out = Uint8List(64);
+  final k = List<int>.generate(128, (i) => i);
+  final text =
+      Uint8List.fromList('Sample message for keylen=blocklen'.codeUnits);
+
+  HmacSha512.mac(out, text, Uint8List.fromList(k));
+  print('MAC: ${hex.encode(out)}');
+}

@@ -1,6 +1,5 @@
 part of pinenacl.api;
 
-
 abstract class Sign {
   Verify get verifyKey;
   SignedMessage sign(List<int> message);
