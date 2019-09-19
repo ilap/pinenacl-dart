@@ -5,7 +5,7 @@ abstract class Sign {
   SignedMessage sign(List<int> message);
 }
 
-abstract class Verify {
+abstract class Verify extends ByteList {
   bool verify({Signature signature, ByteList message});
   bool verifySignedMessage({SignedMessage signedMessage});
 }

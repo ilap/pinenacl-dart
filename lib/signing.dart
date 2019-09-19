@@ -7,8 +7,8 @@ import 'package:convert/convert.dart';
 
 import 'package:pinenacl/api.dart';
 
-class VerifyKey extends ByteList implements AsymmetricKey, Verify {
-  VerifyKey(List<int> list) : super(list, TweetNaCl.publicKeyLength);
+class VerifyKey extends PublicKey implements Verify {
+  VerifyKey(List<int> list) : super(list);
   VerifyKey.fromHexString(String hexaString) : super.fromHexString(hexaString);
 
   @override
@@ -40,7 +40,6 @@ class VerifyKey extends ByteList implements AsymmetricKey, Verify {
     return true;
   }
 }
-
 class SigningKey extends ByteList implements AsymmetricPrivateKey, Sign {
   // Private constructor.
   SigningKey._fromValidBytes(List<int> secret, List<int> public)
@@ -60,7 +59,7 @@ class SigningKey extends ByteList implements AsymmetricPrivateKey, Sign {
       throw Exception('SigningKey must be created from a $seedSize byte seed');
     }
 
-    final priv = Uint8List.fromList(seed + Uint8List(32));
+    final priv = Uint8List.fromList(seed + Uint8List(PublicKey.keyLength));
     final pub = Uint8List(TweetNaCl.publicKeyLength);
     TweetNaCl.crypto_sign_keypair(pub, priv, Uint8List.fromList(seed));
 

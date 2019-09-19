@@ -59,7 +59,7 @@ void main() {
     group('Sign and verify Cardano\'s cryptoxide ed25519 testvectors', () {
       var idx = 0;
       _cardanoVectors.forEach((vector) {
-        final description = '${++idx}';
+        final description = ' (${++idx})';
         test(description, () {
           final seed = vector['seed'];
           final message = vector['message'];
@@ -82,7 +82,7 @@ void main() {
 
       int idx = 0;
       tests.forEach((vector) {
-        String description = '${++idx}';
+        String description = ' (${++idx})';
         test(description, () {
           final seed = hex.decode(vector['seed']).sublist(0, 32);
           final public = hex.decode(vector['publ']);

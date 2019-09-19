@@ -34,27 +34,24 @@ class PrivateKey extends ByteList implements AsymmetricPrivateKey {
     return PrivateKey.fromSeed(Uint8List.fromList(hex.decode(hexaString)));
   }
 
-  factory PrivateKey.fromSeed(List<int> seed) {
+  PrivateKey.fromSeed(List<int> seed): this._fromValidBytes(seed, _seedToPublic(seed)); 
+
+  @override
+  factory PrivateKey.generate() => PrivateKey.fromSeed(TweetNaCl.randombytes(seedSize));
+
+
+  static Uint8List _seedToPublic(Uint8List seed) {
     if (seed == null || seed.length != seedSize) {
       throw Exception(
           'PrivateKey\'s seed must be a $seedSize bytes long binary sequence');
     }
 
-    final public = Uint8List(PublicKey.keyLength);
-
-    TweetNaCl.crypto_scalarmult_base(public, Uint8List.fromList(seed));
-
-    return PrivateKey._fromValidBytes(seed, public);
-  }
-
-  @override
-  factory PrivateKey.generate() {
-    final secret = TweetNaCl.randombytes(keyLength);
-    return PrivateKey.fromSeed(secret);
+    final public = Uint8List(TweetNaCl.publicKeyLength);
+    return TweetNaCl.crypto_scalarmult_base(public, Uint8List.fromList(seed));
   }
 
   static const seedSize = TweetNaCl.seedSize;
-  static const keyLength = TweetNaCl.secretKeyLength;
+  static final keyLength = TweetNaCl.secretKeyLength;
 
   @override
   final PublicKey publicKey;

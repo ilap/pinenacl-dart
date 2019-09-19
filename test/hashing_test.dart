@@ -17,7 +17,7 @@ void main() {
 
       int idx = 0;
       tests.forEach((vector) {
-        final description = 'SHA Validation System\'s testvector(${++idx})';
+        final description = 'SHA Validation System\'s testvectors (${++idx})';
         test(description, () {
           String digest = vector['digest'];
           final message = Uint8List.fromList(hex.decode(vector['message']));
@@ -40,7 +40,7 @@ void main() {
         ++idx;
         final origin = idx < 513 ? 'RFC7693' : 'Libsodium';
         final offset = idx < 513 ? idx : idx - 512;
-        final description = '$origin testvector($offset)';
+        final description = '$origin testvectors ($offset)';
         test(description, () {
           final out = vector['out'];
           final outlen = vector['outlen'];

@@ -126,7 +126,7 @@ void main() {
     group('HMAC-SHA-512', () {
       int idx = 0;
       vectors.forEach((vector) {
-        final description = 'RFC4231\'s testvector(${++idx})';
+        final description = 'RFC4231\'s testvectors (${++idx})';
         test(description, () {
           final k = Uint8List.fromList(hex.decode(vector['key']));
           final kLen = vector['key_length'];
