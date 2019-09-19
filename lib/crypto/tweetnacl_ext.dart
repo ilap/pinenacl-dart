@@ -1,4 +1,5 @@
-part of pinenacl.crypto.tweetnacl;
+part of pinenacl.api.crypto.tweetnacl;
+
 
 /// Following the TweetNaCl convention.
 class TweetNaClExt {

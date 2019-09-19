@@ -1,7 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:convert/convert.dart';
-
 import 'package:pinenacl/api.dart';
 
 class _Context {
@@ -298,6 +296,7 @@ class Blake2b {
   }
 }
 
+/*
 void main() {
   final state = Blake2b.init(24);
   Blake2b.update(state, List<int>.generate(32, (i) => 1));
@@ -322,3 +321,4 @@ void main() {
   var result = blake.finalise();
   */
 }
+*/

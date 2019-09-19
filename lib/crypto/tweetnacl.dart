@@ -1,4 +1,4 @@
-library pinenacl.crypto.tweetnacl;
+library pinenacl.api.crypto.tweetnacl;
 
 import "dart:core";
 import "dart:math";
