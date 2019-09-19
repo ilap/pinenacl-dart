@@ -10,20 +10,7 @@ abstract class Verify extends ByteList {
   bool verifySignedMessage({SignedMessage signedMessage});
 }
 
-class _EncryptionMessage extends ByteList {
-  _EncryptionMessage._(List<int> message, int prefixLength)
-      : this._prefixLength = prefixLength,
-        super(message, message.length);
-
-  _EncryptionMessage(List<int> prefix, List<int> suffix, int prefixLength)
-      : this._prefixLength = prefixLength,
-        super((prefix ?? []) + (suffix ?? []), prefixLength + suffix.length);
-  final int _prefixLength;
-  ByteList get prefix => ByteList(take(_prefixLength), _prefixLength);
-  ByteList get suffix => ByteList(skip(_prefixLength), length - _prefixLength);
-}
-
-class EncryptedMessage extends _EncryptionMessage {
+class EncryptedMessage extends SuffixByteList {
   EncryptedMessage({List<int> nonce, List<int> cipherText})
       : super(nonce, cipherText, nonceLength);
 
@@ -32,7 +19,7 @@ class EncryptedMessage extends _EncryptionMessage {
   Uint8List get cipherText => suffix;
 }
 
-class SealedMessage extends _EncryptionMessage {
+class SealedMessage extends SuffixByteList {
   SealedMessage({List<int> public, List<int> cipherText})
       : super(public, cipherText, publicLength);
 
@@ -41,7 +28,7 @@ class SealedMessage extends _EncryptionMessage {
   Uint8List get cipherText => suffix;
 }
 
-class SignedMessage extends _EncryptionMessage {
+class SignedMessage extends SuffixByteList {
   SignedMessage({Signature signature, List<int> message})
       : super(signature, message, signatureLength);
   SignedMessage.fromList({List<int> signedMessage})

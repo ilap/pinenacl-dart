@@ -40,3 +40,4 @@ and `crypto_auth_verify` functions of the `NaCl` library (does not exists in Twe
 - Added some `TweetNaCl`'s tests.
 - Cleaned some code.
 - Fixed exports.
+- Renamed _EncryptionMessage class to SuffixByteList.
