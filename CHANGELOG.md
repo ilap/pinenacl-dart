@@ -41,3 +41,4 @@ and `crypto_auth_verify` functions of the `NaCl` library (does not exists in Twe
 - Cleaned some code.
 - Fixed exports.
 - Renamed _EncryptionMessage class to SuffixByteList.
+- Fixed `ByteList`'s constructor
