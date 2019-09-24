@@ -9,6 +9,26 @@ import 'package:pinenacl/hashing.dart';
 
 void main() {
   group('Hashing', () {
+    group('SHA-256', () {
+      final dir = Directory.current;
+      final file = File('${dir.path}/test/data/sha256_vectors.json');
+      final contents = file.readAsStringSync();
+      final tests = JsonDecoder().convert(contents);
+
+      int idx = 0;
+      tests.forEach((vector) {
+        final description = 'SHA Validation System\'s testvectors (${++idx})';
+        test(description, () {
+          String digest = vector['digest'];
+          final message = Uint8List.fromList(hex.decode(vector['message']));
+
+          final hash = Hash.sha256(message);
+
+          assert(digest == hex.encode(hash));
+        });
+      });
+    });
+
     group('SHA-512', () {
       final dir = Directory.current;
       final file = File('${dir.path}/test/data/sha512_vectors.json');

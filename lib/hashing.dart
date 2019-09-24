@@ -15,6 +15,18 @@ class Hash {
   //Length of hash in bytes.
   static final int hashLength = 64;
 
+  ///  Returns SHA-256 hash of the message.
+  static Uint8List sha256(dynamic message) {
+    if (message is String) {
+      message = Uint8List.fromList(utf8.encode(message));
+    } else if (message is! Uint8List) {
+      throw Exception('The message must be either of string or Uint8List');
+    }
+    Uint8List out = Uint8List(32);
+    Sha256.crypto_hash_sha256(out, message);
+    return out;
+  }
+
   ///  Returns SHA-512 hash of the message.
   static Uint8List sha512(dynamic message) {
     if (message is String) {

@@ -39,7 +39,7 @@ class TweetNaCl {
 
   // Extended key's length
   static const int extendedKeyLength = 64;
-  
+
   static final Uint8List _0 =
       Uint8List.fromList([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); //16
   static final Uint8List _9 = Uint8List.fromList([

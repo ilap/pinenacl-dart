@@ -8,6 +8,7 @@ import 'package:pinenacl/crypto/tweetnacl.dart';
 
 export 'package:pinenacl/crypto/hmac_sha512.dart';
 export 'package:pinenacl/crypto/blake2b.dart';
+export 'package:pinenacl/crypto/sha_256.dart';
 export 'package:pinenacl/crypto/tweetnacl.dart';
 export 'package:pinenacl/public.dart';
 export 'package:pinenacl/signing.dart';

@@ -45,4 +45,13 @@ void main() {
   /// By repeating the key derivation procedure before encrypting our messages,
   /// and sending the derivationSalt along with the encrypted message, we can expect to never reuse a key,
   /// drastically reducing the risks which ensue from such a reuse.
+
+  /// SHA-256 Example.
+  print("\nSHA-256 Example.\n");
+  var message =
+      '01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789';
+  final out = Hash.sha256(Uint8List.fromList(message.codeUnits));
+  print('Resulted: ${hex.encode(out)}');
+  print(
+      'Expected: 3935959adc03ef044edba6e0c69dc7322e34668c2ca74470e4d39f20362b977a');
 }

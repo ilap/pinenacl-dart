@@ -4,7 +4,8 @@ part of pinenacl.api;
 /// which is based on the unmodifiable Uin8List class
 class ByteList with ListMixin<int> implements Uint8List {
   ByteList([Iterable<int> bytes, int bytesLength])
-      : this._u8l = _constructList(bytes, bytesLength ?? _minLength, bytesLength ?? _maxLength);
+      : this._u8l = _constructList(
+            bytes, bytesLength ?? _minLength, bytesLength ?? _maxLength);
 
   ByteList.fromList(List<int> list, [int minLength, int maxLength])
       : this._u8l = _constructList(
@@ -85,7 +86,8 @@ class SuffixByteList extends ByteList {
       : this._prefixLength = prefixLength,
         super(bytes, bytes.length);
 
-  SuffixByteList.fromList({List<int> bytes, int prefixLength}): this._(bytes, prefixLength);
+  SuffixByteList.fromList({List<int> bytes, int prefixLength})
+      : this._(bytes, prefixLength);
 
   SuffixByteList(List<int> prefix, List<int> suffix, int prefixLength)
       : this._prefixLength = prefixLength,

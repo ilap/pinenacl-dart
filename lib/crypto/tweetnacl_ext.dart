@@ -1,6 +1,5 @@
 part of pinenacl.api.crypto.tweetnacl;
 
-
 /// Following the TweetNaCl convention.
 class TweetNaClExt {
   static const hmacBytes = 64;
