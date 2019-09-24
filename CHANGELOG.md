@@ -45,5 +45,6 @@ and `crypto_auth_verify` functions of the `NaCl` library (does not exists in Twe
 
 ## 0.1.2-dev.3
 
-- Added SHA-256
+- Added SHA-256.
 - Added SHA-256 unit tests with the official testvectors.
+- Fixed some typos.

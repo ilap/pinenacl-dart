@@ -2,11 +2,9 @@ import 'dart:typed_data';
 
 import 'package:fixnum/fixnum.dart';
 
-import 'package:convert/convert.dart';
-
 class Sha256 {
-  static final List<Int32> K = <Int32>[
-    // 8x8
+  static final List<Int32> K = List<Int32>.unmodifiable([
+    // 4x16
     Int32(0x428a2f98), Int32(0x71374491), Int32(0xb5c0fbcf), Int32(0xe9b5dba5),
     Int32(0x3956c25b), Int32(0x59f111f1), Int32(0x923f82a4), Int32(0xab1c5ed5),
     Int32(0xd807aa98), Int32(0x12835b01), Int32(0x243185be), Int32(0x550c7dc3),
@@ -23,10 +21,9 @@ class Sha256 {
     Int32(0x391c0cb3), Int32(0x4ed8aa4a), Int32(0x5b9cca4f), Int32(0x682e6ff3),
     Int32(0x748f82ee), Int32(0x78a5636f), Int32(0x84c87814), Int32(0x8cc70208),
     Int32(0x90befffa), Int32(0xa4506ceb), Int32(0xbef9a3f7), Int32(0xc67178f2)
-  ];
+  ]);
 
-  static Int32 _rotr(Int32 x, int n) =>
-      x.shiftRightUnsigned(n) | (x << (32 - n));
+  static Int32 _rotr(Int32 x, int n) => _shr(x, n) | (x << (32 - n));
   static Int32 _shr(Int32 x, int n) => x.shiftRightUnsigned(n);
   static Int32 _ch(Int32 x, Int32 y, Int32 z) => ((x & y) ^ ((~x) & z));
   static Int32 _maj(Int32 x, Int32 y, Int32 z) => ((x & y) ^ (x & z) ^ (y & z));
@@ -36,12 +33,13 @@ class Sha256 {
   static Int32 _gamma1(Int32 x) => (_rotr(x, 17) ^ _rotr(x, 19) ^ _shr(x, 10));
 
   static Uint8List crypto_hash_sha256(Uint8List out, Uint8List m) {
-    return _crypto_hash_sha256(out, m, m != null ? m.length : 0);
+    return _crypto_hash_sha256(
+        out, m ?? Uint8List(0), m != null ? m.length : 0);
   }
 
   static Uint8List _crypto_hash_sha256(Uint8List out, Uint8List m, l) {
     if (out == null || out.length != 32) {
-      throw Exception('Invalid message to digest');
+      throw Exception('Invalid block for the message to digest.');
     }
 
     final w = List<Int32>(64);
@@ -113,8 +111,8 @@ class Sha256 {
 
     for (var i = 0; i < hh.length; i++) {
       out[4 * i + 0] = ((hh[i] >> 24) & 0xff).toInt();
-      out[4 * i + 2] = ((hh[i] >> 8) & 0xff).toInt();
       out[4 * i + 1] = ((hh[i] >> 16) & 0xff).toInt();
+      out[4 * i + 2] = ((hh[i] >> 8) & 0xff).toInt();
       out[4 * i + 3] = (hh[i] & 0xff).toInt();
     }
 
