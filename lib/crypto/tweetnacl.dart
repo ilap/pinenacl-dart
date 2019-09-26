@@ -37,9 +37,6 @@ class TweetNaCl {
   // Signature length
   static const int signatureLength = 64;
 
-  // Extended key's length
-  static const int extendedKeyLength = 64;
-
   static final Uint8List _0 =
       Uint8List.fromList([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); //16
   static final Uint8List _9 = Uint8List.fromList([
@@ -1484,8 +1481,6 @@ class TweetNaCl {
   static Uint8List crypto_box_beforenm(Uint8List k, Uint8List y, Uint8List x) {
     Uint8List s = Uint8List(32);
     crypto_scalarmult(s, x, y);
-
-    //Uint8List k = Uint8List(32);
 
     final res = crypto_core_hsalsa20(k, _0, s, _sigma);
     return res;
