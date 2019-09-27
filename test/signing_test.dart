@@ -74,9 +74,9 @@ void main() {
       });
     });
 
-    group('Sign and verify Ed25519 testvectors', () {
+    group('Sign and verify Ed25519 (EdDSA RFC8032) testvectors', () {
       final dir = Directory.current;
-      final file = File('${dir.path}/test/data/ed25519_vectors.json');
+      final file = File('${dir.path}/test/data/eddsa_ed25519_vectors.json');
       final contents = file.readAsStringSync();
       final tests = JsonDecoder().convert(contents);
 

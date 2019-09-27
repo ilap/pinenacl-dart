@@ -50,3 +50,4 @@ and `crypto_auth_verify` functions of the `NaCl` library (does not exists in Twe
 - Fixed some typos.
 - Added scalar_base for Ed25519Bip32 compatibility
 - Added Encoding classes.
+- Renamed `ed25519_vectors.json` (RFC8032's EdDSA) to `eddsa_ed25519_vectors.json`.
