@@ -34,7 +34,7 @@ import 'package:pinenacl/api.dart';
 /// Thus large amounts of data should be chunked so that each message is small.
 /// (Each message still needs a unique nonce.) If in doubt, 16KB is a reasonable chunk size.
 ///
-class SecretBox extends BoxBase {
+class SecretBox extends BoxBase with Encodable {
   SecretBox(List<int> secret) : super.fromList(secret);
   SecretBox.fromHexString(String hexaString) : super.fromHexString(hexaString);
 

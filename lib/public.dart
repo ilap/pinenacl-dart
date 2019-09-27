@@ -38,7 +38,7 @@ import 'package:pinenacl/api.dart';
 /// sign them after encryption.
 ///
 /// Doc comment from: [PyNaCl's readthedocs](https://pynacl.readthedocs.io)
-class Box extends BoxBase {
+class Box extends BoxBase with Encodable {
   Box({ByteList myPrivateKey, ByteList theirPublicKey})
       : super.fromList(_beforeNm(theirPublicKey, myPrivateKey, null));
 
@@ -101,7 +101,7 @@ class Box extends BoxBase {
 /// part of the key cannot be recovered after use.
 ///
 /// Doc comment from: [PyNaCl's readthedocs](https://pynacl.readthedocs.io)
-class SealedBox extends ByteList implements AsymmetricKey {
+class SealedBox extends ByteList with Encodable implements AsymmetricKey {
   SealedBox._fromKeyPair(PrivateKey privateKey, PublicKey publicKey)
       : this._privateKey = privateKey,
         super.fromList(publicKey);

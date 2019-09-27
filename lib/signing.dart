@@ -41,7 +41,9 @@ class VerifyKey extends PublicKey implements Verify {
   }
 }
 
-class SigningKey extends ByteList implements AsymmetricPrivateKey, Sign {
+class SigningKey extends ByteList
+    with Encodable
+    implements AsymmetricPrivateKey, Sign {
   // Private constructor.
   SigningKey._fromValidBytes(List<int> secret, List<int> public)
       : this.verifyKey = VerifyKey(public),

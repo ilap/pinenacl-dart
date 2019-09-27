@@ -2,7 +2,7 @@ part of pinenacl.api;
 
 /// `ByteList` is the base of the PineNaCl cryptographic library,
 /// which is based on the unmodifiable Uin8List class
-class ByteList with ListMixin<int> implements Uint8List {
+class ByteList with ListMixin<int> implements Uint8List, Decodable {
   ByteList([Iterable<int> bytes, int bytesLength])
       : this._u8l = _constructList(
             bytes, bytesLength ?? _minLength, bytesLength ?? _maxLength);

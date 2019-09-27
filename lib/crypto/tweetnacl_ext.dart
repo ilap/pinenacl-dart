@@ -2,7 +2,7 @@ part of pinenacl.api.crypto.tweetnacl;
 
 /// TweetNaCl's xtension class.
 /// Following the TweetNaCl convention and added some extras.
-/// 
+///
 class TweetNaClExt {
   static const hmacBytes = 64;
 
@@ -37,7 +37,7 @@ class TweetNaClExt {
     return TweetNaCl._vn(x, xoff, y, yoff, 64);
   }
 
-static int scalar_base(Uint8List pk, Uint8List sk) {
+  static int scalar_base(Uint8List pk, Uint8List sk) {
     Uint8List k = Uint8List(64);
     List<Int64List> p = List<Int64List>(4);
 
