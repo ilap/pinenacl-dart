@@ -17,7 +17,7 @@ Thes library has the aim of
 1. Add the following into the `pubspec.yaml` of your dart package:
 ``` yaml
 dependencies:
-  pinenacl: ^0.1.2-dev.3
+  pinenacl: ^0.1.2-dev.4
 ```
 
 2. You can install now from the command line with pub:
@@ -329,9 +329,11 @@ Implemented features:
   - SecretBox (private-key authenticated encryption)
 - Digital signatures
   - Signatures, curve25519 and ed25519.
-- Hashing
+- Hashing and message authentication
+  - SHA-256,
   - SHA-512, the default hashing algorithm of the original `TweetNaCl`
-  - BLAKE2b for KDF and MAC (not implemented in `TweetNaCl`) .
+  - BLAKE2b for KDF and MAC (not implemented in `TweetNaCl`).
+  - HMAC-SHA512.
 
 ## Low-level Functions supported by `PineNaCl`
 
@@ -378,6 +380,7 @@ The following `NaCl` library's high-level functions are implemented as the exten
 
   1. crypto_auth - HMAC-SHA-512 (NaCl uses HMAC-SHA-512/256)
   2. crypto_auth_verify
+  3. scalar_base - for retriving public key `A`, e.g. `A = kB`.
 
 # Thanks and Credits
 

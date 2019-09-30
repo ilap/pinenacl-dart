@@ -25,7 +25,7 @@ void main() {
   /// Verifier’s perspective (VerifyKey)
   ///
   // TODO: implements similar: VerifyKey.decode(verifyKeyHex, decoder: HexEncoder());
-  final verifyKey2 = VerifyKey.fromHexString(verifyKeyHex);
+  final verifyKey2 = VerifyKey.decode(verifyKeyHex, hexEncoder);
   assert(verifyKey == verifyKey2);
   print('The "$message" is successfully verified');
 

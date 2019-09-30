@@ -81,19 +81,8 @@ class ByteList with ListMixin<int> implements Uint8List, Decodable {
   }
 }
 
-class SuffixByteList extends ByteList {
-  SuffixByteList._(List<int> bytes, int prefixLength)
-      : this._prefixLength = prefixLength,
-        super(bytes, bytes.length);
-
-  SuffixByteList.fromList({List<int> bytes, int prefixLength})
-      : this._(bytes, prefixLength);
-
-  SuffixByteList(List<int> prefix, List<int> suffix, int prefixLength)
-      : this._prefixLength = prefixLength,
-        super((prefix ?? []) + (suffix ?? []), prefixLength + suffix.length);
-
-  final int _prefixLength;
+mixin Suffix on ByteList {
+  int _prefixLength;
   ByteList get prefix => ByteList(take(_prefixLength), _prefixLength);
   ByteList get suffix => ByteList(skip(_prefixLength), length - _prefixLength);
 }

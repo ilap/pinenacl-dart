@@ -6,10 +6,21 @@ import 'dart:typed_data';
 import 'package:convert/convert.dart';
 
 import 'package:pinenacl/api.dart';
+import 'package:pinenacl/api.dart' as encoding;
 
 class VerifyKey extends PublicKey implements Verify {
   VerifyKey(List<int> list) : super(list);
-  VerifyKey.fromHexString(String hexaString) : super.fromHexString(hexaString);
+  //VerifyKey.fromHexString(String hexaString) : super.fromHexString(hexaString);
+
+  factory VerifyKey.decode(String data, [encoder]) {
+
+    encoder = encoder ?? VerifyKey.staticEncoder;
+    final decoded = encoder.decode(data);
+    return VerifyKey(decoded);
+  }
+
+
+  static Encoder staticEncoder = const encoding.Bech32Encoder(hrp: 'ed25519_pk');
 
   @override
   bool verifySignedMessage({SignedMessage signedMessage}) => verify(
@@ -62,7 +73,7 @@ class SigningKey extends ByteList
       throw Exception('SigningKey must be created from a $seedSize byte seed');
     }
 
-    final priv = Uint8List.fromList(seed + Uint8List(PublicKey.keyLength));
+    final priv = Uint8List.fromList(seed + Uint8List(TweetNaCl.publicKeyLength));
     final pub = Uint8List(TweetNaCl.publicKeyLength);
     TweetNaCl.crypto_sign_keypair(pub, priv, Uint8List.fromList(seed));
 

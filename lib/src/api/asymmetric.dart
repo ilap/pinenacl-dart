@@ -1,6 +1,7 @@
 part of pinenacl.api;
 
-abstract class AsymmetricKey with Encodable {}
+abstract class AsymmetricKey with Encodable {
+}
 
 abstract class AsymmetricPrivateKey implements AsymmetricKey {
   factory AsymmetricPrivateKey.generate() {
@@ -15,10 +16,10 @@ class Signature extends ByteList {
 }
 
 class PublicKey extends ByteList with Encodable implements AsymmetricKey {
-  PublicKey(List<int> bytes) : super(bytes, keyLength);
+  PublicKey(List<int> bytes) : super(bytes, TweetNaCl.publicKeyLength);
   PublicKey.fromHexString(String hexString) : super.fromHexString(hexString);
-  static const int keyLength = TweetNaCl.publicKeyLength;
 }
+
 
 class PrivateKey extends ByteList
     with Encodable

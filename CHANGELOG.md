@@ -51,3 +51,9 @@ and `crypto_auth_verify` functions of the `NaCl` library (does not exists in Twe
 - Added scalar_base for Ed25519Bip32 compatibility
 - Added Encoding classes.
 - Renamed `ed25519_vectors.json` (RFC8032's EdDSA) to `eddsa_ed25519_vectors.json`.
+
+## 0.1.2-dev.4
+
+- Refactored `SuffixByteList` class to `Suffix` mixin.
+- Updated README.md (added HMAC, SHA-256)
+- Refactored the `Encoding` classes.

@@ -10,29 +10,39 @@ abstract class Verify extends ByteList {
   bool verifySignedMessage({SignedMessage signedMessage});
 }
 
-class EncryptedMessage extends SuffixByteList {
+class EncryptedMessage extends ByteList with Suffix {
   EncryptedMessage({List<int> nonce, List<int> cipherText})
-      : super(nonce, cipherText, nonceLength);
+      : super(nonce + cipherText);
 
   static const nonceLength = 24;
+
+  @override
+  int _prefixLength = nonceLength;
+
   Uint8List get nonce => prefix;
   Uint8List get cipherText => suffix;
 }
 
-class SealedMessage extends SuffixByteList {
+class SealedMessage extends ByteList with Suffix {
   SealedMessage({List<int> public, List<int> cipherText})
-      : super(public, cipherText, publicLength);
+      : super(public + cipherText);
+
+  @override
+  int _prefixLength = publicLength;
 
   static const publicLength = 32;
   Uint8List get public => prefix;
   Uint8List get cipherText => suffix;
 }
 
-class SignedMessage extends SuffixByteList {
+class SignedMessage extends ByteList with Suffix {
   SignedMessage({Signature signature, List<int> message})
-      : super(signature, message, signatureLength);
+      : super(signature + message, signatureLength);
   SignedMessage.fromList({List<int> signedMessage})
-      : super._(signedMessage, signatureLength);
+      : super(signedMessage);
+
+  @override
+  int _prefixLength = signatureLength;
 
   static const signatureLength = 64;
   Signature get signature => Signature(prefix);

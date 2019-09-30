@@ -4,12 +4,15 @@ import 'package:convert/convert.dart';
 
 import 'package:bech32/bech32.dart' hide Bech32Encoder;
 
-abstract class EncoderBase {
+const hexEncoder = HexEncoder();
+const base32Encoder = Base32Encoder();
+
+abstract class Encoder {
   String encode(ByteList data);
   ByteList decode(String data);
 }
 
-class HexEncoder implements EncoderBase {
+class HexEncoder implements Encoder {
   const HexEncoder();
 
   @override
@@ -23,30 +26,34 @@ class HexEncoder implements EncoderBase {
   }
 }
 
-class Bech32Encoder implements EncoderBase {
+class Bech32Encoder implements Encoder {
   const Bech32Encoder({this.hrp});
   final String hrp;
 
   @override
   String encode(ByteList data) {
-    var b = Base32Encoder._convertBits(data, 8, 5, true);
-    return Bech32Codec().encode(Bech32(hrp, b));
+    var be = Base32Encoder._convertBits(data, 8, 5, true);
+    return Bech32Codec().encode(Bech32(hrp, be));
   }
 
   @override
   ByteList decode(String data) {
     final be32 = Bech32Codec().decode(data);
-    return ByteList(be32.data);
+    return ByteList(Base32Encoder._convertBits(be32.data, 5, 8, false));
   }
 }
 
-class Base32Encoder implements EncoderBase {
+const _alphabet = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
+final _alphabetMap =
+    _alphabet.codeUnits.asMap().map((idx, value) => MapEntry(value, idx));
+
+class Base32Encoder implements Encoder {
   const Base32Encoder();
 
   @override
   String encode(ByteList data) {
     var result = _convertBits(data, 8, 5, true).fold('', (prev, item) {
-      prev += alphabet[item];
+      prev += _alphabet[item];
       return prev;
     });
     return result;
@@ -54,11 +61,12 @@ class Base32Encoder implements EncoderBase {
 
   @override
   ByteList decode(String data) {
-    final result = _convertBits(data.codeUnits, 8, 5, false);
+    final result = _convertBits(
+        data.codeUnits.fold([], (prev, item) {
+          return prev..add(_alphabetMap[item]);
+        }), 5, 8, false);
     return ByteList(result);
   }
-
-  static const alphabet = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
 
   static List<int> _convertBits(List<int> data, int from, int to, bool pad) {
     var acc = 0;
@@ -94,18 +102,18 @@ class Base32Encoder implements EncoderBase {
 
 abstract class Decodable {
   Decodable();
-  factory Decodable.decode(String data,
-      [EncoderBase decoder = const HexEncoder()]) {
 
+  factory Decodable.decode(String data,
+      [Encoder decoder = const HexEncoder()]) {
     throw Exception('Decodable - Unreachable');
   }
 }
 
 abstract class Encodable {
+  static final Encoder staticEncoder = hexEncoder;
+
   String encode([dynamic encoder]) {
-    if (encoder == null) {
-      encoder = HexEncoder();
-    }
+    encoder = encoder ?? staticEncoder;
     return encoder.encode(this);
   }
 }
