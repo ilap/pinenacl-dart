@@ -29,15 +29,20 @@ class Bech32Encoder implements Encoder {
   const Bech32Encoder({this.hrp});
   final String hrp;
 
+  static const maxHrpLength = 83;
+  static const checksumLength = 6;
+  // 100 character long i.e. 100 * 8 / 5
+  static const maxLength = maxHrpLength + 160 + checksumLength;
+
   @override
   String encode(ByteList data) {
     var be = Base32Encoder._convertBits(data, 8, 5, true);
-    return Bech32Codec().encode(Bech32(hrp, be));
+    return Bech32Codec().encode(Bech32(hrp, be), maxLength);
   }
 
   @override
   ByteList decode(String data) {
-    final be32 = Bech32Codec().decode(data);
+    final be32 = Bech32Codec().decode(data, maxLength);
     if (be32.hrp != this.hrp) {
       throw Exception('Invalid `hrp`. Expected $hrp got ${be32.hrp}');
     }
