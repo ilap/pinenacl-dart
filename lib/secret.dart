@@ -36,10 +36,20 @@ import 'package:pinenacl/api.dart';
 ///
 class SecretBox extends BoxBase with Encodable {
   SecretBox(List<int> secret) : super.fromList(secret);
-  SecretBox.fromHexString(String hexaString) : super.fromHexString(hexaString);
+
+  factory SecretBox.decode(String data, [dec]) {
+    dec = dec ?? decoder;
+    final decoded = dec.decode(data);
+    return SecretBox(decoded);
+  }
 
   static const keyLength = TweetNaCl.keyLength;
   static const macBytes = TweetNaCl.macBytes;
+
+  static const decoder = hexEncoder;
+
+  @override
+  Encoder get encoder => decoder;
 
   @override
   ByteList get key => this;

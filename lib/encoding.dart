@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:pinenacl/api.dart';
 import 'package:convert/convert.dart';
 
@@ -39,6 +38,9 @@ class Bech32Encoder implements Encoder {
   @override
   ByteList decode(String data) {
     final be32 = Bech32Codec().decode(data);
+    if (be32.hrp != this.hrp) {
+      throw Exception('Invalid `hrp`. Expected $hrp got ${be32.hrp}');
+    }
     return ByteList(Base32Encoder._convertBits(be32.data, 5, 8, false));
   }
 }
@@ -64,7 +66,10 @@ class Base32Encoder implements Encoder {
     final result = _convertBits(
         data.codeUnits.fold([], (prev, item) {
           return prev..add(_alphabetMap[item]);
-        }), 5, 8, false);
+        }),
+        5,
+        8,
+        false);
     return ByteList(result);
   }
 
@@ -100,20 +105,11 @@ class Base32Encoder implements Encoder {
   }
 }
 
-abstract class Decodable {
-  Decodable();
-
-  factory Decodable.decode(String data,
-      [Encoder decoder = const HexEncoder()]) {
-    throw Exception('Decodable - Unreachable');
-  }
-}
-
-abstract class Encodable {
-  static final Encoder staticEncoder = hexEncoder;
-
-  String encode([dynamic encoder]) {
-    encoder = encoder ?? staticEncoder;
-    return encoder.encode(this);
+abstract class Encodable<T extends AsymmetricKey> {
+  //static const Encoder encoder = hexEncoder;
+  Encoder get encoder;
+  String encode([dynamic enc]) {
+    enc = enc ?? encoder;
+    return enc.encode(this);
   }
 }

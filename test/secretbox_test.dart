@@ -22,13 +22,13 @@ const _vectors = {
 void main() {
   group('Secret Key Encryption', () {
     test('SecretBox basic', () {
-      final s = SecretBox.fromHexString(
+      final s = SecretBox.decode(
           'ec2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798');
       assert(s == s.key);
     });
 
     test('SecretBox encryption', () {
-      final box = SecretBox.fromHexString(_vectors['key']);
+      final box = SecretBox.decode(_vectors['key']);
 
       final nonce = _vectors['nonce'];
       final cipherText = _vectors['ciphertext'];
@@ -45,7 +45,7 @@ void main() {
     });
 
     test('SecretBox decryption', () {
-      final box = SecretBox.fromHexString(_vectors['key']);
+      final box = SecretBox.decode(_vectors['key']);
 
       final nonce = _vectors['nonce'];
       final ciphertext = _vectors['ciphertext'];
@@ -58,7 +58,7 @@ void main() {
     });
 
     test('SecretBox decryption (no nonce)', () {
-      final box = SecretBox.fromHexString(_vectors['key']);
+      final box = SecretBox.decode(_vectors['key']);
 
       final plaintext = _vectors['plaintext'];
 

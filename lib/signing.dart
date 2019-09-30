@@ -3,24 +3,24 @@ library pinenacl.api.signatures;
 import "dart:core";
 import 'dart:typed_data';
 
-import 'package:convert/convert.dart';
+//import 'package:convert/convert.dart';
 
 import 'package:pinenacl/api.dart';
 import 'package:pinenacl/api.dart' as encoding;
 
 class VerifyKey extends PublicKey implements Verify {
   VerifyKey(List<int> list) : super(list);
-  //VerifyKey.fromHexString(String hexaString) : super.fromHexString(hexaString);
 
-  factory VerifyKey.decode(String data, [encoder]) {
-
-    encoder = encoder ?? VerifyKey.staticEncoder;
-    final decoded = encoder.decode(data);
+  factory VerifyKey.decode(String data, [dec]) {
+    dec = dec ?? decoder;
+    final decoded = dec.decode(data);
     return VerifyKey(decoded);
   }
 
+  static const decoder = encoding.Bech32Encoder(hrp: 'ed25519_pk');
 
-  static Encoder staticEncoder = const encoding.Bech32Encoder(hrp: 'ed25519_pk');
+  @override
+  Encoder get encoder => decoder;
 
   @override
   bool verifySignedMessage({SignedMessage signedMessage}) => verify(
@@ -64,16 +64,13 @@ class SigningKey extends ByteList
     return SigningKey.fromSeed(seed);
   }
 
-  factory SigningKey.fromHexString(String hexaString) {
-    return SigningKey.fromSeed(Uint8List.fromList(hex.decode(hexaString)));
-  }
-
   factory SigningKey.fromSeed(List<int> seed) {
     if (seed == null || seed?.length != seedSize) {
       throw Exception('SigningKey must be created from a $seedSize byte seed');
     }
 
-    final priv = Uint8List.fromList(seed + Uint8List(TweetNaCl.publicKeyLength));
+    final priv =
+        Uint8List.fromList(seed + Uint8List(TweetNaCl.publicKeyLength));
     final pub = Uint8List(TweetNaCl.publicKeyLength);
     TweetNaCl.crypto_sign_keypair(pub, priv, Uint8List.fromList(seed));
 
@@ -84,6 +81,17 @@ class SigningKey extends ByteList
     final secret = TweetNaCl.randombytes(seedSize);
     return SigningKey.fromSeed(secret);
   }
+
+  factory SigningKey.decode(String data, [dec]) {
+    dec = dec ?? decoder;
+    final decoded = dec.decode(data);
+    return SigningKey(seed: decoded);
+  }
+
+  static const decoder = encoding.Bech32Encoder(hrp: 'ed25519_sk');
+
+  @override
+  Encoder get encoder => decoder;
 
   static const seedSize = TweetNaCl.seedSize;
 

@@ -1,7 +1,6 @@
 part of pinenacl.api;
 
-abstract class AsymmetricKey with Encodable {
-}
+abstract class AsymmetricKey with Encodable {}
 
 abstract class AsymmetricPrivateKey implements AsymmetricKey {
   factory AsymmetricPrivateKey.generate() {
@@ -18,8 +17,11 @@ class Signature extends ByteList {
 class PublicKey extends ByteList with Encodable implements AsymmetricKey {
   PublicKey(List<int> bytes) : super(bytes, TweetNaCl.publicKeyLength);
   PublicKey.fromHexString(String hexString) : super.fromHexString(hexString);
-}
+  static const decoder = Bech32Encoder(hrp: 'ed25519_pk');
 
+  @override
+  Encoder get encoder => decoder;
+}
 
 class PrivateKey extends ByteList
     with Encodable
@@ -43,6 +45,17 @@ class PrivateKey extends ByteList
   @override
   factory PrivateKey.generate() =>
       PrivateKey.fromSeed(TweetNaCl.randombytes(seedSize));
+
+  factory PrivateKey.decode(String data, [dec]) {
+    dec = dec ?? decoder;
+    final decoded = dec.decode(data);
+    return PrivateKey(decoded);
+  }
+
+  static const decoder = Bech32Encoder(hrp: 'ed25519_sk');
+
+  @override
+  Encoder get encoder => decoder;
 
   @override
   final PublicKey publicKey;

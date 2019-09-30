@@ -51,6 +51,11 @@ class Box extends BoxBase with Encodable {
 
   ByteList get sharedKey => this;
 
+  static const decoder = hexEncoder;
+
+  @override
+  Encoder get encoder => decoder;
+
   // NOTE: properties and function must be public i.e. not underscore names e.g. _key
   @override
   ByteList get key => sharedKey;
@@ -126,6 +131,11 @@ class SealedBox extends ByteList with Encodable implements AsymmetricKey {
   static const _secretLength = TweetNaCl.secretKeyLength;
   static const _macBytes = TweetNaCl.macBytes;
   static const _sealBytes = _pubLength + _macBytes;
+
+  static const decoder = hexEncoder;
+
+  @override
+  Encoder get encoder => decoder;
 
   /// Decrypts the ciphertext using the ephemeral public key enclosed
   /// in the ciphertext and the SealedBox private key, returning

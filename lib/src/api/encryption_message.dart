@@ -38,8 +38,7 @@ class SealedMessage extends ByteList with Suffix {
 class SignedMessage extends ByteList with Suffix {
   SignedMessage({Signature signature, List<int> message})
       : super(signature + message, signatureLength);
-  SignedMessage.fromList({List<int> signedMessage})
-      : super(signedMessage);
+  SignedMessage.fromList({List<int> signedMessage}) : super(signedMessage);
 
   @override
   int _prefixLength = signatureLength;
