@@ -2277,7 +2277,6 @@ class TweetNaCl {
      */
 
     //if (seed != 0) randombytes_array_len(sk, 32);
-    /// FIXME: why does it need to be hashed?
     _crypto_hash_off(k, seed, 0, 32);
     k[0] &= 248;
     k[31] &= 127;

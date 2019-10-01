@@ -57,4 +57,7 @@ and `crypto_auth_verify` functions of the `NaCl` library (does not exists in Twe
 - Refactored `SuffixByteList` class to `Suffix` mixin.
 - Updated README.md (added HMAC, SHA-256)
 - Refactored the `Encoding` classes.
-- Swapped `Bech32` to the custom length version one that's available currently on the github.
+- Swapped `Bech32` to the github version, as pub package does not have custom length for messages.
+
+## 0.1.2
+- Complete refactor of the API and the base classes.

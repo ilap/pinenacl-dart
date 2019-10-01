@@ -82,7 +82,7 @@ class HmacSha512 {
     }
 
     /// Step #4
-    /// /// Exclusive-Or K0 with ipad to produce a B-byte string: K0 ⊕ ipad.
+    /// Exclusive-Or K0 with ipad to produce a B-byte string: K0 ⊕ ipad.
 
     final k0i = k0.toList();
     for (int i = 0; i < k0.length; i++) {
@@ -102,11 +102,11 @@ class HmacSha512 {
     }
 
     /// Step 8 Append the result from step 6 to step 7:
-    /// /// (K0 ⊕ opad) || H((K0 ⊕ ipad) || text).
+    /// (K0 ⊕ opad) || H((K0 ⊕ ipad) || text).
     final _r = k0o + hk0;
 
     /// Step 9 Apply H to the result from step 8:
-    /// /// H((K0 ⊕ opad )|| H((K0 ⊕ ipad) || text)).
+    /// H((K0 ⊕ opad )|| H((K0 ⊕ ipad) || text)).
     h(out, Uint8List.fromList(_r));
   }
 

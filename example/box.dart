@@ -1,4 +1,4 @@
-import 'package:pinenacl/api.dart' show Box, PrivateKey;
+import 'package:pinenacl/public.dart' show Box, PrivateKey;
 
 void main() {
   print('\n### Public Key Encryption - Box Example ###\n');

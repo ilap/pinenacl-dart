@@ -1,8 +1,7 @@
 library pinenacl.api.secret;
 
-import 'dart:core';
-
 import 'package:pinenacl/api.dart';
+export 'package:pinenacl/api.dart';
 
 /// From: [PyNaCl's readthedocs](https://pynacl.readthedocs.io)
 ///
@@ -33,8 +32,7 @@ import 'package:pinenacl/api.dart';
 /// 4. Performance may be improved by working with messages that fit into data caches.
 /// Thus large amounts of data should be chunked so that each message is small.
 /// (Each message still needs a unique nonce.) If in doubt, 16KB is a reasonable chunk size.
-///
-class SecretBox extends BoxBase with Encodable {
+class SecretBox extends BoxBase {
   SecretBox(List<int> secret) : super.fromList(secret);
 
   factory SecretBox.decode(String data, [dec]) {

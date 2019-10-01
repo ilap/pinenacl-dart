@@ -1,6 +1,8 @@
 import 'dart:typed_data';
+
 import 'package:convert/convert.dart';
 import 'package:test/test.dart';
+
 import 'package:pinenacl/api.dart' show TweetNaCl;
 
 /// The [`NaCl`](https://nacl.cr.yp.to/valid.html) official testvectors from the

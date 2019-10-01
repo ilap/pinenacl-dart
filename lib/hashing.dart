@@ -1,16 +1,15 @@
-library pinenacl.api.hash;
+library pinenacl.api.hashing;
 
-import 'dart:core';
 import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:pinenacl/api.dart';
 
-///  Hash algorithm, Implements SHA-512.
+/// Hash algorithms, Implements SHA-512, SHA-256 and Blake2b.
 /// Cryptographic secure hash functions are irreversible transforms of input data to a fixed length digest.
 /// The standard properties of a cryptographic hash make these functions useful both for standalone usage as data integrity checkers, as well as black-box building blocks of other kind of algorithms and data structures.
 ///
-/// All of the hash functions exposed in `pinenacl.hash` can be used as data integrity checkers.
+/// All of the hash functions exposed in `pinenacl.hashing` can be used as data integrity checkers.
 class Hash {
   //Length of hash in bytes.
   static final int hashLength = 64;

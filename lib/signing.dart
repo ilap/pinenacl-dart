@@ -1,14 +1,13 @@
-library pinenacl.api.signatures;
-
-import "dart:core";
 import 'dart:typed_data';
 
-//import 'package:convert/convert.dart';
-
 import 'package:pinenacl/api.dart';
-import 'package:pinenacl/api.dart' as encoding;
 
-class VerifyKey extends PublicKey implements Verify {
+class Signature extends ByteList implements SignatureBase {
+  Signature(List<int> bytes) : super(bytes, bytesLength);
+  static const bytesLength = TweetNaCl.signatureLength;
+}
+
+class VerifyKey extends AsymmetricPublicKey implements Verify {
   VerifyKey(List<int> list) : super(list);
 
   factory VerifyKey.decode(String data, [dec]) {
@@ -17,17 +16,16 @@ class VerifyKey extends PublicKey implements Verify {
     return VerifyKey(decoded);
   }
 
-  static const decoder = encoding.Bech32Encoder(hrp: 'ed25519_pk');
+  static const decoder = Bech32Encoder(hrp: 'ed25519_pk');
 
   @override
   Encoder get encoder => decoder;
 
   @override
-  bool verifySignedMessage({SignedMessage signedMessage}) => verify(
+  bool verifySignedMessage({EncryptionMessage signedMessage}) => verify(
       signature: signedMessage.signature, message: signedMessage.message);
-
   @override
-  bool verify({Signature signature, List<int> message}) {
+  bool verify({SignatureBase signature, List<int> message}) {
     if (signature != null) {
       if (signature.length != TweetNaCl.signatureLength) {
         throw Exception(
@@ -52,9 +50,9 @@ class VerifyKey extends PublicKey implements Verify {
   }
 }
 
-class SigningKey extends ByteList
-    with Encodable
-    implements AsymmetricPrivateKey, Sign {
+/// Cannot extends `AsymmetricPrivateKey` as it would have to implement
+/// the final `publicKey`.
+class SigningKey extends ByteList implements AsymmetricPrivateKey, Sign {
   // Private constructor.
   SigningKey._fromValidBytes(List<int> secret, List<int> public)
       : this.verifyKey = VerifyKey(public),
@@ -88,7 +86,7 @@ class SigningKey extends ByteList
     return SigningKey(seed: decoded);
   }
 
-  static const decoder = encoding.Bech32Encoder(hrp: 'ed25519_sk');
+  static const decoder = Bech32Encoder(hrp: 'ed25519_sk');
 
   @override
   Encoder get encoder => decoder;
@@ -96,7 +94,7 @@ class SigningKey extends ByteList
   static const seedSize = TweetNaCl.seedSize;
 
   @override
-  AsymmetricKey get publicKey => verifyKey;
+  AsymmetricPublicKey get publicKey => verifyKey;
 
   @override
   final VerifyKey verifyKey;
@@ -113,4 +111,21 @@ class SigningKey extends ByteList
 
     return SignedMessage.fromList(signedMessage: sm);
   }
+}
+
+class SignedMessage extends ByteList with Suffix implements EncryptionMessage {
+  SignedMessage({SignatureBase signature, List<int> message})
+      : super(signature + message, signatureLength);
+  SignedMessage.fromList({List<int> signedMessage}) : super(signedMessage);
+
+  @override
+  int prefixLength = signatureLength;
+
+  static const signatureLength = 64;
+
+  @override
+  SignatureBase get signature => Signature(prefix);
+
+  @override
+  ByteList get message => suffix;
 }

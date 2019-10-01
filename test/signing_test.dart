@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:convert/convert.dart';
 import 'package:test/test.dart';
 
-import 'package:pinenacl/api.dart';
+import 'package:pinenacl/signing.dart';
 
 const _vectors = {
   'seed': '002fdd1f7641793ab064bb7aa848f762e7ec6e332ffc26eeacda141ae33b1783',

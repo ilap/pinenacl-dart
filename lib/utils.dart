@@ -3,6 +3,8 @@ library pinenacl.utils;
 import 'dart:typed_data';
 import 'package:pinenacl/api.dart';
 
+/// Utils class, provides secure randomnes and basic
+/// list functions.
 class Utils {
   static Uint8List randombytes(int len) {
     return TweetNaCl.randombytes(len);

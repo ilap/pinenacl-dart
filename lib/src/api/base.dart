@@ -1,5 +1,22 @@
 part of pinenacl.api;
 
+abstract class AsymmetricKey extends ByteList with Encodable {
+  AsymmetricKey([List<int> data]) : super(data);
+  AsymmetricKey.fromList(List<int> data) : super.fromList(data);
+}
+
+abstract class AsymmetricPublicKey extends AsymmetricKey {
+  AsymmetricPublicKey([List<int> data]) : super(data);
+  AsymmetricPublicKey.fromList(List<int> data) : super.fromList(data);
+}
+
+abstract class AsymmetricPrivateKey extends AsymmetricKey {
+  factory AsymmetricPrivateKey.generate() {
+    throw Exception('AsymmetricPrivateKey - unreachable');
+  }
+  final AsymmetricPublicKey publicKey;
+}
+
 /// `ByteList` is the base of the PineNaCl cryptographic library,
 /// which is based on the unmodifiable Uin8List class
 class ByteList with ListMixin<int>, Encodable implements Uint8List {
@@ -10,10 +27,6 @@ class ByteList with ListMixin<int>, Encodable implements Uint8List {
   ByteList.fromList(List<int> list, [int minLength, int maxLength])
       : this._u8l = _constructList(
             list, minLength ?? _minLength, maxLength ?? _maxLength);
-
-  ByteList.fromHexString(String s, {int minLength, int maxLength})
-      : this._u8l = _constructList(Uint8List.fromList(hex.decode(s)),
-            minLength ?? _minLength, maxLength ?? _maxLength);
 
   factory ByteList.decode(String data, [dec = decoder]) {
     return dec.decode(data);
@@ -35,7 +48,9 @@ class ByteList with ListMixin<int>, Encodable implements Uint8List {
     return UnmodifiableUint8ListView(Uint8List.fromList(list.toList()));
   }
 
+  // Default encoder/decoder is the HexEncoder()
   static const decoder = hexEncoder;
+
   @override
   Encoder get encoder => decoder;
 
@@ -89,8 +104,21 @@ class ByteList with ListMixin<int>, Encodable implements Uint8List {
   }
 }
 
+abstract class Encoder {
+  String encode(ByteList data);
+  ByteList decode(String data);
+}
+
+mixin Encodable {
+  Encoder get encoder;
+  String encode([Encoder encoder]) {
+    encoder = encoder ?? this.encoder;
+    return encoder.encode(this);
+  }
+}
+
 mixin Suffix on ByteList {
-  int _prefixLength;
-  ByteList get prefix => ByteList(take(_prefixLength), _prefixLength);
-  ByteList get suffix => ByteList(skip(_prefixLength), length - _prefixLength);
+  int prefixLength;
+  ByteList get prefix => ByteList(take(prefixLength), prefixLength);
+  ByteList get suffix => ByteList(skip(prefixLength), length - prefixLength);
 }

@@ -1,16 +1,12 @@
-import 'package:pinenacl/api.dart';
+import 'package:bech32/bech32.dart' hide Bech32Encoder;
 import 'package:convert/convert.dart';
 
-import 'package:bech32/bech32.dart' hide Bech32Encoder;
+import 'package:pinenacl/api.dart';
 
 const hexEncoder = HexEncoder();
 const base32Encoder = Base32Encoder();
 
-abstract class Encoder {
-  String encode(ByteList data);
-  ByteList decode(String data);
-}
-
+/// Default encoder
 class HexEncoder implements Encoder {
   const HexEncoder();
 
@@ -107,14 +103,5 @@ class Base32Encoder implements Encoder {
     }
 
     return result;
-  }
-}
-
-abstract class Encodable<T extends AsymmetricKey> {
-  //static const Encoder encoder = hexEncoder;
-  Encoder get encoder;
-  String encode([dynamic enc]) {
-    enc = enc ?? encoder;
-    return enc.encode(this);
   }
 }

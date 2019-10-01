@@ -1,9 +1,8 @@
 import 'dart:typed_data';
-import 'package:test/test.dart';
 
 import 'package:convert/convert.dart';
+import 'package:test/test.dart';
 
-import 'package:pinenacl/api.dart';
 import 'package:pinenacl/public.dart';
 
 const _vectors = {
@@ -29,10 +28,12 @@ const _vectors = {
 
 void main() {
   group('Public Key Encryption', () {
-    final pub = PublicKey.fromHexString(
-        'ec2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798');
-    final priv = PrivateKey.fromHexString(
-        '5c2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798');
+    final pub = PublicKey.decode(
+        'ec2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798',
+        hexEncoder);
+    final priv = PrivateKey.decode(
+        '5c2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798',
+        hexEncoder);
 
     test('Test Box decode', () {
       final b1 = Box(myPrivateKey: priv, theirPublicKey: pub);
@@ -41,10 +42,12 @@ void main() {
     });
 
     test('Test Box class', () {
-      final pub = PublicKey.fromHexString(
-          'ec2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798');
-      final priv = PrivateKey.fromHexString(
-          '5c2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798');
+      final pub = PublicKey.decode(
+          'ec2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798',
+          hexEncoder);
+      final priv = PrivateKey.decode(
+          '5c2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798',
+          hexEncoder);
       final b = Box(myPrivateKey: priv, theirPublicKey: pub);
 
       assert(b == b.sharedKey);
@@ -52,8 +55,8 @@ void main() {
     });
 
     test('Test Box encryption', () {
-      final pubalice = PublicKey.fromHexString(_vectors['pubalice']);
-      final privbob = PrivateKey.fromHexString(_vectors['privbob']);
+      final pubalice = PublicKey.decode(_vectors['pubalice'], hexEncoder);
+      final privbob = PrivateKey.decode(_vectors['privbob'], hexEncoder);
 
       final box = Box(myPrivateKey: privbob, theirPublicKey: pubalice);
 
@@ -72,8 +75,8 @@ void main() {
     });
 
     test('Test Box decryption', () {
-      final privalice = PrivateKey.fromHexString(_vectors['privalice']);
-      final pubbob = PublicKey.fromHexString(_vectors['pubbob']);
+      final privalice = PrivateKey.decode(_vectors['privalice'], hexEncoder);
+      final pubbob = PublicKey.decode(_vectors['pubbob'], hexEncoder);
       final nonce = _vectors['nonce'];
       final plaintext = _vectors['plaintext'];
       final ciphertext = _vectors['ciphertext'];
@@ -87,10 +90,10 @@ void main() {
     });
 
     test('Test Box encryption and decryption combined', () {
-      final privalice = PrivateKey.fromHexString(_vectors['privalice']);
-      final pubalice = PublicKey.fromHexString(_vectors['pubalice']);
-      final privbob = PrivateKey.fromHexString(_vectors['privbob']);
-      final pubbob = PublicKey.fromHexString(_vectors['pubbob']);
+      final privalice = PrivateKey.decode(_vectors['privalice'], hexEncoder);
+      final pubalice = PublicKey.decode(_vectors['pubalice'], hexEncoder);
+      final privbob = PrivateKey.decode(_vectors['privbob'], hexEncoder);
+      final pubbob = PublicKey.decode(_vectors['pubbob'], hexEncoder);
 
       final box = Box(myPrivateKey: privbob, theirPublicKey: pubalice);
       final box1 = Box(myPrivateKey: privalice, theirPublicKey: pubbob);
@@ -108,8 +111,8 @@ void main() {
     });
 
     test('Test Nonce encryption and decryption combined', () {
-      final privalice = PrivateKey.fromHexString(_vectors['privalice']);
-      final pubbob = PublicKey.fromHexString(_vectors['pubbob']);
+      final privalice = PrivateKey.decode(_vectors['privalice'], hexEncoder);
+      final pubbob = PublicKey.decode(_vectors['pubbob'], hexEncoder);
 
       final box = Box(myPrivateKey: privalice, theirPublicKey: pubbob);
 

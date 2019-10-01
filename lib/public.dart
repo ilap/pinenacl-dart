@@ -3,6 +3,7 @@ library pinenacl.api.public;
 import 'dart:typed_data';
 
 import 'package:pinenacl/api.dart';
+export 'package:pinenacl/api.dart';
 
 /// Public Key Encryption
 ///
@@ -38,11 +39,11 @@ import 'package:pinenacl/api.dart';
 /// sign them after encryption.
 ///
 /// Doc comment from: [PyNaCl's readthedocs](https://pynacl.readthedocs.io)
-class Box extends BoxBase with Encodable {
-  Box({ByteList myPrivateKey, ByteList theirPublicKey})
+class Box extends BoxBase {
+  Box({AsymmetricPrivateKey myPrivateKey, AsymmetricPublicKey theirPublicKey})
       : super.fromList(_beforeNm(theirPublicKey, myPrivateKey, null));
 
-  Box._fromSharedKey(ByteList sharedKey)
+  Box._fromSharedKey(AsymmetricKey sharedKey)
       : super.fromList(_beforeNm(null, null, sharedKey));
 
   factory Box.decode(ByteList encoded) {
@@ -67,8 +68,8 @@ class Box extends BoxBase with Encodable {
   Crypting doDecrypt = TweetNaCl.crypto_box_open_afternm;
 
   // Initialize the sharedKey
-  static ByteList _beforeNm(
-      ByteList publicKey, ByteList secretKey, ByteList sharedKey) {
+  static ByteList _beforeNm(AsymmetricPublicKey publicKey,
+      AsymmetricPrivateKey secretKey, AsymmetricKey sharedKey) {
     if (publicKey == null && secretKey == null) {
       /// Using the predefined sharedKey we must have the
       /// publicKey and privateKey unset.
@@ -106,16 +107,17 @@ class Box extends BoxBase with Encodable {
 /// part of the key cannot be recovered after use.
 ///
 /// Doc comment from: [PyNaCl's readthedocs](https://pynacl.readthedocs.io)
-class SealedBox extends ByteList with Encodable implements AsymmetricKey {
-  SealedBox._fromKeyPair(PrivateKey privateKey, PublicKey publicKey)
+class SealedBox extends AsymmetricKey {
+  SealedBox._fromKeyPair(
+      AsymmetricPrivateKey privateKey, AsymmetricPublicKey publicKey)
       : this._privateKey = privateKey,
         super.fromList(publicKey);
 
   factory SealedBox(AsymmetricKey key) {
-    if (key is PrivateKey) {
+    if (key is AsymmetricPrivateKey) {
       final pub = key.publicKey;
       return SealedBox._fromKeyPair(key, pub);
-    } else if (key is PublicKey) {
+    } else if (key is AsymmetricPublicKey) {
       return SealedBox._fromKeyPair(null, key);
     } else {
       throw Exception(
@@ -123,7 +125,7 @@ class SealedBox extends ByteList with Encodable implements AsymmetricKey {
     }
   }
 
-  final PrivateKey _privateKey;
+  final AsymmetricPrivateKey _privateKey;
 
   static const _zerobytesLength = TweetNaCl.zerobytesLength;
   static const _nonceLength = 24;
