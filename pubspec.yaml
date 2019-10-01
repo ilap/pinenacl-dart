@@ -10,10 +10,7 @@ environment:
 dependencies:
   fixnum: ^0.10.9
   convert: ^2.0.2
-  # Until it's available on pub.dev
-  # bech32: ^0.1.1
-  bech32: 
-    git: https://github.com/inapay/bech32
+  bech32: ^0.1.2
 
 dev_dependencies:
   pedantic: ^1.8.0+1

@@ -7,7 +7,7 @@ class TweetNaClExt {
   static const hmacBytes = 64;
 
   // Extended secret key's length
-  static const int extendedSecretKeyLength = 64;
+  static const int extendedSecretKeyLength = 32;
 
   static int _crypto_auth(Uint8List out, Uint8List m, Uint8List k) {
     HmacSha512.mac(out, m, k);

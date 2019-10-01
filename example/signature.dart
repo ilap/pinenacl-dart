@@ -1,4 +1,3 @@
-import 'package:convert/convert.dart';
 import 'package:pinenacl/api.dart';
 
 void main() {
@@ -19,7 +18,7 @@ void main() {
 
   // Serialize the verify key to send it to a third party
   // TODO: implements similar: verifyKey.encode(Bech32Encoder(hrp: 'ed25519_pk'));
-  final verifyKeyHex = hex.encode(verifyKey);
+  final verifyKeyHex = verifyKey.encode(hexEncoder);
 
   ///
   /// Verifier’s perspective (VerifyKey)
