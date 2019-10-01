@@ -61,3 +61,4 @@ and `crypto_auth_verify` functions of the `NaCl` library (does not exists in Twe
 
 ## 0.1.2
 - Complete refactor of the API and the base classes.
+- Added API class diagrams.

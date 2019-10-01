@@ -1,0 +1,90 @@
+@startuml
+skinparam packageStyle rectangle
+
+' Reference: https://visual-paradigm.com/guide/uml-unified-modeling-language/uml-aggregation-vs-composition/
+
+'Base Classes and Interfaces
+'################################################################
+namespace pinenacl.api {
+
+        class ByteList implements Encodable {
+        }
+
+        abstract class Suffix {
+            _prefixlength
+            get prefix
+            get suffix
+        }
+
+        abstract class Encodable {
+            get encoder
+            encode([encoder])
+        }
+
+        abstract class AsymmetricKey extends ByteList {
+        }
+
+        abstract class AsymmetricPrivateKey implements AsymmetricKey {
+
+            publicKey
+            generate()
+        }
+
+        abstract class AsymmetricPublicKey implements AsymmetricKey {
+        }
+
+
+        abstract class Encoder {
+            encode(ByteList data);
+            decode(String data);
+        }
+
+
+    namespace pinenacl.api.signatures {
+
+
+        abstract class Sign {
+
+            sign(msg)
+        }
+
+        abstract class Verify {
+
+            verify(msg)
+        }
+        abstract class SignatureBase extends pinenacl.api.ByteList {
+        }
+
+        abstract class EncryptionMessage {
+            get signature;
+            get message;
+        }
+    }
+
+    namespace pinenacl.api.key_encryption {
+
+        abstract class BoxBase extends pinenacl.api.AsymmetricKey {
+            doEncrypt;
+            doDecrypt;
+            encrypt()
+            decrypt()
+        }
+
+        class PublicKey extends  pinenacl.api.AsymmetricPublicKey {
+        }
+
+        class PrivateKey extends  pinenacl.api.AsymmetricPrivateKey {
+        }
+
+        class EncryptedMessage extends pinenacl.api.ByteList implements pinenacl.api.Suffix {
+            nonce => prefix;
+            cipherText => suffix;
+        }
+
+        class SealedMessage extends pinenacl.api.ByteList implements pinenacl.api.Suffix {
+            public => prefix
+            cipherText => suffix
+        }
+    }
+}
+@enduml
