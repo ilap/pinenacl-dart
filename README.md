@@ -32,6 +32,71 @@ import 'package:pinenacl/api.dart';
 import 'package:pinenacl/public.dart';
 ```
 
+# Features
+
+`PineNaCl` reuses a lot of terminologies, concepts, sections of documents and implements examples and some features from, the before mentioned [PyNaCl](https://github.com/pyca/pynacl)'s publicly available  [readthedocs.io](https://pynacl.readthedocs.io).
+
+Implemented features:
+- __ECDH__ (with Curve25519) for key exchange
+  - Public-key Encryption 
+    - Box (public-key authenticated encryption) and
+    - SealedBox
+  - Private-key encryption
+    - SecretBox (private-key authenticated encryption)
+- __EdDSA__ for Digital signatures (signing).
+  - __Ed25519__ Signatures i.e. Curve25519 with SHA-512.
+- Hashing and message authentication
+  - SHA-256,
+  - SHA-512, the default hashing algorithm of the original `TweetNaCl`
+  - BLAKE2b for KDF and MAC (not implemented in `TweetNaCl`).
+  - HMAC-SHA512.
+## Low-level Functions supported by `PineNaCl`
+
+This library supports all 25 of the [C NaCl functions](#functions_supported_by_tweetnacl), that can be used to build `NaCl` applications.
+1. crypto_box = crypto_box_curve25519xsalsa20poly1305
+2. crypto_box_open
+3. crypto_box_keypair
+4. crypto_box_beforenm
+5. crypto_box_afternm
+6. crypto_box_open_afternm
+7. crypto_core_salsa20
+8. crypto_core_hsalsa20
+9. crypto_hashblocks = crypto_hashblocks_sha512
+10. crypto_hash = crypto_hash_sha512
+11. crypto_onetimeauth = crypto_onetimeauth_poly1305
+12. crypto_onetimeauth_verify
+13. crypto_scalarmult = crypto_scalarmult_curve25519
+14. crypto_scalarmult_base
+15. crypto_secretbox = crypto_secretbox_xsalsa20poly1305
+16. crypto_secretbox_open
+17. crypto_sign = crypto_sign_ed25519
+18. crypto_sign_keypair
+19. crypto_sign_open
+20. crypto_stream = crypto_stream_xsalsa20
+21. crypto_stream_salsa20
+22. crypto_stream_salsa20_xor
+23. crypto_stream_xor
+24. crypto_verify_16
+25. crypto_verify_32
+
+However a simple `NaCl` application would only need the following six high-level NaCl API functions.
+- crypto_box for public-key authenticated encryption;
+- crypto_box_open for verification and decryption;
+- crypto_box_keypair to create a public key (scalarmult _k_ with basepoint _B_=9) for key exchange.
+
+Similarly for signatures
+- crypto_sign,
+- crypto_sign_open, and
+- crypto_sign_keypair, to create signing keypair for signing (scalarmult _k_ with basepoint _B_=(x, 4/5))
+
+### Extension to the `TweetNaCl`
+
+The following `NaCl` library's high-level functions are implemented as the extension to the `TweetNaCl` library.
+
+  1. crypto_auth - HMAC-SHA-512 (NaCl uses HMAC-SHA-512/256)
+  2. crypto_auth_verify
+  3. scalar_base - for retriving public key `A`, e.g. `A = kB`.
+
 ## Examples
 
 `PineNaCl` comes /w the following examples:
@@ -316,71 +381,6 @@ void main() {
 - [ ] Refactor to much simpler code.
 - [ ] Simplify or refactor the APIs and modules' dependencies.
 - [ ] Remove [fixnum] and [convert] pakages' dependency.
-
-# Features
-
-`PineNaCl` reuses a lot of terminologies, concepts, sections of documents and implements examples and some features from, the before mentioned [PyNaCl](https://github.com/pyca/pynacl)'s publicly available  [readthedocs.io](https://pynacl.readthedocs.io).
-
-Implemented features:
-- Public-key Encryption
-  - Box (public-key authenticated encryption) and
-  - SealedBox
-- Private-key encryption
-  - SecretBox (private-key authenticated encryption)
-- Digital signatures
-  - Signatures, curve25519 and ed25519.
-- Hashing and message authentication
-  - SHA-256,
-  - SHA-512, the default hashing algorithm of the original `TweetNaCl`
-  - BLAKE2b for KDF and MAC (not implemented in `TweetNaCl`).
-  - HMAC-SHA512.
-
-## Low-level Functions supported by `PineNaCl`
-
-This library supports all 25 of the [C NaCl functions](#functions_supported_by_tweetnacl), that can be used to build `NaCl` applications.
-1. crypto_box = crypto_box_curve25519xsalsa20poly1305
-2. crypto_box_open
-3. crypto_box_keypair
-4. crypto_box_beforenm
-5. crypto_box_afternm
-6. crypto_box_open_afternm
-7. crypto_core_salsa20
-8. crypto_core_hsalsa20
-9. crypto_hashblocks = crypto_hashblocks_sha512
-10. crypto_hash = crypto_hash_sha512
-11. crypto_onetimeauth = crypto_onetimeauth_poly1305
-12. crypto_onetimeauth_verify
-13. crypto_scalarmult = crypto_scalarmult_curve25519
-14. crypto_scalarmult_base
-15. crypto_secretbox = crypto_secretbox_xsalsa20poly1305
-16. crypto_secretbox_open
-17. crypto_sign = crypto_sign_ed25519
-18. crypto_sign_keypair
-19. crypto_sign_open
-20. crypto_stream = crypto_stream_xsalsa20
-21. crypto_stream_salsa20
-22. crypto_stream_salsa20_xor
-23. crypto_stream_xor
-24. crypto_verify_16
-25. crypto_verify_32
-
-However a simple `NaCl` application would only need the following six high-level NaCl API functions.
-- crypto_box for public-key authenticated encryption;
-- crypto_box_open for verification and decryption;
-- crypto_box_keypair to create a public key
-
-Similarly for signatures
-- crypto_sign,
-- crypto_sign_open, and
-- crypto_sign_keypair.
-
-### Extension to the `TweetNaCl`
-
-The following `NaCl` library's high-level functions are implemented as the extension to the `TweetNaCl` library.
-
-  1. crypto_auth - HMAC-SHA-512 (NaCl uses HMAC-SHA-512/256)
-  2. crypto_auth_verify
-  3. scalar_base - for retriving public key `A`, e.g. `A = kB`.
 
 # Thanks and Credits
 
