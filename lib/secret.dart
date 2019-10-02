@@ -35,9 +35,8 @@ export 'package:pinenacl/api.dart';
 class SecretBox extends BoxBase {
   SecretBox(List<int> secret) : super.fromList(secret);
 
-  factory SecretBox.decode(String data, [dec]) {
-    dec = dec ?? decoder;
-    final decoded = dec.decode(data);
+  factory SecretBox.decode(String data, [Encoder defaultDecoder = decoder]) {
+    final decoded = defaultDecoder.decode(data);
     return SecretBox(decoded);
   }
 

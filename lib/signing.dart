@@ -10,9 +10,8 @@ class Signature extends ByteList implements SignatureBase {
 class VerifyKey extends AsymmetricPublicKey implements Verify {
   VerifyKey(List<int> list) : super(list);
 
-  factory VerifyKey.decode(String data, [dec]) {
-    dec = dec ?? decoder;
-    final decoded = dec.decode(data);
+  factory VerifyKey.decode(String data, [Encoder defaultDecoder = decoder]) {
+    final decoded = defaultDecoder.decode(data);
     return VerifyKey(decoded);
   }
 
@@ -80,9 +79,8 @@ class SigningKey extends ByteList implements AsymmetricPrivateKey, Sign {
     return SigningKey.fromSeed(secret);
   }
 
-  factory SigningKey.decode(String data, [dec]) {
-    dec = dec ?? decoder;
-    final decoded = dec.decode(data);
+  factory SigningKey.decode(String data, [Encoder defaultDecoder = decoder]) {
+    final decoded = defaultDecoder.decode(data);
     return SigningKey(seed: decoded);
   }
 

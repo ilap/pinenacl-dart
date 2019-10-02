@@ -63,3 +63,4 @@ and `crypto_auth_verify` functions of the `NaCl` library (does not exists in Twe
 - Complete refactor of the API and the base classes.
 - Added API class diagrams.
 - Swapped `Bech32` back to the latest and working pub package.
+- Refactored the `decode` factories.

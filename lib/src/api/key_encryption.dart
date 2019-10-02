@@ -56,9 +56,8 @@ class EncryptedMessage extends ByteList with Suffix {
 class PublicKey extends ByteList implements AsymmetricPublicKey {
   PublicKey(List<int> bytes) : super(bytes, TweetNaCl.publicKeyLength);
 
-  factory PublicKey.decode(String data, [dec]) {
-    dec = dec ?? decoder;
-    final decoded = dec.decode(data);
+  factory PublicKey.decode(String data, [Encoder defaultDecoder = decoder]) {
+    final decoded = defaultDecoder.decode(data);
     return PublicKey(decoded);
   }
   static const decoder = Bech32Encoder(hrp: 'ed25519_pk');
@@ -84,9 +83,8 @@ class PrivateKey extends ByteList implements AsymmetricPrivateKey {
   factory PrivateKey.generate() =>
       PrivateKey.fromSeed(TweetNaCl.randombytes(seedSize));
 
-  factory PrivateKey.decode(String data, [dec]) {
-    dec = dec ?? decoder;
-    final decoded = dec.decode(data);
+  factory PrivateKey.decode(String data, [Encoder defaultDecoder = decoder]) {
+    final decoded = defaultDecoder.decode(data);
     return PrivateKey(decoded);
   }
 
