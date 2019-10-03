@@ -50,4 +50,24 @@ class TweetNaClExt {
 
     return 0;
   }
+
+  static Uint8List scalar_base_seed(Uint8List pk, Uint8List seed) {
+    Uint8List k = Uint8List(64);
+    List<Int64List> p = List<Int64List>(4);
+
+    p[0] = Int64List(16);
+    p[1] = Int64List(16);
+    p[2] = Int64List(16);
+    p[3] = Int64List(16);
+
+    TweetNaCl._crypto_hash_off(k, seed, 0, 32);
+    k[0] &= 248;
+    k[31] &= 127;
+    k[31] |= 64;
+
+    TweetNaCl._scalarbase(p, k, 0);
+    TweetNaCl._pack(pk, p);
+
+    return pk;
+  }
 }

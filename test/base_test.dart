@@ -1,6 +1,7 @@
 import 'package:test/test.dart';
 
-import 'package:pinenacl/api.dart';
+import 'package:pinenacl/public.dart'
+    show GenericPrivateKey, ByteList, Curve25519;
 
 void main() {
   group('Base Classes Test', () {
@@ -8,7 +9,7 @@ void main() {
       test('Immutability', () {
         final _l32 = List<int>.generate(32, (i) => 0xb);
         final byteList = ByteList(_l32, 32);
-        final sk = PrivateKey(_l32);
+        final sk = GenericPrivateKey<Curve25519>(_l32);
 
         expect(() {
           sk[0] += 1;
@@ -28,7 +29,7 @@ void main() {
       test('Growing', () {
         final _l32 = List<int>.generate(32, (i) => 0xb);
         final byteList = ByteList(_l32, 32);
-        final sk = PrivateKey(_l32);
+        final sk = GenericPrivateKey<Curve25519>(_l32);
 
         expect(() {
           sk.length += 1;

@@ -28,10 +28,10 @@ const _vectors = {
 
 void main() {
   group('Public Key Encryption', () {
-    final pub = PublicKey.decode(
+    final pub = GenericPublicKey<Curve25519>.decode(
         'ec2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798',
         hexEncoder);
-    final priv = PrivateKey.decode(
+    final priv = GenericPrivateKey<Curve25519>.decode(
         '5c2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798',
         hexEncoder);
 
@@ -42,10 +42,10 @@ void main() {
     });
 
     test('Test Box class', () {
-      final pub = PublicKey.decode(
+      final pub = GenericPublicKey<Curve25519>.decode(
           'ec2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798',
           hexEncoder);
-      final priv = PrivateKey.decode(
+      final priv = GenericPrivateKey<Curve25519>.decode(
           '5c2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798',
           hexEncoder);
       final b = Box(myPrivateKey: priv, theirPublicKey: pub);
@@ -55,8 +55,10 @@ void main() {
     });
 
     test('Test Box encryption', () {
-      final pubalice = PublicKey.decode(_vectors['pubalice'], hexEncoder);
-      final privbob = PrivateKey.decode(_vectors['privbob'], hexEncoder);
+      final pubalice =
+          GenericPublicKey<Curve25519>.decode(_vectors['pubalice'], hexEncoder);
+      final privbob =
+          GenericPrivateKey<Curve25519>.decode(_vectors['privbob'], hexEncoder);
 
       final box = Box(myPrivateKey: privbob, theirPublicKey: pubalice);
 
@@ -75,8 +77,10 @@ void main() {
     });
 
     test('Test Box decryption', () {
-      final privalice = PrivateKey.decode(_vectors['privalice'], hexEncoder);
-      final pubbob = PublicKey.decode(_vectors['pubbob'], hexEncoder);
+      final privalice = GenericPrivateKey<Curve25519>.decode(
+          _vectors['privalice'], hexEncoder);
+      final pubbob =
+          GenericPublicKey<Curve25519>.decode(_vectors['pubbob'], hexEncoder);
       final nonce = _vectors['nonce'];
       final plaintext = _vectors['plaintext'];
       final ciphertext = _vectors['ciphertext'];
@@ -90,10 +94,14 @@ void main() {
     });
 
     test('Test Box encryption and decryption combined', () {
-      final privalice = PrivateKey.decode(_vectors['privalice'], hexEncoder);
-      final pubalice = PublicKey.decode(_vectors['pubalice'], hexEncoder);
-      final privbob = PrivateKey.decode(_vectors['privbob'], hexEncoder);
-      final pubbob = PublicKey.decode(_vectors['pubbob'], hexEncoder);
+      final privalice = GenericPrivateKey<Curve25519>.decode(
+          _vectors['privalice'], hexEncoder);
+      final pubalice =
+          GenericPublicKey<Curve25519>.decode(_vectors['pubalice'], hexEncoder);
+      final privbob =
+          GenericPrivateKey<Curve25519>.decode(_vectors['privbob'], hexEncoder);
+      final pubbob =
+          GenericPublicKey<Curve25519>.decode(_vectors['pubbob'], hexEncoder);
 
       final box = Box(myPrivateKey: privbob, theirPublicKey: pubalice);
       final box1 = Box(myPrivateKey: privalice, theirPublicKey: pubbob);
@@ -111,8 +119,10 @@ void main() {
     });
 
     test('Test Nonce encryption and decryption combined', () {
-      final privalice = PrivateKey.decode(_vectors['privalice'], hexEncoder);
-      final pubbob = PublicKey.decode(_vectors['pubbob'], hexEncoder);
+      final privalice = GenericPrivateKey<Curve25519>.decode(
+          _vectors['privalice'], hexEncoder);
+      final pubbob =
+          GenericPublicKey<Curve25519>.decode(_vectors['pubbob'], hexEncoder);
 
       final box = Box(myPrivateKey: privalice, theirPublicKey: pubbob);
 
@@ -125,10 +135,10 @@ void main() {
     });
 
     test('Test Wrong AsymmetricKey types', () {
-      final priv = PrivateKey.generate();
+      final priv = GenericPrivateKey<Curve25519>.generate();
       final _31 = Uint8List(31);
       final _32 = Uint8List(32);
-      final k32 = PublicKey(_32);
+      final k32 = GenericPublicKey<Curve25519>(_32);
 
       // TODO: Generalise and implement proper rrror handling by implementing proper exception classes.
       // expect(() => PrivateKey(priv.publicKey), throwsException);
@@ -137,10 +147,11 @@ void main() {
       // expect(() => PrivateKey(priv.publicKey), throwsA(predicate((e) => e is Error)))
       // expect(() => PrivateKey(), throwsA(predicate((e) => e is ArgumentError && e.message == 'Error')));
       // expect(() => PrivateKey(), throwsA(allOf(isArgumentError, predicate((e) => e.message == 'Error'))));
-      expect(() => PrivateKey(priv), returnsNormally);
-      expect(() => PrivateKey.fromSeed(_31), throwsException);
-      expect(() => PublicKey(_32), returnsNormally);
-      expect(() => PublicKey(_31), throwsException);
+      expect(() => GenericPrivateKey<Curve25519>(priv), returnsNormally);
+      expect(
+          () => GenericPrivateKey<Curve25519>.fromSeed(_31), throwsException);
+      expect(() => GenericPublicKey<Curve25519>(_32), returnsNormally);
+      expect(() => GenericPublicKey<Curve25519>(_31), throwsException);
 
       // Valid combinations
       expect(() => Box.decode(k32), returnsNormally);

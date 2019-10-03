@@ -5,11 +5,11 @@ import 'dart:typed_data';
 import 'package:convert/convert.dart';
 import 'package:test/test.dart';
 
-import 'package:pinenacl/api.dart';
+import 'package:pinenacl/public.dart';
 
 void _doShared(String sk, String pk, String sharedSecret) {
-  final priv = PrivateKey.decode(sk, hexEncoder);
-  final pub = PublicKey.decode(pk, hexEncoder);
+  final priv = GenericPrivateKey<Curve25519>.decode(sk, hexEncoder);
+  final pub = GenericPublicKey<Curve25519>.decode(pk, hexEncoder);
 
   final expected = Uint8List(32);
 
@@ -33,15 +33,19 @@ void main() {
       test('official testvector', () {
         final sharedSecret = officialVector['shr'];
 
-        final alicePriv = PrivateKey.decode(officialVector['ask'], hexEncoder);
+        final alicePriv = GenericPrivateKey<Curve25519>.decode(
+            officialVector['ask'], hexEncoder);
         final aliceGenPub = alicePriv.publicKey;
-        final alicePub = PublicKey.decode(officialVector['apk'], hexEncoder);
+        final alicePub = GenericPublicKey<Curve25519>.decode(
+            officialVector['apk'], hexEncoder);
 
         assert(hex.encode(aliceGenPub) == hex.encode(alicePub));
 
-        final bobPriv = PrivateKey.decode(officialVector['bsk'], hexEncoder);
+        final bobPriv = GenericPrivateKey<Curve25519>.decode(
+            officialVector['bsk'], hexEncoder);
         final bobGenPub = bobPriv.publicKey;
-        final bobPub = PublicKey.decode(officialVector['bpk'], hexEncoder);
+        final bobPub = GenericPublicKey<Curve25519>.decode(
+            officialVector['bpk'], hexEncoder);
 
         assert(hex.encode(bobGenPub) == hex.encode(bobPub));
 

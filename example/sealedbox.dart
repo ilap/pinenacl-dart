@@ -1,10 +1,11 @@
-import 'package:pinenacl/public.dart' show SealedBox, PrivateKey;
+import 'package:pinenacl/public.dart'
+    show SealedBox, GenericPrivateKey, Curve25519;
 
 void main() {
   print('\n### Public Key Encryption - SealedBox Example ###\n');
 
   // Generate Bob's private key, which must be kept secret
-  final skbob = PrivateKey.generate();
+  final skbob = GenericPrivateKey<Curve25519>.generate();
   final pkbob = skbob.publicKey;
 
   // Alice wishes to send a encrypted message to Bob,
