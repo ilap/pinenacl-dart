@@ -33,6 +33,7 @@ void main() {
   // concatenated together.  These are equivalent:
   verifyKey.verifySignedMessage(signedMessage: signed);
   verifyKey.verify(signature: signed.signature, message: signed.message);
+  print(signed.signature.encode());
 
   try {
     // Forged message.

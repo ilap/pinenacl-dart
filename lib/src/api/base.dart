@@ -148,25 +148,10 @@ class PrivateParams {
   final dynamic hashAlg;
 }
 
-abstract class AlgorythmParams {
+abstract class AlgorithmParams {
   PrivateParams prvParams;
   PublicParams pubParams;
   SignatureParams sigParams;
-}
-
-abstract class AlgorythmParams2 {
-  PrivateParams prvParams;
-  PublicParams pubParams;
-  SignatureParams sigParams;
-
-  Codec get prvEncoder => hexEncoder;
-  Codec get pubEncoder => prvEncoder;
-  Codec get sigEncoder => prvEncoder;
-
-  dynamic get pubAlg;
-  dynamic get signAlg;
-  dynamic get verifyAlg;
-  dynamic get hashAlg;
-
-  int get length;
+  Uint8List normalizeBytes(Uint8List k);
+  bool validateBytes(Uint8List k);
 }

@@ -33,7 +33,7 @@ void main() {
         hexEncoder);
     final priv = GenericPrivateKey<Curve25519>.decode(
         '5c2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798',
-        hexEncoder);
+        decoder: hexEncoder);
 
     test('Test Box decode', () {
       final b1 = Box(myPrivateKey: priv, theirPublicKey: pub);
@@ -47,7 +47,7 @@ void main() {
           hexEncoder);
       final priv = GenericPrivateKey<Curve25519>.decode(
           '5c2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798',
-          hexEncoder);
+          decoder: hexEncoder);
       final b = Box(myPrivateKey: priv, theirPublicKey: pub);
 
       assert(b == b.sharedKey);
@@ -57,8 +57,8 @@ void main() {
     test('Test Box encryption', () {
       final pubalice =
           GenericPublicKey<Curve25519>.decode(_vectors['pubalice'], hexEncoder);
-      final privbob =
-          GenericPrivateKey<Curve25519>.decode(_vectors['privbob'], hexEncoder);
+      final privbob = GenericPrivateKey<Curve25519>.decode(_vectors['privbob'],
+          decoder: hexEncoder);
 
       final box = Box(myPrivateKey: privbob, theirPublicKey: pubalice);
 
@@ -78,7 +78,8 @@ void main() {
 
     test('Test Box decryption', () {
       final privalice = GenericPrivateKey<Curve25519>.decode(
-          _vectors['privalice'], hexEncoder);
+          _vectors['privalice'],
+          decoder: hexEncoder);
       final pubbob =
           GenericPublicKey<Curve25519>.decode(_vectors['pubbob'], hexEncoder);
       final nonce = _vectors['nonce'];
@@ -95,11 +96,12 @@ void main() {
 
     test('Test Box encryption and decryption combined', () {
       final privalice = GenericPrivateKey<Curve25519>.decode(
-          _vectors['privalice'], hexEncoder);
+          _vectors['privalice'],
+          decoder: hexEncoder);
       final pubalice =
           GenericPublicKey<Curve25519>.decode(_vectors['pubalice'], hexEncoder);
-      final privbob =
-          GenericPrivateKey<Curve25519>.decode(_vectors['privbob'], hexEncoder);
+      final privbob = GenericPrivateKey<Curve25519>.decode(_vectors['privbob'],
+          decoder: hexEncoder);
       final pubbob =
           GenericPublicKey<Curve25519>.decode(_vectors['pubbob'], hexEncoder);
 
@@ -120,7 +122,8 @@ void main() {
 
     test('Test Nonce encryption and decryption combined', () {
       final privalice = GenericPrivateKey<Curve25519>.decode(
-          _vectors['privalice'], hexEncoder);
+          _vectors['privalice'],
+          decoder: hexEncoder);
       final pubbob =
           GenericPublicKey<Curve25519>.decode(_vectors['pubbob'], hexEncoder);
 

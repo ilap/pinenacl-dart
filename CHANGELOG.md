@@ -69,4 +69,5 @@ and `crypto_auth_verify` functions of the `NaCl` library (does not exists in Twe
 
 - API braking changes
 - Refactored `AsymmetricKey` types to generic classes.
-- Introduced `Algorythm`'s classes.
+- Introduced `Algorithm`'s classes.
+- Fixing some typos and some housekeeping.

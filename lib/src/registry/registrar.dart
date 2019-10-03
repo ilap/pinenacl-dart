@@ -13,7 +13,8 @@ class Registrar {
   }
 
   static dynamic getInstance(String type) {
-    // Returns Ed25519 as the default type.
-    return _constructors[type]() ?? () => Ed25519();
+    // TODO:  it returns an Ed25519 instance,
+    // or threw an Exception
+    return (_constructors[type] ?? _constructors['Ed25519'])();
   }
 }

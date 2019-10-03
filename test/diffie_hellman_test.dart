@@ -8,7 +8,7 @@ import 'package:test/test.dart';
 import 'package:pinenacl/public.dart';
 
 void _doShared(String sk, String pk, String sharedSecret) {
-  final priv = GenericPrivateKey<Curve25519>.decode(sk, hexEncoder);
+  final priv = GenericPrivateKey<Curve25519>.decode(sk, decoder: hexEncoder);
   final pub = GenericPublicKey<Curve25519>.decode(pk, hexEncoder);
 
   final expected = Uint8List(32);
@@ -34,7 +34,8 @@ void main() {
         final sharedSecret = officialVector['shr'];
 
         final alicePriv = GenericPrivateKey<Curve25519>.decode(
-            officialVector['ask'], hexEncoder);
+            officialVector['ask'],
+            decoder: hexEncoder);
         final aliceGenPub = alicePriv.publicKey;
         final alicePub = GenericPublicKey<Curve25519>.decode(
             officialVector['apk'], hexEncoder);
@@ -42,7 +43,8 @@ void main() {
         assert(hex.encode(aliceGenPub) == hex.encode(alicePub));
 
         final bobPriv = GenericPrivateKey<Curve25519>.decode(
-            officialVector['bsk'], hexEncoder);
+            officialVector['bsk'],
+            decoder: hexEncoder);
         final bobGenPub = bobPriv.publicKey;
         final bobPub = GenericPublicKey<Curve25519>.decode(
             officialVector['bpk'], hexEncoder);
