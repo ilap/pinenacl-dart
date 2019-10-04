@@ -7,7 +7,7 @@ const hexEncoder = HexEncoder();
 const base32Encoder = Base32Encoder();
 
 /// Default encoder
-class HexEncoder implements Codec {
+class HexEncoder implements Encoder {
   const HexEncoder();
 
   @override
@@ -21,7 +21,7 @@ class HexEncoder implements Codec {
   }
 }
 
-class Bech32Encoder implements Codec {
+class Bech32Encoder implements Encoder {
   const Bech32Encoder({this.hrp});
   final String hrp;
 
@@ -50,7 +50,7 @@ const _alphabet = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
 final _alphabetMap =
     _alphabet.codeUnits.asMap().map((idx, value) => MapEntry(value, idx));
 
-class Base32Encoder implements Codec {
+class Base32Encoder implements Encoder {
   const Base32Encoder();
 
   @override

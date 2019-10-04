@@ -17,7 +17,7 @@ Thes library has the aim of
 1. Add the following into the `pubspec.yaml` of your dart package:
 ``` yaml
 dependencies:
-  pinenacl: ^0.1.3-dev.1
+  pinenacl: ^0.1.2
 ```
 
 2. You can install now from the command line with pub:
@@ -129,19 +129,19 @@ Implemented from [PyNaCl's example](https://pynacl.readthedocs.io/en/stable/publ
 > -- <cite>[PyNaCl](https://pynacl.readthedocs.io/en/stable/public/#examples)</cite>
 
 ``` dart
-import 'package:pinenacl/public.dart' show Box, GenericPrivateKey, Curve25519;
+import 'package:pinenacl/api.dart';
+import 'package:pinenacl/public.dart' show PrivateKey;
 
 void main() {
-  print('\n### Public Key Encryption - Box Example ###\n');
   // Generate Bob's private key, which must be kept secret
-  final skbob = GenericPrivateKey<Curve25519>.generate();
+  final skbob = PrivateKey.generate();
 
   // Bob's public key can be given to anyone wishing to send
   // Bob an encrypted message
   final pkbob = skbob.publicKey;
 
   // Alice does the same and then Alice and Bob exchange public keys
-  final skalice = GenericPrivateKey<Curve25519>.generate();
+  final skalice = PrivateKey.generate();
 
   final pkalice = skalice.publicKey;
 
@@ -151,8 +151,7 @@ void main() {
 
   // This is our message to send, it must be a bytestring as Box will treat it
   // as just a binary blob of data.
-  final message =
-      'There is no conspiracy out there, but lack of the incentives to drive the people towards the answers.';
+  final message = 'There is no conspiracy out there, but lack of the incentives to drive the people towards the answers.';
 
   // TweetNaCl can automatically generate a random nonce for us, making the encryption very simple:
   // Encrypt our message, it will be exactly 40 bytes longer than the
@@ -167,7 +166,7 @@ void main() {
   // Decrypt our message, an exception will be raised if the encryption was
   // tampered with or there was otherwise an error.
   final decrypted = aliceBox.decrypt(encrypted);
-  print(String.fromCharCodes(decrypted));
+  print(String.fromCharCodes(decrypted.plaintext));
 }
 ```
 
@@ -184,14 +183,12 @@ void main() {
 > -- <cite>[PyNaCl](https://pynacl.readthedocs.io/en/stable/public/#examples)</cite>
 
 ``` dart
-import 'package:pinenacl/public.dart'
-    show SealedBox, GenericPrivateKey, Curve25519;
+import 'package:pinenacl/public.dart' show SealedBox, PrivateKey;
 
 void main() {
-  print('\n### Public Key Encryption - SealedBox Example ###\n');
 
   // Generate Bob's private key, which must be kept secret
-  final skbob = GenericPrivateKey<Curve25519>.generate();
+  final skbob = PrivateKey.generate();
   final pkbob = skbob.publicKey;
 
   // Alice wishes to send a encrypted message to Bob,
@@ -203,11 +200,6 @@ void main() {
       'with the change or we can try to resist it';
 
   final encrypted = sealedBox.encrypt(message.codeUnits);
-  try {
-    sealedBox.decrypt(encrypted);
-  } on Exception catch (e) {
-    print('Exception\'s successfully cought:\n$e');
-  }
 
   // Bob unseals the box with his privatekey, and decrypts it.
   final unsealedBox = SealedBox(skbob);
@@ -233,22 +225,20 @@ import 'package:pinenacl/api.dart';
 import 'package:pinenacl/secret.dart' show SecretBox;
 
 void main() {
-  print('\n### Secret Key Encryption - SecretBox Example ###\n');
   final key = Utils.randombytes(SecretBox.keyLength);
   final box = SecretBox(key);
 
-  final message =
-      'Change is a tricky thing, it threatens what we find familiar with...';
+  final message = 'Change is a tricky thing, it threatens what we find familiar with...';
 
   final encrypted = box.encrypt(message.codeUnits);
 
   final decrypted = box.decrypt(encrypted);
 
-  final ctext = encrypted.cipherText;
+  final ctext = encrypted.ciphertext;
 
   assert(ctext.length == message.length + SecretBox.macBytes);
 
-  final plaintext = String.fromCharCodes(decrypted);
+  final plaintext = String.fromCharCodes(decrypted.plaintext);
   print(plaintext);
   assert(message == plaintext);
 }
@@ -266,18 +256,18 @@ Implemented from [PyNaCl's example](https://pynacl.readthedocs.io/en/stable/publ
 > -- <cite>[PyNaCl](https://pynacl.readthedocs.io/en/stable/signing)</cite>
 
 ``` dart
+import 'package:convert/convert.dart';
 import 'package:pinenacl/signing.dart';
 
 void main() {
-  print('\n### Digital Signatures - Signing Example ###\n');
-
+  /// 
   /// Signer’s perspective (SigningKey)
   ///
+ 
   // Generate a new random signing key
-  final signingKey = SigningKey<Ed25519>.generate();
+  final signingKey = SigningKey.generate();
 
   final message = 'People see the things they want to see...';
-  final forgedMessage = 'people see the things they want to see...';
   // Sign a message with the signing key
   final signed = signingKey.sign(message.codeUnits);
 
@@ -286,28 +276,30 @@ void main() {
 
   // Serialize the verify key to send it to a third party
   // TODO: implements similar: verifyKey.encode(Bech32Encoder(hrp: 'ed25519_pk'));
-  final verifyKeyHex = verifyKey.encode(hexEncoder);
+  final verifyKeyHex = hex.encode(verifyKey);
 
-  ///
+  /// 
   /// Verifier’s perspective (VerifyKey)
-  ///
+  /// 
   // TODO: implements similar: VerifyKey.decode(verifyKeyHex, decoder: HexEncoder());
-  final verifyKey2 = VerifyKey<Ed25519>.decode(verifyKeyHex, hexEncoder);
+  final verifyKey2 = VerifyKey.fromHexString(verifyKeyHex);
   assert(verifyKey == verifyKey2);
   print('The "$message" is successfully verified');
 
   // Check the validity of a message's signature
   // The message and the signature can either be passed separately or
   // concatenated together.  These are equivalent:
-  verifyKey.verifySignedMessage(signedMessage: signed);
-  verifyKey.verify(signature: signed.signature, message: signed.message);
+  verifyKey.verify(signed);
+  verifyKey.verify(signed.message, signed.signature);
+
+  // Alter the signed message text
+  signed[0] ^= signed[0] + 1;
 
   try {
     // Forged message.
-    verifyKey.verify(
-        signature: signed.signature, message: forgedMessage.codeUnits);
-  } on Exception catch (e) {
-    print('Exception\'s successfully cought:\n$e');
+    verifyKey.verify(signed);
+  } on Exception catch(e) {
+    print('Successfully cought: $e');
   }
 }
 ```

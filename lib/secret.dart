@@ -1,3 +1,5 @@
+library pinenacl.api.secret;
+
 import 'package:pinenacl/api.dart';
 export 'package:pinenacl/api.dart';
 
@@ -33,7 +35,7 @@ export 'package:pinenacl/api.dart';
 class SecretBox extends BoxBase {
   SecretBox(List<int> secret) : super.fromList(secret);
 
-  factory SecretBox.decode(String data, [Codec defaultDecoder = decoder]) {
+  factory SecretBox.decode(String data, [Encoder defaultDecoder = decoder]) {
     final decoded = defaultDecoder.decode(data);
     return SecretBox(decoded);
   }
@@ -44,7 +46,7 @@ class SecretBox extends BoxBase {
   static const decoder = hexEncoder;
 
   @override
-  Codec get encoder => decoder;
+  Encoder get encoder => decoder;
 
   @override
   ByteList get key => this;

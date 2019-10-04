@@ -47,7 +47,7 @@ void main() {
         final expected = SignedMessage.fromList(
             signedMessage: hex.decode(_vectors['expected']));
 
-        final signingKey = SigningKey<Ed25519>(seed: hex.decode(seed));
+        final signingKey = SigningKey(seed: hex.decode(seed));
         final signed = signingKey.sign(hex.decode(message));
 
         assert(signed == expected);
@@ -65,7 +65,7 @@ void main() {
           final message = vector['message'];
           final signature = vector['signature'];
 
-          final signingKey = SigningKey<Ed25519>(seed: hex.decode(seed));
+          final signingKey = SigningKey(seed: hex.decode(seed));
           final signed = signingKey.sign(hex.decode(message));
 
           assert(hex.encode(signed.message) == message);
@@ -91,10 +91,10 @@ void main() {
           final signature = signedMessage.sublist(0, 64);
           final expected = SignedMessage.fromList(signedMessage: signedMessage);
 
-          final signingKey = SigningKey<Ed25519>(seed: seed);
+          final signingKey = SigningKey(seed: seed);
           final signed = signingKey.sign(message);
 
-          final verifyKey = VerifyKey<Ed25519>(public);
+          final verifyKey = VerifyKey(public);
           expect(() => verifyKey.verifySignedMessage(signedMessage: signed),
               returnsNormally);
           expect(
@@ -110,11 +110,11 @@ void main() {
     });
     group('Wrong types test', () {
       test('SigningKey and VerifyKey', () {
-        final sk = SigningKey<Ed25519>.generate();
+        final sk = SigningKey.generate();
         final _31 = Uint8List(31);
 
-        expect(() => SigningKey<Ed25519>(seed: sk), throwsException);
-        expect(() => SigningKey<Ed25519>.fromSeed(_31), throwsException);
+        expect(() => SigningKey(seed: sk), throwsException);
+        expect(() => SigningKey.fromSeed(_31), throwsException);
 
         /// Any validlength bytes (except private key) or
         /// publicKey can be a VerifyKey

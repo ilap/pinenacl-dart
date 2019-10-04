@@ -1,9 +1,9 @@
+library pinenacl.api.public;
+
 import 'dart:typed_data';
 
 import 'package:pinenacl/api.dart';
 export 'package:pinenacl/api.dart';
-
-//export 'src/impl/key_encryption.dart';
 
 /// Public Key Encryption
 ///
@@ -55,7 +55,7 @@ class Box extends BoxBase {
   static const decoder = hexEncoder;
 
   @override
-  Codec get encoder => decoder;
+  Encoder get encoder => decoder;
 
   // NOTE: properties and function must be public i.e. not underscore names e.g. _key
   @override
@@ -137,7 +137,7 @@ class SealedBox extends AsymmetricKey {
   static const decoder = hexEncoder;
 
   @override
-  Codec get encoder => decoder;
+  Encoder get encoder => decoder;
 
   /// Decrypts the ciphertext using the ephemeral public key enclosed
   /// in the ciphertext and the SealedBox private key, returning
