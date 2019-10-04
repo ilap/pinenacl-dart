@@ -7,7 +7,7 @@ class TweetNaClExt {
   static const hmacBytes = 64;
 
   // Extended secret key's length
-  static const int extendedSecretKeyLength = 32;
+  static const int extendedSecretKeyLength = 64;
 
   static int _crypto_auth(Uint8List out, Uint8List m, Uint8List k) {
     HmacSha512.mac(out, m, k);
@@ -37,7 +37,7 @@ class TweetNaClExt {
     return TweetNaCl._vn(x, xoff, y, yoff, 64);
   }
 
-  static int scalar_base(Uint8List pk, Uint8List sk) {
+  static Uint8List scalar_base(Uint8List pk, Uint8List sk) {
     List<Int64List> p = List<Int64List>(4);
 
     p[0] = Int64List(16);
@@ -48,6 +48,26 @@ class TweetNaClExt {
     TweetNaCl._scalarbase(p, sk, 0);
     TweetNaCl._pack(pk, p);
 
-    return 0;
+    return pk;
+  }
+
+  static Uint8List scalar_base_seed(Uint8List pk, Uint8List seed) {
+    Uint8List k = Uint8List(64);
+    List<Int64List> p = List<Int64List>(4);
+
+    p[0] = Int64List(16);
+    p[1] = Int64List(16);
+    p[2] = Int64List(16);
+    p[3] = Int64List(16);
+
+    TweetNaCl._crypto_hash_off(k, seed, 0, 32);
+    k[0] &= 248;
+    k[31] &= 127;
+    k[31] |= 64;
+
+    TweetNaCl._scalarbase(p, k, 0);
+    TweetNaCl._pack(pk, p);
+
+    return pk;
   }
 }

@@ -28,7 +28,7 @@ class ByteList with ListMixin<int>, Encodable implements Uint8List {
       : this._u8l = _constructList(
             list, minLength ?? _minLength, maxLength ?? _maxLength);
 
-  factory ByteList.decode(String data, [Encoder defaultDecoder = decoder]) {
+  factory ByteList.decode(String data, [Codec defaultDecoder = decoder]) {
     return defaultDecoder.decode(data);
   }
 
@@ -52,7 +52,7 @@ class ByteList with ListMixin<int>, Encodable implements Uint8List {
   static const decoder = hexEncoder;
 
   @override
-  Encoder get encoder => decoder;
+  Codec get encoder => decoder;
 
   // Original getters/setters
   @override
@@ -92,7 +92,9 @@ class ByteList with ListMixin<int>, Encodable implements Uint8List {
     if (!isEqual) return false;
 
     for (int i = 0; i < length; i++) {
-      if (this[i] != (other as List)[i]) return false;
+      if (this[i] != (other as List)[i]) {
+        return false;
+      }
     }
     return true;
   }
@@ -104,14 +106,14 @@ class ByteList with ListMixin<int>, Encodable implements Uint8List {
   }
 }
 
-abstract class Encoder {
+abstract class Codec {
   String encode(ByteList data);
   ByteList decode(String data);
 }
 
 mixin Encodable {
-  Encoder get encoder;
-  String encode([Encoder encoder]) {
+  Codec get encoder;
+  String encode([Codec encoder]) {
     encoder = encoder ?? this.encoder;
     return encoder.encode(this);
   }
@@ -121,4 +123,35 @@ mixin Suffix on ByteList {
   int prefixLength;
   ByteList get prefix => ByteList(take(prefixLength), prefixLength);
   ByteList get suffix => ByteList(skip(prefixLength), length - prefixLength);
+}
+
+class SignatureParams {
+  const SignatureParams(
+      {this.signAlg, this.verifyAlg, this.codec, this.length});
+  final int length;
+  final Codec codec;
+  final dynamic signAlg;
+  final dynamic verifyAlg;
+}
+
+class PublicParams {
+  const PublicParams({this.codec, this.length});
+  final int length;
+  final Codec codec;
+}
+
+class PrivateParams {
+  const PrivateParams({this.pubAlg, this.hashAlg, this.codec, this.length});
+  final int length;
+  final Codec codec;
+  final dynamic pubAlg;
+  final dynamic hashAlg;
+}
+
+abstract class AlgorithmParams {
+  PrivateParams prvParams;
+  PublicParams pubParams;
+  SignatureParams sigParams;
+  Uint8List normalizeBytes(Uint8List k);
+  bool validateBytes(Uint8List k);
 }

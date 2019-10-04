@@ -1,4 +1,4 @@
-import 'package:pinenacl/api.dart';
+import 'package:pinenacl/signing.dart';
 
 void main() {
   print('\n### Digital Signatures - Signing Example ###\n');
@@ -6,7 +6,7 @@ void main() {
   /// Signer’s perspective (SigningKey)
   ///
   // Generate a new random signing key
-  final signingKey = SigningKey.generate();
+  final signingKey = SigningKey<Ed25519>.generate();
 
   final message = 'People see the things they want to see...';
   final forgedMessage = 'people see the things they want to see...';
@@ -24,7 +24,7 @@ void main() {
   /// Verifier’s perspective (VerifyKey)
   ///
   // TODO: implements similar: VerifyKey.decode(verifyKeyHex, decoder: HexEncoder());
-  final verifyKey2 = VerifyKey.decode(verifyKeyHex, hexEncoder);
+  final verifyKey2 = VerifyKey<Ed25519>.decode(verifyKeyHex, hexEncoder);
   assert(verifyKey == verifyKey2);
   print('The "$message" is successfully verified');
 
@@ -33,6 +33,7 @@ void main() {
   // concatenated together.  These are equivalent:
   verifyKey.verifySignedMessage(signedMessage: signed);
   verifyKey.verify(signature: signed.signature, message: signed.message);
+  print(signed.signature.encode());
 
   try {
     // Forged message.

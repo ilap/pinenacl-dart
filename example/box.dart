@@ -1,16 +1,16 @@
-import 'package:pinenacl/public.dart' show Box, PrivateKey;
+import 'package:pinenacl/public.dart' show Box, GenericPrivateKey, Curve25519;
 
 void main() {
   print('\n### Public Key Encryption - Box Example ###\n');
   // Generate Bob's private key, which must be kept secret
-  final skbob = PrivateKey.generate();
+  final skbob = GenericPrivateKey<Curve25519>.generate();
 
   // Bob's public key can be given to anyone wishing to send
   // Bob an encrypted message
   final pkbob = skbob.publicKey;
 
   // Alice does the same and then Alice and Bob exchange public keys
-  final skalice = PrivateKey.generate();
+  final skalice = GenericPrivateKey<Curve25519>.generate();
 
   final pkalice = skalice.publicKey;
 
