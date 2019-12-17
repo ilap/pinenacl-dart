@@ -42,8 +42,11 @@ abstract class BoxBase extends AsymmetricKey {
 
 class EncryptedMessage extends ByteList with Suffix {
   EncryptedMessage({List<int> nonce, List<int> cipherText})
-      : super(nonce + cipherText);
+      : super.fromList(nonce + cipherText, nonceLength);
 
+  EncryptedMessage.fromList(List<int> list)
+      : super.fromList(list, nonceLength);
+  
   static const nonceLength = 24;
 
   @override

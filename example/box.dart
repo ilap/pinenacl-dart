@@ -1,4 +1,4 @@
-import 'package:pinenacl/public.dart' show Box, PrivateKey;
+import 'package:pinenacl/public.dart' show Box, PrivateKey, EncryptedMessage;
 
 void main() {
   print('\n### Public Key Encryption - Box Example ###\n');
@@ -27,14 +27,14 @@ void main() {
   // Encrypt our message, it will be exactly 40 bytes longer than the
   // original message as it stores authentication information and the
   // nonce alongside it.
-  final encrypted = bobBox.encrypt(message.codeUnits);
-
+  final encryptedAsList = bobBox.encrypt(message.codeUnits).sublist(0);
+  
   // Finally, the message is decrypted (regardless of how the nonce was generated):
   // Alice creates a second box with her private key to decrypt the message
   final aliceBox = Box(myPrivateKey: skalice, theirPublicKey: pkbob);
 
   // Decrypt our message, an exception will be raised if the encryption was
   // tampered with or there was otherwise an error.
-  final decrypted = aliceBox.decrypt(encrypted);
+  final decrypted = aliceBox.decrypt(EncryptedMessage.fromList(encryptedAsList));
   print(String.fromCharCodes(decrypted));
 }
