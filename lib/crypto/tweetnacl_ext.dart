@@ -38,12 +38,12 @@ class TweetNaClExt {
   }
 
   static int scalar_base(Uint8List pk, Uint8List sk) {
-    List<Int64List> p = List<Int64List>(4);
+    List<List<Int64>> p = List<List<Int64>>(4);
 
-    p[0] = Int64List(16);
-    p[1] = Int64List(16);
-    p[2] = Int64List(16);
-    p[3] = Int64List(16);
+    p[0] = List<Int64>(16);
+    p[1] = List<Int64>(16);
+    p[2] = List<Int64>(16);
+    p[3] = List<Int64>(16);
 
     TweetNaCl._scalarbase(p, sk, 0);
     TweetNaCl._pack(pk, p);
