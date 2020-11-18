@@ -54,4 +54,12 @@ void main() {
   print('Resulted: ${hex.encode(out)}');
   print(
       'Expected: 3935959adc03ef044edba6e0c69dc7322e34668c2ca74470e4d39f20362b977a');
+
+  final macOut = Uint8List(64);
+  final k = List<int>.generate(128, (i) => i);
+  final text =
+      Uint8List.fromList('Sample message for keylen=blocklen'.codeUnits);
+
+  HmacSha512.mac(macOut, text, Uint8List.fromList(k));
+  print('MAC: ${hex.encode(macOut)}');
 }

@@ -1,7 +1,7 @@
 library pinenacl.api.crypto.tweetnacl;
 
-import "dart:core";
-import "dart:math";
+import 'dart:core';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:fixnum/fixnum.dart';
@@ -663,7 +663,7 @@ class TweetNaCl {
 
   static int crypto_stream_salsa20(
       Uint8List c, int cpos, int b, Uint8List n, Uint8List k) {
-    Uint8List z = Uint8List(16), x = Uint8List(64);
+    var z = Uint8List(16), x = Uint8List(64);
     int i;
     Int32 u;
     for (i = 0; i < 16; i++) {

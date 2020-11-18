@@ -99,7 +99,7 @@ class ByteList with ListMixin<int>, Encodable implements Uint8List {
 
   @override
   ByteList sublist(int start, [int end]) {
-    final sublist = _u8l.sublist(start, end);
+    final sublist = _u8l.sublist(start, end ?? _u8l.length);
     return ByteList(sublist, sublist.length);
   }
 }

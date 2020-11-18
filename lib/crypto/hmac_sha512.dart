@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-import 'package:convert/convert.dart';
 
 import 'package:pinenacl/api.dart';
 
@@ -85,7 +84,7 @@ class HmacSha512 {
     /// Exclusive-Or K0 with ipad to produce a B-byte string: K0 ⊕ ipad.
 
     final k0i = k0.toList();
-    for (int i = 0; i < k0.length; i++) {
+    for (var i = 0; i < k0.length; i++) {
       k0i[i] = k0i[i] ^ ipad[i];
     }
 
@@ -97,7 +96,7 @@ class HmacSha512 {
 
     /// Step 7 Exclusive-Or K0 with opad: K0 ⊕ opad.
     final k0o = k0.toList();
-    for (int i = 0; i < k0.length; i++) {
+    for (var i = 0; i < k0.length; i++) {
       k0o[i] = k0o[i] ^ opad[i];
     }
 
@@ -111,18 +110,8 @@ class HmacSha512 {
   }
 
   static void _memcopy(Uint8List from, Uint8List to, [int toOffset = 0]) {
-    for (int i = 0; i < from.length; i++) {
+    for (var i = 0; i < from.length; i++) {
       to[i + toOffset] = from[i];
     }
   }
-}
-
-void main() {
-  final out = Uint8List(64);
-  final k = List<int>.generate(128, (i) => i);
-  final text =
-      Uint8List.fromList('Sample message for keylen=blocklen'.codeUnits);
-
-  HmacSha512.mac(out, text, Uint8List.fromList(k));
-  print('MAC: ${hex.encode(out)}');
 }
