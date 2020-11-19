@@ -136,7 +136,7 @@ class Blake2b {
     }
 
     // init work variables
-    for (int i = 0; i < 16; i++) {
+    for (var i = 0; i < 16; i++) {
       v[i] = context.h[i];
       v[i + 16] = _blake2bIv32[i];
     }
@@ -153,11 +153,11 @@ class Blake2b {
     }
 
     // get little-endian words
-    for (int i = 0; i < 32; i++) {
+    for (var i = 0; i < 32; i++) {
       m[i] = _b2bGET32(context.b, 4 * i);
     }
 
-    for (int i = 0; i < 12; i++) {
+    for (var i = 0; i < 12; i++) {
       _b2bG(0, 8, 16, 24, _sigma82[i * 16 + 0], _sigma82[i * 16 + 1]);
       _b2bG(2, 10, 18, 26, _sigma82[i * 16 + 2], _sigma82[i * 16 + 3]);
       _b2bG(4, 12, 20, 28, _sigma82[i * 16 + 4], _sigma82[i * 16 + 5]);
@@ -168,7 +168,7 @@ class Blake2b {
       _b2bG(6, 8, 18, 28, _sigma82[i * 16 + 14], _sigma82[i * 16 + 15]);
     }
 
-    for (int i = 0; i < 16; i++) {
+    for (var i = 0; i < 16; i++) {
       context.h[i] = context.h[i] ^ v[i] ^ v[i + 16];
     }
   }
@@ -226,11 +226,11 @@ class Blake2b {
 
     if (personal != null) {
       // padding if length < $personalBytes
-      final int offset = 48 + personalBytes - personal.length;
+      final offset = 48 + personalBytes - personal.length;
       Utils.listCopy(personal, params, offset);
     }
 
-    for (int i = 0; i < 16; i++) {
+    for (var i = 0; i < 16; i++) {
       context.h[i] = _blake2bIv32[i] ^ _b2bGET32(params, i * 4);
     }
 

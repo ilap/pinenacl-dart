@@ -19,7 +19,7 @@ class TweetNaClExt {
   }
 
   static int _crypto_auth_verify(Uint8List h, Uint8List m, Uint8List k) {
-    Uint8List x = Uint8List(hmacBytes);
+    var x = Uint8List(hmacBytes);
     _crypto_auth(x, m, k);
     return _crypto_verify_64(h, 0, x, 0);
   }
@@ -38,7 +38,7 @@ class TweetNaClExt {
   }
 
   static int scalar_base(Uint8List pk, Uint8List sk) {
-    List<Int64List> p = List<Int64List>(4);
+    var p = List<Int64List>(4);
 
     p[0] = Int64List(16);
     p[1] = Int64List(16);

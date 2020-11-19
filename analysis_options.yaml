@@ -23,6 +23,12 @@ linter:
     - unnecessary_const
     - unnecessary_new
 
+analyzer:
+  errors:
+    missing_required_param: error
+    missing_return: error
+    must_be_immutable: error
+
 # analyzer:
 #  implicit-casts: false
 #  implicit-dynamic: false

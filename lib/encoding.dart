@@ -39,7 +39,7 @@ class Bech32Encoder implements Encoder {
   @override
   ByteList decode(String data) {
     final be32 = Bech32Codec().decode(data, maxLength);
-    if (be32.hrp != this.hrp) {
+    if (be32.hrp != hrp) {
       throw Exception('Invalid `hrp`. Expected $hrp got ${be32.hrp}');
     }
     return ByteList(Base32Encoder._convertBits(be32.data, 5, 8, false));
@@ -77,7 +77,7 @@ class Base32Encoder implements Encoder {
   static List<int> _convertBits(List<int> data, int from, int to, bool pad) {
     var acc = 0;
     var bits = 0;
-    List<int> result = [];
+    var result = <int>[];
     var maxv = (1 << to) - 1;
 
     data.forEach((v) {

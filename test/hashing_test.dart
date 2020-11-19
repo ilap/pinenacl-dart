@@ -15,7 +15,7 @@ void main() {
       final contents = file.readAsStringSync();
       final tests = JsonDecoder().convert(contents);
 
-      int idx = 0;
+      var idx = 0;
       tests.forEach((vector) {
         final description = 'SHA Validation System\'s testvectors (${++idx})';
         test(description, () {
@@ -35,7 +35,7 @@ void main() {
       final contents = file.readAsStringSync();
       final tests = JsonDecoder().convert(contents);
 
-      int idx = 0;
+      var idx = 0;
       tests.forEach((vector) {
         final description = 'SHA Validation System\'s testvectors (${++idx})';
         test(description, () {
@@ -55,7 +55,7 @@ void main() {
       final contents = file.readAsStringSync();
       final tests = JsonDecoder().convert(contents);
 
-      int idx = 0;
+      var idx = 0;
       tests.forEach((vector) {
         ++idx;
         final origin = idx < 513 ? 'RFC7693' : 'Libsodium';

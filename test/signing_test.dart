@@ -80,9 +80,9 @@ void main() {
       final contents = file.readAsStringSync();
       final tests = JsonDecoder().convert(contents);
 
-      int idx = 0;
+      var idx = 0;
       tests.forEach((vector) {
-        String description = ' (${++idx})';
+        var description = ' (${++idx})';
         test(description, () {
           final seed = hex.decode(vector['seed']).sublist(0, 32);
           final public = hex.decode(vector['publ']);

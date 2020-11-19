@@ -23,8 +23,7 @@ abstract class BoxBase extends AsymmetricKey {
 
     final c = Uint8List(TweetNaCl.boxzerobytesLength) + ciphertext;
     final m = Uint8List(c.length);
-    final plaintext =
-        doDecrypt(m, Uint8List.fromList(c), c.length, nonce, key);
+    final plaintext = doDecrypt(m, Uint8List.fromList(c), c.length, nonce, key);
     return Uint8List.fromList(plaintext);
   }
 
@@ -34,7 +33,7 @@ abstract class BoxBase extends AsymmetricKey {
     final m = Uint8List(TweetNaCl.zerobytesLength) + plainText;
     final c = Uint8List(m.length);
     final cipherText =
-        doEncrypt(c, Uint8List.fromList(m), m.length, nonce, this.key);
+        doEncrypt(c, Uint8List.fromList(m), m.length, nonce, key);
 
     return EncryptedMessage(nonce: nonce, cipherText: cipherText);
   }
@@ -44,9 +43,8 @@ class EncryptedMessage extends ByteList with Suffix {
   EncryptedMessage({List<int> nonce, List<int> cipherText})
       : super.fromList(nonce + cipherText, nonceLength);
 
-  EncryptedMessage.fromList(List<int> list)
-      : super.fromList(list, nonceLength);
-  
+  EncryptedMessage.fromList(List<int> list) : super.fromList(list, nonceLength);
+
   static const nonceLength = 24;
 
   @override
@@ -72,7 +70,7 @@ class PublicKey extends ByteList implements AsymmetricPublicKey {
 class PrivateKey extends ByteList implements AsymmetricPrivateKey {
   // private constructor
   PrivateKey._fromValidBytes(List<int> secret, List<int> public)
-      : this.publicKey = PublicKey(public),
+      : publicKey = PublicKey(public),
         super(secret, keyLength);
 
   factory PrivateKey(List<int> seed) {

@@ -21,7 +21,7 @@ class Hash {
     } else if (message is! Uint8List) {
       throw Exception('The message must be either of string or Uint8List');
     }
-    Uint8List out = Uint8List(32);
+    var out = Uint8List(32);
     Sha256.crypto_hash_sha256(out, message);
     return out;
   }
@@ -33,7 +33,7 @@ class Hash {
     } else if (message is! Uint8List) {
       throw Exception('The message must be either of string or Uint8List');
     }
-    Uint8List out = Uint8List(hashLength);
+    var out = Uint8List(hashLength);
     TweetNaCl.crypto_hash(out, message);
     return out;
   }

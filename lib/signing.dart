@@ -37,7 +37,7 @@ class VerifyKey extends AsymmetricPublicKey implements Verify {
           'Signature length (${message.length}) is invalid, expected "${TweetNaCl.signatureLength}"');
     }
 
-    Uint8List m = Uint8List(message.length);
+    var m = Uint8List(message.length);
 
     final result = TweetNaCl.crypto_sign_open(
         m, -1, Uint8List.fromList(message), 0, message.length, this);
@@ -54,7 +54,7 @@ class VerifyKey extends AsymmetricPublicKey implements Verify {
 class SigningKey extends ByteList implements AsymmetricPrivateKey, Sign {
   // Private constructor.
   SigningKey._fromValidBytes(List<int> secret, List<int> public)
-      : this.verifyKey = VerifyKey(public),
+      : verifyKey = VerifyKey(public),
         super(secret, secret.length);
 
   factory SigningKey({List<int> seed}) {
@@ -100,7 +100,7 @@ class SigningKey extends ByteList implements AsymmetricPrivateKey, Sign {
   @override
   SignedMessage sign(List<int> message) {
     // signed message
-    Uint8List sm = Uint8List(message.length + TweetNaCl.signatureLength);
+    var sm = Uint8List(message.length + TweetNaCl.signatureLength);
     final result = TweetNaCl.crypto_sign(
         sm, -1, Uint8List.fromList(message), 0, message.length, this);
     if (result != 0) {

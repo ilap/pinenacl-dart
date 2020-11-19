@@ -71,7 +71,7 @@ void main() {
         final curve = vector['curve'];
         final comment = vector['comment'];
         final idx = vector['tcId'];
-        String description = '$curve - $comment ($idx)';
+        var description = '$curve - $comment ($idx)';
 
         test(description, () {
           final public = vector['public'];

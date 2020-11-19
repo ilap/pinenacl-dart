@@ -110,7 +110,7 @@ class Box extends BoxBase {
 class SealedBox extends AsymmetricKey {
   SealedBox._fromKeyPair(
       AsymmetricPrivateKey privateKey, AsymmetricPublicKey publicKey)
-      : this._privateKey = privateKey,
+      : _privateKey = privateKey,
         super.fromList(publicKey);
 
   factory SealedBox(AsymmetricKey key) {
@@ -184,17 +184,17 @@ class SealedBox extends AsymmetricKey {
     final cLen = _sealBytes + mLen;
     final ciphertext = Uint8List(cLen);
 
-    Uint8List epk = Uint8List(_pubLength);
-    Uint8List esk = Uint8List(_secretLength);
+    var epk = Uint8List(_pubLength);
+    var esk = Uint8List(_secretLength);
     TweetNaCl.crypto_box_keypair(epk, esk);
 
-    final Uint8List nonce = Uint8List(_nonceLength);
+    final nonce = Uint8List(_nonceLength);
     _generateNonce(nonce, epk, pk);
 
     final k = Uint8List(_secretLength);
     TweetNaCl.crypto_box_beforenm(k, pk, esk);
 
-    Uint8List mac = ciphertext.sublist(_pubLength, _pubLength + _macBytes);
+    var mac = ciphertext.sublist(_pubLength, _pubLength + _macBytes);
 
     _cryptoBoxDetached(ciphertext, mac, message, mLen, nonce, k);
     Utils.listCopy(epk, ciphertext, 0);
@@ -210,7 +210,7 @@ class SealedBox extends AsymmetricKey {
 
   void _cryptoBoxDetached(Uint8List c, Uint8List mac, Uint8List m, int d,
       Uint8List n, Uint8List k) {
-    Uint8List ciphertext = Uint8List(d + _zerobytesLength);
+    var ciphertext = Uint8List(d + _zerobytesLength);
 
     TweetNaCl.crypto_stream_xor(
         ciphertext,
@@ -248,11 +248,11 @@ class SealedBox extends AsymmetricKey {
     final epk = ciphertext.sublist(0, _pubLength);
 
     final k = Uint8List(_secretLength);
-    TweetNaCl.crypto_box_beforenm(k, epk, this._privateKey);
+    TweetNaCl.crypto_box_beforenm(k, epk, _privateKey);
     final nonce = Uint8List(_nonceLength);
     _generateNonce(nonce, epk, this);
 
-    Uint8List x = Uint8List(_secretLength);
+    var x = Uint8List(_secretLength);
     TweetNaCl.crypto_stream(x, 0, _zerobytesLength, nonce, k);
 
     final mac = ciphertext.sublist(_zerobytesLength, _sealBytes);

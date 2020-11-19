@@ -124,7 +124,7 @@ const vectors = [
 void main() {
   group('Hash-based message authentication code', () {
     group('HMAC-SHA-512', () {
-      int idx = 0;
+      var idx = 0;
       vectors.forEach((vector) {
         final description = 'RFC4231\'s testvectors (${++idx})';
         test(description, () {

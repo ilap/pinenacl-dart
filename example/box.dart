@@ -28,13 +28,14 @@ void main() {
   // original message as it stores authentication information and the
   // nonce alongside it.
   final encryptedAsList = bobBox.encrypt(message.codeUnits).sublist(0);
-  
+
   // Finally, the message is decrypted (regardless of how the nonce was generated):
   // Alice creates a second box with her private key to decrypt the message
   final aliceBox = Box(myPrivateKey: skalice, theirPublicKey: pkbob);
 
   // Decrypt our message, an exception will be raised if the encryption was
   // tampered with or there was otherwise an error.
-  final decrypted = aliceBox.decrypt(EncryptedMessage.fromList(encryptedAsList));
+  final decrypted =
+      aliceBox.decrypt(EncryptedMessage.fromList(encryptedAsList));
   print(String.fromCharCodes(decrypted));
 }

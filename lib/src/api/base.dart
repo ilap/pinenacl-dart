@@ -21,11 +21,11 @@ abstract class AsymmetricPrivateKey extends AsymmetricKey {
 /// which is based on the unmodifiable Uin8List class
 class ByteList with ListMixin<int>, Encodable implements Uint8List {
   ByteList([Iterable<int> bytes, int bytesLength])
-      : this._u8l = _constructList(
+      : _u8l = _constructList(
             bytes, bytesLength ?? _minLength, bytesLength ?? _maxLength);
 
   ByteList.fromList(List<int> list, [int minLength, int maxLength])
-      : this._u8l = _constructList(
+      : _u8l = _constructList(
             list, minLength ?? _minLength, maxLength ?? _maxLength);
 
   factory ByteList.decode(String data, [Encoder defaultDecoder = decoder]) {
@@ -91,7 +91,7 @@ class ByteList with ListMixin<int>, Encodable implements Uint8List {
 
     if (!isEqual) return false;
 
-    for (int i = 0; i < length; i++) {
+    for (var i = 0; i < length; i++) {
       if (this[i] != (other as List)[i]) return false;
     }
     return true;

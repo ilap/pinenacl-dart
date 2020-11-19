@@ -47,7 +47,7 @@ void main() {
   /// drastically reducing the risks which ensue from such a reuse.
 
   /// SHA-256 Example.
-  print("\nSHA-256 Example.\n");
+  print('\nSHA-256 Example.\n');
   var message =
       '01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789';
   final out = Hash.sha256(Uint8List.fromList(message.codeUnits));

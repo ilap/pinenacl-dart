@@ -11,13 +11,13 @@ class Utils {
   }
 
   static void listCopy(Uint8List from, Uint8List to, [int toOffset = 0]) {
-    for (int i = 0; i < from.length; i++) {
+    for (var i = 0; i < from.length; i++) {
       to[i + toOffset] = from[i];
     }
   }
 
   static void listZero(List list) {
-    for (int i = 0; i < list.length; i++) {
+    for (var i = 0; i < list.length; i++) {
       list[i] = 0;
     }
   }
