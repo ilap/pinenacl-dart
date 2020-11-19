@@ -86,7 +86,7 @@ void main() {
         assert(hex.encode(_1k) == firstKey);
       });
       test('Nonce and stream (4194304 long output) test', () {
-        final int outLen = 4194304;
+        final outLen = 4194304;
         final out = Uint8List(outLen);
         final hashOut = Uint8List(64);
 

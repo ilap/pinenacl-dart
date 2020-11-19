@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-//import 'package:fixnum/fixnum.dart';
 
 /// Port of Andrew Moon's Poly1305-donna-16. Public domain.
 /// https://github.com/floodyberry/poly1305-donna
@@ -17,20 +16,20 @@ class Poly1305 {
     t0 = key[0] & 0xff | (key[1] & 0xff) << 8;
     _r[0] = t0 & 0x1fff;
     t1 = key[2] & 0xff | (key[3] & 0xff) << 8;
-    _r[1] = (t0 >> 13) | (t1 << 3) & 0x1fff;
+    _r[1] = ((t0 >> 13) | (t1 << 3)) & 0x1fff;
     t2 = key[4] & 0xff | (key[5] & 0xff) << 8;
-    _r[2] = (t1 >> 10) | (t2 << 6) & 0x1f03;
+    _r[2] = ((t1 >> 10) | (t2 << 6)) & 0x1f03;
     t3 = key[6] & 0xff | (key[7] & 0xff) << 8;
-    _r[3] = (t2 >> 7) | (t3 << 9) & 0x1fff;
+    _r[3] = ((t2 >> 7) | (t3 << 9)) & 0x1fff;
     t4 = key[8] & 0xff | (key[9] & 0xff) << 8;
-    _r[4] = (t3 >> 4) | (t4 << 12) & 0x00ff;
+    _r[4] = ((t3 >> 4) | (t4 << 12)) & 0x00ff;
     _r[5] = (t4 >> 1) & 0x1ffe;
     t5 = key[10] & 0xff | (key[11] & 0xff) << 8;
-    _r[6] = (t4 >> 14) | (t5 << 2) & 0x1fff;
+    _r[6] = ((t4 >> 14) | (t5 << 2)) & 0x1fff;
     t6 = key[12] & 0xff | (key[13] & 0xff) << 8;
-    _r[7] = (t5 >> 11) | (t6 << 5) & 0x1f81;
+    _r[7] = ((t5 >> 11) | (t6 << 5)) & 0x1f81;
     t7 = key[14] & 0xff | (key[15] & 0xff) << 8;
-    _r[8] = (t6 >> 8) | (t7 << 8) & 0x1fff;
+    _r[8] = ((t6 >> 8) | (t7 << 8)) & 0x1fff;
     _r[9] = (t7 >> 5) & 0x007f;
 
     _pad[0] = key[16] & 0xff | (key[17] & 0xff) << 8;
@@ -79,22 +78,22 @@ class Poly1305 {
 
     while (bytes >= 16) {
       t0 = m[mpos + 0] & 0xff | (m[mpos + 1] & 0xff) << 8;
-      h0 += (t0) & 0x1fff;
+      h0 += t0 & 0x1fff;
       t1 = m[mpos + 2] & 0xff | (m[mpos + 3] & 0xff) << 8;
-      h1 += (t0 >> 13) | (t1 << 3) & 0x1fff;
+      h1 += ((t0 >> 13) | (t1 << 3)) & 0x1fff;
       t2 = m[mpos + 4] & 0xff | (m[mpos + 5] & 0xff) << 8;
-      h2 += (t1 >> 10) | (t2 << 6) & 0x1fff;
+      h2 += ((t1 >> 10) | (t2 << 6)) & 0x1fff;
       t3 = m[mpos + 6] & 0xff | (m[mpos + 7] & 0xff) << 8;
-      h3 += (t2 >> 7) | (t3 << 9) & 0x1fff;
+      h3 += ((t2 >> 7) | (t3 << 9)) & 0x1fff;
       t4 = m[mpos + 8] & 0xff | (m[mpos + 9] & 0xff) << 8;
-      h4 += (t3 >> 4) | (t4 << 12) & 0x1fff;
+      h4 += ((t3 >> 4) | (t4 << 12)) & 0x1fff;
       h5 += (t4 >> 1) & 0x1fff;
       t5 = m[mpos + 10] & 0xff | (m[mpos + 11] & 0xff) << 8;
-      h6 += (t4 >> 14) | (t5 << 2) & 0x1fff;
+      h6 += ((t4 >> 14) | (t5 << 2)) & 0x1fff;
       t6 = m[mpos + 12] & 0xff | (m[mpos + 13] & 0xff) << 8;
-      h7 += (t5 >> 11) | (t6 << 5) & 0x1fff;
+      h7 += ((t5 >> 11) | (t6 << 5)) & 0x1fff;
       t7 = m[mpos + 14] & 0xff | (m[mpos + 15] & 0xff) << 8;
-      h8 += (t6 >> 8) | (t7 << 8) & 0x1fff;
+      h8 += ((t6 >> 8) | (t7 << 8)) & 0x1fff;
       h9 += (t7 >> 5) | hibit;
 
       c = 0;
@@ -240,7 +239,7 @@ class Poly1305 {
       d8 += h7 * r1;
       d8 += h8 * r0;
       d8 += h9 * 5 * r9;
-      c += 8 >> 13;
+      c += d8 >> 13;
       d8 &= 0x1fff;
 
       d9 = c;

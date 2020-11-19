@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+
 class Sha256 {
   static const K = [
     // 4x16
@@ -56,7 +57,7 @@ class Sha256 {
     final paddedLen = ((l + 8 >> 6) << 4) + 16;
     final padded = Uint32List(paddedLen);
 
-    final bitLength = l << 3;//* 8;
+    final bitLength = l << 3;
     final dataLength = bitLength >> 5;
 
     for (var i = 0; i < bitLength; i += 8) {

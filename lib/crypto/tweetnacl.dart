@@ -721,7 +721,7 @@ class TweetNaCl {
 
   static int _crypto_onetimeauth(Uint8List out, final int outpos, Uint8List m,
       final int mpos, int n, Uint8List k) {
-    Poly1305 s = Poly1305(k);
+    var s = Poly1305(k);
     s.update(m, mpos, n);
     s.finish(out, outpos);
     return 0;

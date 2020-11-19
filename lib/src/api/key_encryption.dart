@@ -24,7 +24,7 @@ abstract class BoxBase extends AsymmetricKey {
     final c = Uint8List(TweetNaCl.boxzerobytesLength) + ciphertext;
     final m = Uint8List(c.length);
     final plaintext =
-        doDecrypt(m, Uint8List.fromList(c), c.length, nonce, this.key);
+        doDecrypt(m, Uint8List.fromList(c), c.length, nonce, key);
     return Uint8List.fromList(plaintext);
   }
 
