@@ -67,3 +67,9 @@ and `crypto_auth_verify` functions of the `NaCl` library (does not exists in Twe
 
 ## 0.1.3-dev.1
 - Added constructor for `EncryptedMessage` class, see ilap/pinenacl-dart#3
+
+## 0.1.4
+- Removed fixnum dependency from poly1305
+- Code cleanup and removing fixnum dependencies from some modules.
+- Bumped version to 0.1.4
+
