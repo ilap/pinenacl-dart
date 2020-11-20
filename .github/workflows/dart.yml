@@ -1,18 +1,24 @@
-name: Dart CI
+name: Dart Test CI
 
-on: [push]
-
+on:
+  push:
+    branches:
+      - master
+      - releases/*
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
-    container:
-      image:  google/dart:latest
-
+  stable-channel:
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-    - uses: actions/checkout@v1
-    - name: Install dependencies
+    - name: Setup Dart VM
+      uses: vanesyan/setup-dart@v1
+      with:
+        version: latest
+        channel: stable
+    - name: Install dependencies #1
       run: pub get
     - name: Run tests
       run: pub run test
