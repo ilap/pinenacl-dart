@@ -18,7 +18,8 @@ jobs:
       with:
         version: latest
         channel: stable
-    - name: Install dependencies #1
+    - uses: actions/checkout@v1
+    - name: Install dependencies
       run: pub get
     - name: Run tests
       run: pub run test
