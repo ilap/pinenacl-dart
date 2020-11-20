@@ -1,6 +1,6 @@
 # PineNaCl
 
-[![pub package](https://img.shields.io/pub/v/pinenacl.svg)](https://pub.dartlang.org/packages/pinenacl)
+[![pub package](https://img.shields.io/pub/v/pinenacl.svg)](https://pub.dartlang.org/packages/pinenacl) ![Dart Test CI](https://github.com/ilap/pinenacl-dart/workflows/Dart%20Test%20CI/badge.svg)
 
 PineNaCl is a Dart implementation of the [`TweetNaCl`](https://tweetnacl.cr.yp.to/) the world's first auditable [high-security cryptographic library](https://tweetnacl.cr.yp.to/tweetnacl-20140917.pdf).
 
