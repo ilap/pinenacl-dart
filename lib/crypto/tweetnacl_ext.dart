@@ -1,10 +1,10 @@
 part of pinenacl.api.crypto.tweetnacl;
 
-/// 
+///
 /// TweetNaCl's extension class.
 /// Following the TweetNaCl convention and added some extras.
 /// Extension is just an eye-candy here as it uses only static methods.
-/// 
+///
 extension TweetNaClExt on TweetNaCl {
   // HMAC bytes
   static const hmacBytes = 64;

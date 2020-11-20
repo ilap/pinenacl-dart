@@ -50,7 +50,24 @@ class TweetNaCl {
   static const _gf0 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; //16
   static const _gf1 = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; //16
   // ignore: constant_identifier_names
-  static const _121665 = [0xDB41, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; //16
+  static const _121665 = [
+    0xDB41,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ]; //16
 
   // ignore: constant_identifier_names
   static const _D = [
@@ -1373,7 +1390,8 @@ class TweetNaCl {
     _M_off(o, ooff, a, aoff, a, aoff);
   }
 
-  static void _inv25519(Uint64List o, final int ooff, Uint64List i, final int ioff) {
+  static void _inv25519(
+      Uint64List o, final int ooff, Uint64List i, final int ioff) {
     var c = Uint64List(16);
     int a;
     for (a = 0; a < 16; a++) {

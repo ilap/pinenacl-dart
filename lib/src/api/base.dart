@@ -84,8 +84,7 @@ class ByteList with ListMixin<int>, Encodable implements Uint8List {
   @override
   bool operator ==(Object other) {
     var isEqual = identical(this, other) ||
-        other != null &&
-            other is ByteList &&
+        other is ByteList &&
             runtimeType == other.runtimeType &&
             length == other.length;
 

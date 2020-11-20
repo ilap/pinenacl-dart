@@ -4,7 +4,6 @@ import 'dart:typed_data';
 /// https://github.com/floodyberry/poly1305-donna
 class Poly1305 {
   Poly1305(Uint8List key) {
-
     int t0, t1, t2, t3, t4, t5, t6, t7;
 
     t0 = key[0] & 0xff | (key[1] & 0xff) << 8;

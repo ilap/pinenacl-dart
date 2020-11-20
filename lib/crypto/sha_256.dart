@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:fixnum/fixnum.dart';
+
 class Sha256 {
   static const K = [
     // 4x16
@@ -21,14 +23,14 @@ class Sha256 {
     0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2,
   ];
 
-  static int _rotr(int x, int n) => _shr(x, n) | (x << (32 - n));
-  static int _shr(int x, int n) => x >> n;
-  static int _ch(int x, int y, int z) => ((x & y) ^ ((~x) & z));
-  static int _maj(int x, int y, int z) => ((x & y) ^ (x & z) ^ (y & z));
-  static int _sigma0(int x) => (_rotr(x, 2) ^ _rotr(x, 13) ^ _rotr(x, 22));
-  static int _sigma1(int x) => (_rotr(x, 6) ^ _rotr(x, 11) ^ _rotr(x, 25));
-  static int _gamma0(int x) => (_rotr(x, 7) ^ _rotr(x, 18) ^ _shr(x, 3));
-  static int _gamma1(int x) => (_rotr(x, 17) ^ _rotr(x, 19) ^ _shr(x, 10));
+  static Int32 _rotr(Int32 x, int n) => _shr(x, n) | (x << (32 - n));
+  static Int32 _shr(Int32 x, int n) => x.shiftRightUnsigned(n);
+  static Int32 _ch(Int32 x, Int32 y, Int32 z) => ((x & y) ^ ((~x) & z));
+  static Int32 _maj(Int32 x, Int32 y, Int32 z) => ((x & y) ^ (x & z) ^ (y & z));
+  static Int32 _sigma0(Int32 x) => (_rotr(x, 2) ^ _rotr(x, 13) ^ _rotr(x, 22));
+  static Int32 _sigma1(Int32 x) => (_rotr(x, 6) ^ _rotr(x, 11) ^ _rotr(x, 25));
+  static Int32 _gamma0(Int32 x) => (_rotr(x, 7) ^ _rotr(x, 18) ^ _shr(x, 3));
+  static Int32 _gamma1(Int32 x) => (_rotr(x, 17) ^ _rotr(x, 19) ^ _shr(x, 10));
 
   static Uint8List crypto_hash_sha256(Uint8List out, Uint8List m) {
     return _crypto_hash_sha256(
@@ -40,24 +42,24 @@ class Sha256 {
       throw Exception('Invalid block for the message to digest.');
     }
 
-    final w = List<int>(64);
-    int a, b, c, d, e, f, g, h, T1, T2;
+    final w = List<Int32>(64);
+    Int32 a, b, c, d, e, f, g, h, T1, T2;
 
-    final hh = Uint32List.fromList(const [
-      0x6a09e667,
-      0xbb67ae85,
-      0x3c6ef372,
-      0xa54ff53a,
-      0x510e527f,
-      0x9b05688c,
-      0x1f83d9ab,
-      0x5be0cd19
+    final hh = List<Int32>.from([
+      Int32(0x6a09e667),
+      Int32(0xbb67ae85),
+      Int32(0x3c6ef372),
+      Int32(0xa54ff53a),
+      Int32(0x510e527f),
+      Int32(0x9b05688c),
+      Int32(0x1f83d9ab),
+      Int32(0x5be0cd19)
     ]);
 
     final paddedLen = ((l + 8 >> 6) << 4) + 16;
     final padded = Uint32List(paddedLen);
 
-    final bitLength = l << 3;
+    final bitLength = l << 8;
     final dataLength = bitLength >> 5;
 
     for (var i = 0; i < bitLength; i += 8) {
@@ -79,7 +81,7 @@ class Sha256 {
 
       for (var j = 0; j < 64; j++) {
         if (j < 16) {
-          w[j] = padded[j + i];
+          w[j] = Int32(padded[j + i]);
         } else {
           w[j] = _gamma1(w[j - 2]) + w[j - 7] + _gamma0(w[j - 15]) + w[j - 16];
         }
@@ -108,10 +110,10 @@ class Sha256 {
     }
 
     for (var i = 0; i < hh.length; i++) {
-      out[4 * i + 0] = ((hh[i] >> 24) & 0xff);
-      out[4 * i + 1] = ((hh[i] >> 16) & 0xff);
-      out[4 * i + 2] = ((hh[i] >> 8) & 0xff);
-      out[4 * i + 3] = (hh[i] & 0xff);
+      out[4 * i + 0] = ((hh[i] >> 24) & 0xff).toInt();
+      out[4 * i + 1] = ((hh[i] >> 16) & 0xff).toInt();
+      out[4 * i + 2] = ((hh[i] >> 8) & 0xff).toInt();
+      out[4 * i + 3] = (hh[i] & 0xff).toInt();
     }
 
     return out;

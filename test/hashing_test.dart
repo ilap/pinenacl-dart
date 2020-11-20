@@ -23,7 +23,6 @@ void main() {
           final message = Uint8List.fromList(hex.decode(vector['message']));
 
           final hash = Hash.sha256(message);
-
           assert(digest == hex.encode(hash));
         });
       });
