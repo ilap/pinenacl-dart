@@ -3,7 +3,7 @@ library pinenacl.api.hashing;
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:pinenacl/api.dart';
+import 'api.dart';
 
 /// Hash algorithms, Implements SHA-512, SHA-256 and Blake2b.
 /// Cryptographic secure hash functions are irreversible transforms of input data to a fixed length digest.

@@ -6,7 +6,7 @@ authors:
 homepage: https://github.com/ilap/pinenacl-dart
 
 environment:
-  sdk: '>=2.7.0 <=2.10.4'
+  sdk: '>=2.7.0 < 3.0.0'
 
 dependencies:
   fixnum: ^0.10.11

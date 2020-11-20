@@ -2,7 +2,7 @@ library pinenacl.api.public;
 
 import 'dart:typed_data';
 
-import 'package:pinenacl/api.dart';
+import 'api.dart';
 export 'package:pinenacl/api.dart';
 
 /// Public Key Encryption

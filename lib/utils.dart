@@ -1,7 +1,7 @@
 library pinenacl.utils;
 
 import 'dart:typed_data';
-import 'package:pinenacl/api.dart';
+import 'api.dart';
 
 /// Utils class, provides secure randomnes and basic
 /// list functions.

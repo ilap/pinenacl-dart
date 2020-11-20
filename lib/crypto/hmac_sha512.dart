@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:pinenacl/api.dart';
+import '../api.dart';
 
 /// https://csrc.nist.gov/csrc/media/publications/fips/198/1/final/documents/fips-198-1_final.pdf
 /// HMAC-SHA-512 implementation

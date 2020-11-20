@@ -3,8 +3,8 @@ library pinenacl.api;
 import 'dart:collection';
 import 'dart:typed_data';
 
-import 'package:pinenacl/encoding.dart';
-import 'package:pinenacl/crypto/tweetnacl.dart';
+import 'crypto/tweetnacl.dart';
+import 'encoding.dart';
 
 export 'package:pinenacl/crypto/blake2b.dart';
 export 'package:pinenacl/crypto/hmac_sha512.dart';

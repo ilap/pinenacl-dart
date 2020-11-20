@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:pinenacl/api.dart';
+import 'api.dart';
 
 class Signature extends ByteList implements SignatureBase {
   Signature(List<int> bytes) : super(bytes, bytesLength);

@@ -1,7 +1,7 @@
 import 'package:bech32/bech32.dart' hide Bech32Encoder;
 import 'package:convert/convert.dart';
 
-import 'package:pinenacl/api.dart';
+import 'api.dart';
 
 const hexEncoder = HexEncoder();
 const base32Encoder = Base32Encoder();

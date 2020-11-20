@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:pinenacl/api.dart';
+import '../api.dart';
 
 class _Context {
   _Context(this.b, this.h, this.t, this.c, this.outLen);
