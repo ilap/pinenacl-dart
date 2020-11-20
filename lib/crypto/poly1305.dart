@@ -4,12 +4,6 @@ import 'dart:typed_data';
 /// https://github.com/floodyberry/poly1305-donna
 class Poly1305 {
   Poly1305(Uint8List key) {
-    _buffer = Uint8List(16);
-    _r = List<int>.filled(10, 0);
-    _h = List<int>.filled(10, 0);
-    _pad = Int32List(8);
-    _leftover = 0;
-    _fin = 0;
 
     int t0, t1, t2, t3, t4, t5, t6, t7;
 
@@ -41,13 +35,12 @@ class Poly1305 {
     _pad[6] = key[28] & 0xff | (key[29] & 0xff) << 8;
     _pad[7] = key[30] & 0xff | (key[31] & 0xff) << 8;
   }
-
-  Uint8List _buffer;
-  List<int> _r;
-  List<int> _h;
-  Int32List _pad;
-  int _leftover;
-  int _fin;
+  final _buffer = Uint8List(16);
+  final _r = List<int>.filled(10, 0);
+  final _h = List<int>.filled(10, 0);
+  final _pad = Int32List(8);
+  var _leftover = 0;
+  var _fin = 0;
 
   Poly1305 blocks(Uint8List m, int mpos, int bytes) {
     var hibit = _fin != 0 ? 0 : (1 << 11);

@@ -87,8 +87,8 @@ class Blake2b {
 
   /// Compression function. [last] flag indicates last block.
   static void _blake2bCompress(_Context context, last) {
-    var v = Uint32List(32);
-    var m = Uint32List(32);
+    final v = Uint32List(32);
+    final m = Uint32List(32);
 
     /// G Mixing function
     /// The ROTRs are inlined for speed
@@ -271,7 +271,7 @@ class Blake2b {
     _blake2bCompress(context, true); // final block flag = 1
 
     // little endian convert and store
-    var out = Uint8List(context.outLen);
+    final out = Uint8List(context.outLen);
     for (var i = 0; i < context.outLen; i++) {
       out[i] = context.h[i >> 2] >> (8 * (i & 3));
     }

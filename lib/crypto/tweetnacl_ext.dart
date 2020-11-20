@@ -1,8 +1,11 @@
 part of pinenacl.api.crypto.tweetnacl;
 
+/// 
 /// TweetNaCl's extension class.
 /// Following the TweetNaCl convention and added some extras.
-class TweetNaClExt {
+/// Extension is just an eye-candy here as it uses only static methods.
+/// 
+extension TweetNaClExt on TweetNaCl {
   // HMAC bytes
   static const hmacBytes = 64;
 
@@ -19,7 +22,7 @@ class TweetNaClExt {
   }
 
   static int _crypto_auth_verify(Uint8List h, Uint8List m, Uint8List k) {
-    var x = Uint8List(hmacBytes);
+    final x = Uint8List(hmacBytes);
     _crypto_auth(x, m, k);
     return _crypto_verify_64(h, 0, x, 0);
   }
@@ -38,12 +41,12 @@ class TweetNaClExt {
   }
 
   static int scalar_base(Uint8List pk, Uint8List sk) {
-    var p = List<Int64List>(4);
+    final p = List<Uint64List>(4);
 
-    p[0] = Int64List(16);
-    p[1] = Int64List(16);
-    p[2] = Int64List(16);
-    p[3] = Int64List(16);
+    p[0] = Uint64List(16);
+    p[1] = Uint64List(16);
+    p[2] = Uint64List(16);
+    p[3] = Uint64List(16);
 
     TweetNaCl._scalarbase(p, sk, 0);
     TweetNaCl._pack(pk, p);
