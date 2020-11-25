@@ -376,12 +376,14 @@ void main() {
 > By repeating the key derivation procedure before encrypting our messages,  and sending the derivationSalt along with the encrypted message, we can expect to never reuse a key, drastically reducing the risks which ensue from such a reuse.
 # TODOS
 
+- [ ] **Important**: refactor for working in 32-bit systems and browser (js).
 - [ ] Implement proper Error/Exception handling.
-- [ ] Implement encoding/decoding) classes. 
-- [ ] Add more unit tests.
-- [ ] Refactor to much simpler code.
-- [ ] Simplify or refactor the APIs and modules' dependencies.
-- [ ] Remove [fixnum] and [convert] pakages' dependency.
+- [x] Implement encoding/decoding) classes. 
+- [x] Add more unit tests.
+- [x] Refactor to much simpler code.
+- [x] Simplify or refactor the APIs and modules' dependencies.
+- [x] Remove [bech32], [hex] and [convert] pakages dependency.
+- [x] Remove [fixnum] pakage dependency.
 
 # Thanks and Credits
 
@@ -389,6 +391,8 @@ void main() {
 - [TweetNaCl dart implementation](https://github.com/jspschool/tweetnacl-dart)
 - [TweetNaCl: a crypto library in 100 tweets](https://tweetnacl.cr.yp.to/index.html)
 - [blake2b](https://github.com/emilbayes/blake2b)
+- [bech32](https://github.com/haarts/bech32)
+- And lot of others...
 
 # License
 

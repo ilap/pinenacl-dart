@@ -25,14 +25,14 @@ const _vectors = {
 };
 
 void main() {
-  const hexCoder = HexCoder.instance;
+  const hex = HexCoder.instance;
   group('Public Key Encryption', () {
     final pub = PublicKey.decode(
         'ec2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798',
-        hexCoder);
+        hex);
     final priv = PrivateKey.decode(
         '5c2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798',
-        hexCoder);
+        hex);
 
     test('Test Box decode', () {
       final b1 = Box(myPrivateKey: priv, theirPublicKey: pub);
@@ -43,10 +43,10 @@ void main() {
     test('Test Box class', () {
       final pub = PublicKey.decode(
           'ec2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798',
-          hexCoder);
+          hex);
       final priv = PrivateKey.decode(
           '5c2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798',
-          hexCoder);
+          hex);
       final b = Box(myPrivateKey: priv, theirPublicKey: pub);
 
       assert(b == b.sharedKey);
@@ -54,8 +54,8 @@ void main() {
     });
 
     test('Test Box encryption', () {
-      final pubalice = PublicKey.decode(_vectors['pubalice']!, hexCoder);
-      final privbob = PrivateKey.decode(_vectors['privbob']!, hexCoder);
+      final pubalice = PublicKey.decode(_vectors['pubalice']!, hex);
+      final privbob = PrivateKey.decode(_vectors['privbob']!, hex);
 
       final box = Box(myPrivateKey: privbob, theirPublicKey: pubalice);
 
@@ -63,59 +63,59 @@ void main() {
       final ciphertext = _vectors['ciphertext']!;
       final plaintext = _vectors['plaintext']!;
 
-      final encrypted = box.encrypt(hexCoder.decode(plaintext),
-          nonce: hexCoder.decode(nonce));
+      final encrypted =
+          box.encrypt(hex.decode(plaintext), nonce: hex.decode(nonce));
 
-      final expected = hexCoder.decode(nonce + ciphertext);
+      final expected = hex.decode(nonce + ciphertext);
 
-      assert(hexCoder.encode(encrypted) == hexCoder.encode(expected));
-      assert(hexCoder.encode(encrypted.nonce) == nonce);
-      assert(hexCoder.encode(encrypted.cipherText) == ciphertext);
+      assert(hex.encode(encrypted) == hex.encode(expected));
+      assert(hex.encode(encrypted.nonce) == nonce);
+      assert(hex.encode(encrypted.cipherText) == ciphertext);
     });
 
     test('Test Box decryption', () {
-      final privalice = PrivateKey.decode(_vectors['privalice']!, hexCoder);
-      final pubbob = PublicKey.decode(_vectors['pubbob']!, hexCoder);
+      final privalice = PrivateKey.decode(_vectors['privalice']!, hex);
+      final pubbob = PublicKey.decode(_vectors['pubbob']!, hex);
       final nonce = _vectors['nonce']!;
       final plaintext = _vectors['plaintext']!;
       final ciphertext = _vectors['ciphertext']!;
 
       final box = Box(myPrivateKey: privalice, theirPublicKey: pubbob);
 
-      final decrypted = box.decrypt(hexCoder.decode(ciphertext),
-          nonce: hexCoder.decode(nonce));
+      final decrypted =
+          box.decrypt(hex.decode(ciphertext), nonce: hex.decode(nonce));
 
-      assert(hexCoder.encode(ByteList.fromList(decrypted)) == plaintext);
+      assert(hex.encode(ByteList.fromList(decrypted)) == plaintext);
     });
 
     test('Test Box encryption and decryption combined', () {
-      final pubalice = PublicKey.decode(_vectors['pubalice']!, hexCoder);
-      final privbob = PrivateKey.decode(_vectors['privbob']!, hexCoder);
+      final pubalice = PublicKey.decode(_vectors['pubalice']!, hex);
+      final privbob = PrivateKey.decode(_vectors['privbob']!, hex);
 
       final box = Box(myPrivateKey: privbob, theirPublicKey: pubalice);
 
       final nonce = _vectors['nonce']!;
       final plaintext = _vectors['plaintext']!;
 
-      final encrypted = box.encrypt(hexCoder.decode(plaintext),
-          nonce: hexCoder.decode(nonce));
+      final encrypted =
+          box.encrypt(hex.decode(plaintext), nonce: hex.decode(nonce));
 
       // NOTE: nonce is retrieved from the EncryptedMessage class
       final decrypted = box.decrypt(encrypted);
 
-      assert(hexCoder.encode(decrypted) == plaintext);
+      assert(hex.encode(decrypted) == plaintext);
     });
 
     test('Test Nonce encryption and decryption combined', () {
-      final privalice = PrivateKey.decode(_vectors['privalice']!, hexCoder);
-      final pubbob = PublicKey.decode(_vectors['pubbob']!, hexCoder);
+      final privalice = PrivateKey.decode(_vectors['privalice']!, hex);
+      final pubbob = PublicKey.decode(_vectors['pubbob']!, hex);
 
       final box = Box(myPrivateKey: privalice, theirPublicKey: pubbob);
 
       final plaintext = _vectors['plaintext']!;
-      final nonce_0 = box.encrypt(hexCoder.decode(plaintext)).nonce;
+      final nonce_0 = box.encrypt(hex.decode(plaintext)).nonce;
 
-      final nonce_1 = box.encrypt(hexCoder.decode(plaintext)).nonce;
+      final nonce_1 = box.encrypt(hex.decode(plaintext)).nonce;
 
       assert(nonce_0 != nonce_1);
     });

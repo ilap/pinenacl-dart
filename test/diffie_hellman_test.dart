@@ -7,11 +7,10 @@ import 'package:test/test.dart';
 import 'package:pinenacl/api.dart';
 
 const hex = HexCoder.instance;
-const hexCoder = hex;
 
 void _doShared(String sk, String pk, String sharedSecret) {
-  final priv = PrivateKey.decode(sk, hexCoder);
-  final pub = PublicKey.decode(pk, hexCoder);
+  final priv = PrivateKey.decode(sk, hex);
+  final pub = PublicKey.decode(pk, hex);
 
   final expected = Uint8List(32);
 
@@ -35,15 +34,15 @@ void main() {
       test('official testvector', () {
         final sharedSecret = officialVector['shr'];
 
-        final alicePriv = PrivateKey.decode(officialVector['ask']!, hexCoder);
+        final alicePriv = PrivateKey.decode(officialVector['ask']!, hex);
         final aliceGenPub = alicePriv.publicKey;
-        final alicePub = PublicKey.decode(officialVector['apk']!, hexCoder);
+        final alicePub = PublicKey.decode(officialVector['apk']!, hex);
 
         assert(hex.encode(aliceGenPub) == hex.encode(alicePub));
 
-        final bobPriv = PrivateKey.decode(officialVector['bsk']!, hexCoder);
+        final bobPriv = PrivateKey.decode(officialVector['bsk']!, hex);
         final bobGenPub = bobPriv.publicKey;
-        final bobPub = PublicKey.decode(officialVector['bpk']!, hexCoder);
+        final bobPub = PublicKey.decode(officialVector['bpk']!, hex);
 
         assert(hex.encode(bobGenPub) == hex.encode(bobPub));
 

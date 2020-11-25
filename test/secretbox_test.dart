@@ -1,5 +1,6 @@
 import 'dart:typed_data';
-import 'package:convert/convert.dart';
+
+import 'package:pinenacl/encoding.dart';
 import 'package:test/test.dart';
 
 import 'package:pinenacl/secret.dart' show SecretBox;
@@ -21,6 +22,7 @@ const _vectors = {
 };
 
 void main() {
+  const hex = HexCoder.instance;
   group('Secret Key Encryption', () {
     test('SecretBox basic', () {
       final s = SecretBox.decode(

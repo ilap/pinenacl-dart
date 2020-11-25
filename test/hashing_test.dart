@@ -2,12 +2,13 @@ import 'dart:io';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:convert/convert.dart';
+import 'package:pinenacl/encoding.dart';
 import 'package:test/test.dart';
 
 import 'package:pinenacl/hashing.dart';
 
 void main() {
+  const hex = HexCoder.instance;
   group('Hashing', () {
     group('SHA-256', () {
       final dir = Directory.current;

@@ -1,7 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:convert/convert.dart';
-
 import 'package:pinenacl/api.dart';
 import 'package:pinenacl/hashing.dart';
 
@@ -9,6 +7,7 @@ void main() {
   print('\n### Hashing - Blake2b Example ###\n');
 
   final hasher = Hash.blake2b;
+  const hex = HexCoder.instance;
 
   /// # Hashing
   print('Hash example\nH(\'\'): ${hex.encode(hasher(''))}');

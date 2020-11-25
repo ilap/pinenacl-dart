@@ -5,7 +5,9 @@
 - Reformatted CHANGELOG.md
 - Added `in-house` HexCoder class
 - Refactored, cleaned the code for preparing `null-safety`
-- Removed `package:hex` and `package:bech32` dependencies
+- Removed `hex`, `bech32` and `convert` package dependencies
+- Added analyzer strong-mode's `implicit-casts: false` and `implicit-dynamic: false`
+
 
 ## [v0.1.5](https://github.com/ilap/pinenacl-dart/compare/v0.1.3...v0.1.5) (2020-11-20)
 - Reverted SHA-256 changes back as it behaved differently on JIT and AOT

@@ -10,6 +10,7 @@ import 'hmac_sha512.dart';
 import 'poly1305.dart';
 
 part 'tweetnacl_ext.dart';
+// ignore_for_file: constant_identifier_names
 
 class TweetNaCl {
   static const int keyLength = 32;
@@ -37,9 +38,8 @@ class TweetNaCl {
   // Signature length
   static const int signatureLength = 64;
 
-  // ignore: constant_identifier_names
   static const _0 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-  // ignore: constant_identifier_names
+
   static const _9 = [
     9, 0, 0, 0, 0, 0, 0, 0, // 0-7
     0, 0, 0, 0, 0, 0, 0, 0,
@@ -49,7 +49,7 @@ class TweetNaCl {
 
   static const _gf0 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; //16
   static const _gf1 = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; //16
-  // ignore: constant_identifier_names
+
   static const _121665 = [
     0xDB41,
     1,
@@ -69,7 +69,6 @@ class TweetNaCl {
     0
   ]; //16
 
-  // ignore: constant_identifier_names
   static const _D = [
     0x78a3, 0x1359, 0x4dca, 0x75eb, // 0-3
     0xd8ab, 0x4141, 0x0a4d, 0x0070,
@@ -77,28 +76,27 @@ class TweetNaCl {
     0xfe73, 0x2b6f, 0x6cee, 0x5203
   ];
 
-  // ignore: constant_identifier_names
   static const _D2 = [
     0xf159, 0x26b2, 0x9b94, 0xebd6, // 0-3
     0xb156, 0x8283, 0x149a, 0x00e0,
     0xd130, 0xeef3, 0x80f2, 0x198e,
     0xfce7, 0x56df, 0xd9dc, 0x2406
   ];
-  // ignore: constant_identifier_names
+
   static const _X = [
     0xd51a, 0x8f25, 0x2d60, 0xc956, // 0-3
     0xa7b2, 0x9525, 0xc760, 0x692c,
     0xdc5c, 0xfdd6, 0xe231, 0xc0a4,
     0x53fe, 0xcd6e, 0x36d3, 0x2169
   ];
-  // ignore: constant_identifier_names
+
   static const _Y = [
     0x6658, 0x6666, 0x6666, 0x6666, // 0-3
     0x6666, 0x6666, 0x6666, 0x6666,
     0x6666, 0x6666, 0x6666, 0x6666,
     0x6666, 0x6666, 0x6666, 0x6666
   ];
-  // ignore: constant_identifier_names
+
   static const _I = [
     0xa0b0, 0x4a0e, 0x1b27, 0xc4ee, // 0-3
     0xe478, 0xad2f, 0x1806, 0x2f43,
@@ -2302,7 +2300,6 @@ class TweetNaCl {
     return 0;
   }
 
-  // ignore: constant_identifier_names
   static const _L = [
     0xed, 0xd3, 0xf5, 0x5c, 0x1a, 0x63, 0x12, 0x58, //0-7
     0xd6, 0x9c, 0xf7, 0xa2, 0xde, 0xf9, 0xde, 0x14,

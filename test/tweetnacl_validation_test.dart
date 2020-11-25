@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:convert/convert.dart';
+import 'package:pinenacl/encoding.dart';
 import 'package:test/test.dart';
 
 import 'package:pinenacl/api.dart' show TweetNaCl;
@@ -8,6 +8,7 @@ import 'package:pinenacl/api.dart' show TweetNaCl;
 /// The [`NaCl`](https://nacl.cr.yp.to/valid.html) official testvectors from the
 /// [Cryptography in NaCl](https://cr.yp.to/highspeed/naclcrypto-20090310.pdf) paper
 void main() {
+  const hex = HexCoder.instance;
   const aliceSk =
       '77076d0a7318a57d3c16c17251b26645df4c2f87ebc0992ab177fba51db92c2a';
   const alicePk =
@@ -52,30 +53,28 @@ void main() {
       test('Alice\'s SecretKey to PublicKey to', () {
         final pk = Uint8List(TweetNaCl.publicKeyLength);
 
-        TweetNaCl.crypto_scalarmult_base(pk, hex.decode(aliceSk) as Uint8List);
+        TweetNaCl.crypto_scalarmult_base(pk, hex.decode(aliceSk));
 
         assert(hex.encode(pk) == alicePk);
       });
       test('Bob\'s SecretKey to PublicKey test', () {
         final pk = Uint8List(TweetNaCl.publicKeyLength);
 
-        TweetNaCl.crypto_scalarmult_base(pk, hex.decode(bobSk) as Uint8List);
+        TweetNaCl.crypto_scalarmult_base(pk, hex.decode(bobSk));
 
         assert(hex.encode(pk) == bobPk);
       });
       test('Shared secret (Alice Secret, Bob pulic) test', () {
         final k = Uint8List(TweetNaCl.secretKeyLength);
 
-        TweetNaCl.crypto_scalarmult(
-            k, hex.decode(aliceSk) as Uint8List, hex.decode(bobPk));
+        TweetNaCl.crypto_scalarmult(k, hex.decode(aliceSk), hex.decode(bobPk));
 
         assert(hex.encode(k) == sharedSecret);
       });
       test('Shared secret (Bob secret, Alice pulic) test', () {
         final k = Uint8List(TweetNaCl.secretKeyLength);
 
-        TweetNaCl.crypto_scalarmult(
-            k, hex.decode(bobSk) as Uint8List, hex.decode(alicePk));
+        TweetNaCl.crypto_scalarmult(k, hex.decode(bobSk), hex.decode(alicePk));
 
         assert(hex.encode(k) == sharedSecret);
       });
@@ -83,7 +82,7 @@ void main() {
         final _1k = Uint8List(TweetNaCl.secretKeyLength);
 
         TweetNaCl.crypto_core_hsalsa20(
-            _1k, zero, hex.decode(sharedSecret) as Uint8List, hex.decode(c));
+            _1k, zero, hex.decode(sharedSecret), hex.decode(c));
 
         assert(hex.encode(_1k) == firstKey);
       });
@@ -94,11 +93,7 @@ void main() {
 
         expect(
             () => TweetNaCl.crypto_stream_salsa20(
-                out,
-                0,
-                outLen,
-                hex.decode(nonce) as Uint8List,
-                hex.decode(firstKey) as Uint8List),
+                out, 0, outLen, hex.decode(nonce), hex.decode(firstKey)),
             returnsNormally);
         final hexOut = TweetNaCl.crypto_hash(hashOut, out);
 

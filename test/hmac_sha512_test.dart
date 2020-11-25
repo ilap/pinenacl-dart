@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:convert/convert.dart';
 import 'package:test/test.dart';
 
 import 'package:pinenacl/api.dart';
@@ -122,6 +121,7 @@ const vectors = [
 ];
 
 void main() {
+  const hex = HexCoder.instance;
   group('Hash-based message authentication code', () {
     group('HMAC-SHA-512', () {
       var idx = 0;
