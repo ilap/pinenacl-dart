@@ -5,12 +5,12 @@ abstract class Sign {
   EncryptionMessage sign(List<int> message);
 }
 
-abstract class Verify extends ByteList {
-  bool verify({SignatureBase signature, List<int> message});
-  bool verifySignedMessage({EncryptionMessage signedMessage});
+abstract class Verify implements ByteList {
+  bool verify({required SignatureBase signature, required List<int> message});
+  bool verifySignedMessage({required EncryptionMessage signedMessage});
 }
 
-abstract class SignatureBase extends ByteList {}
+abstract class SignatureBase implements ByteList {}
 
 abstract class EncryptionMessage {
   SignatureBase get signature;

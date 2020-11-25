@@ -38,13 +38,13 @@ class Poly1305 {
   final _r = List<int>.filled(10, 0);
   final _h = List<int>.filled(10, 0);
   final _pad = Int32List(8);
-  var _leftover = 0;
-  var _fin = 0;
+  int _leftover = 0;
+  int _fin = 0;
 
   Poly1305 blocks(Uint8List m, int mpos, int bytes) {
     var hibit = _fin != 0 ? 0 : (1 << 11);
-    var t0, t1, t2, t3, t4, t5, t6, t7, c;
-    var d0, d1, d2, d3, d4, d5, d6, d7, d8, d9;
+    int t0, t1, t2, t3, t4, t5, t6, t7, c;
+    int d0, d1, d2, d3, d4, d5, d6, d7, d8, d9;
 
     var h0 = _h[0],
         h1 = _h[1],

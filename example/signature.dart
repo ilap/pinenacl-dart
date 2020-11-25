@@ -1,6 +1,7 @@
 import 'package:pinenacl/api.dart';
 
 void main() {
+  const hexCoder = HexCoder.instance;
   print('\n### Digital Signatures - Signing Example ###\n');
 
   /// Signer’s perspective (SigningKey)
@@ -17,14 +18,12 @@ void main() {
   final verifyKey = signingKey.verifyKey;
 
   // Serialize the verify key to send it to a third party
-  // TODO: implements similar: verifyKey.encode(Bech32Encoder(hrp: 'ed25519_pk'));
-  final verifyKeyHex = verifyKey.encode(hexEncoder);
+  final verifyKeyHex = verifyKey.encode(hexCoder);
 
   ///
   /// Verifier’s perspective (VerifyKey)
   ///
-  // TODO: implements similar: VerifyKey.decode(verifyKeyHex, decoder: HexEncoder());
-  final verifyKey2 = VerifyKey.decode(verifyKeyHex, hexEncoder);
+  final verifyKey2 = VerifyKey.decode(verifyKeyHex, coder: hexCoder);
   assert(verifyKey == verifyKey2);
   print('The "$message" is successfully verified');
 

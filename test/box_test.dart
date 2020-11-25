@@ -1,8 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:convert/convert.dart';
 import 'package:test/test.dart';
-
 import 'package:pinenacl/public.dart';
 
 const _vectors = {
@@ -27,13 +25,14 @@ const _vectors = {
 };
 
 void main() {
+  const hexCoder = HexCoder.instance;
   group('Public Key Encryption', () {
     final pub = PublicKey.decode(
         'ec2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798',
-        hexEncoder);
+        hexCoder);
     final priv = PrivateKey.decode(
         '5c2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798',
-        hexEncoder);
+        hexCoder);
 
     test('Test Box decode', () {
       final b1 = Box(myPrivateKey: priv, theirPublicKey: pub);
@@ -44,10 +43,10 @@ void main() {
     test('Test Box class', () {
       final pub = PublicKey.decode(
           'ec2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798',
-          hexEncoder);
+          hexCoder);
       final priv = PrivateKey.decode(
           '5c2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798',
-          hexEncoder);
+          hexCoder);
       final b = Box(myPrivateKey: priv, theirPublicKey: pub);
 
       assert(b == b.sharedKey);
@@ -55,71 +54,68 @@ void main() {
     });
 
     test('Test Box encryption', () {
-      final pubalice = PublicKey.decode(_vectors['pubalice'], hexEncoder);
-      final privbob = PrivateKey.decode(_vectors['privbob'], hexEncoder);
+      final pubalice = PublicKey.decode(_vectors['pubalice']!, hexCoder);
+      final privbob = PrivateKey.decode(_vectors['privbob']!, hexCoder);
 
       final box = Box(myPrivateKey: privbob, theirPublicKey: pubalice);
 
-      final nonce = _vectors['nonce'];
-      final ciphertext = _vectors['ciphertext'];
-      final plaintext = _vectors['plaintext'];
+      final nonce = _vectors['nonce']!;
+      final ciphertext = _vectors['ciphertext']!;
+      final plaintext = _vectors['plaintext']!;
 
-      final encrypted =
-          box.encrypt(hex.decode(plaintext), nonce: hex.decode(nonce));
+      final encrypted = box.encrypt(hexCoder.decode(plaintext),
+          nonce: hexCoder.decode(nonce));
 
-      final expected = hex.decode(nonce + ciphertext);
+      final expected = hexCoder.decode(nonce + ciphertext);
 
-      assert(hex.encode(encrypted) == hex.encode(expected));
-      assert(hex.encode(encrypted.nonce) == nonce);
-      assert(hex.encode(encrypted.cipherText) == ciphertext);
+      assert(hexCoder.encode(encrypted) == hexCoder.encode(expected));
+      assert(hexCoder.encode(encrypted.nonce) == nonce);
+      assert(hexCoder.encode(encrypted.cipherText) == ciphertext);
     });
 
     test('Test Box decryption', () {
-      final privalice = PrivateKey.decode(_vectors['privalice'], hexEncoder);
-      final pubbob = PublicKey.decode(_vectors['pubbob'], hexEncoder);
-      final nonce = _vectors['nonce'];
-      final plaintext = _vectors['plaintext'];
-      final ciphertext = _vectors['ciphertext'];
+      final privalice = PrivateKey.decode(_vectors['privalice']!, hexCoder);
+      final pubbob = PublicKey.decode(_vectors['pubbob']!, hexCoder);
+      final nonce = _vectors['nonce']!;
+      final plaintext = _vectors['plaintext']!;
+      final ciphertext = _vectors['ciphertext']!;
 
       final box = Box(myPrivateKey: privalice, theirPublicKey: pubbob);
 
-      final decrypted =
-          box.decrypt(hex.decode(ciphertext), nonce: hex.decode(nonce));
+      final decrypted = box.decrypt(hexCoder.decode(ciphertext),
+          nonce: hexCoder.decode(nonce));
 
-      assert(hex.encode(decrypted) == plaintext);
+      assert(hexCoder.encode(ByteList.fromList(decrypted)) == plaintext);
     });
 
     test('Test Box encryption and decryption combined', () {
-      final privalice = PrivateKey.decode(_vectors['privalice'], hexEncoder);
-      final pubalice = PublicKey.decode(_vectors['pubalice'], hexEncoder);
-      final privbob = PrivateKey.decode(_vectors['privbob'], hexEncoder);
-      final pubbob = PublicKey.decode(_vectors['pubbob'], hexEncoder);
+      final pubalice = PublicKey.decode(_vectors['pubalice']!, hexCoder);
+      final privbob = PrivateKey.decode(_vectors['privbob']!, hexCoder);
 
       final box = Box(myPrivateKey: privbob, theirPublicKey: pubalice);
-      final box1 = Box(myPrivateKey: privalice, theirPublicKey: pubbob);
 
-      final nonce = _vectors['nonce'];
-      final plaintext = _vectors['plaintext'];
+      final nonce = _vectors['nonce']!;
+      final plaintext = _vectors['plaintext']!;
 
-      final encrypted =
-          box.encrypt(hex.decode(plaintext), nonce: hex.decode(nonce));
+      final encrypted = box.encrypt(hexCoder.decode(plaintext),
+          nonce: hexCoder.decode(nonce));
 
       // NOTE: nonce is retrieved from the EncryptedMessage class
-      final decrypted = box1.decrypt(encrypted);
+      final decrypted = box.decrypt(encrypted);
 
-      assert(hex.encode(decrypted) == plaintext);
+      assert(hexCoder.encode(decrypted) == plaintext);
     });
 
     test('Test Nonce encryption and decryption combined', () {
-      final privalice = PrivateKey.decode(_vectors['privalice'], hexEncoder);
-      final pubbob = PublicKey.decode(_vectors['pubbob'], hexEncoder);
+      final privalice = PrivateKey.decode(_vectors['privalice']!, hexCoder);
+      final pubbob = PublicKey.decode(_vectors['pubbob']!, hexCoder);
 
       final box = Box(myPrivateKey: privalice, theirPublicKey: pubbob);
 
-      final plaintext = _vectors['plaintext'];
-      final nonce_0 = box.encrypt(hex.decode(plaintext)).nonce;
+      final plaintext = _vectors['plaintext']!;
+      final nonce_0 = box.encrypt(hexCoder.decode(plaintext)).nonce;
 
-      final nonce_1 = box.encrypt(hex.decode(plaintext)).nonce;
+      final nonce_1 = box.encrypt(hexCoder.decode(plaintext)).nonce;
 
       assert(nonce_0 != nonce_1);
     });
@@ -130,7 +126,7 @@ void main() {
       final _32 = Uint8List(32);
       final k32 = PublicKey(_32);
 
-      // TODO: Generalise and implement proper rrror handling by implementing proper exception classes.
+      // TODO: Generalise and implement proper Error handling by implementing proper exception classes.
       // expect(() => PrivateKey(priv.publicKey), throwsException);
       // expect(() => PrivateKey, returnsNormally);
       // expect(() => PrivateKey(), throwsA(TypeMatcher<EXCTYPE>()));
@@ -148,12 +144,13 @@ void main() {
           returnsNormally);
 
       // Invalid combinations
-      expect(
-          () => Box(myPrivateKey: null, theirPublicKey: null), throwsException);
-      expect(() => Box(myPrivateKey: null, theirPublicKey: priv.publicKey),
-          throwsException);
-      expect(
-          () => Box(myPrivateKey: priv, theirPublicKey: null), throwsException);
+      // eliminated by null-safety
+      //expect(
+      //    () => Box(myPrivateKey: null, theirPublicKey: null), throwsException);
+      //expect(() => Box(myPrivateKey: null, theirPublicKey: priv.publicKey),
+      //    throwsException);
+      //expect(
+      //    () => Box(myPrivateKey: priv, theirPublicKey: null), throwsException);
     });
   });
 }

@@ -2,14 +2,16 @@ import 'dart:io';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:convert/convert.dart';
 import 'package:test/test.dart';
 
 import 'package:pinenacl/api.dart';
 
+const hex = HexCoder.instance;
+const hexCoder = hex;
+
 void _doShared(String sk, String pk, String sharedSecret) {
-  final priv = PrivateKey.decode(sk, hexEncoder);
-  final pub = PublicKey.decode(pk, hexEncoder);
+  final priv = PrivateKey.decode(sk, hexCoder);
+  final pub = PublicKey.decode(pk, hexCoder);
 
   final expected = Uint8List(32);
 
@@ -33,15 +35,15 @@ void main() {
       test('official testvector', () {
         final sharedSecret = officialVector['shr'];
 
-        final alicePriv = PrivateKey.decode(officialVector['ask'], hexEncoder);
+        final alicePriv = PrivateKey.decode(officialVector['ask']!, hexCoder);
         final aliceGenPub = alicePriv.publicKey;
-        final alicePub = PublicKey.decode(officialVector['apk'], hexEncoder);
+        final alicePub = PublicKey.decode(officialVector['apk']!, hexCoder);
 
         assert(hex.encode(aliceGenPub) == hex.encode(alicePub));
 
-        final bobPriv = PrivateKey.decode(officialVector['bsk'], hexEncoder);
+        final bobPriv = PrivateKey.decode(officialVector['bsk']!, hexCoder);
         final bobGenPub = bobPriv.publicKey;
-        final bobPub = PublicKey.decode(officialVector['bpk'], hexEncoder);
+        final bobPub = PublicKey.decode(officialVector['bpk']!, hexCoder);
 
         assert(hex.encode(bobGenPub) == hex.encode(bobPub));
 
@@ -62,22 +64,22 @@ void main() {
       final dir = Directory.current;
       final file = File('${dir.path}/test/wycheproof/X25519.json');
       final contents = file.readAsStringSync();
-      final x25519 = JsonDecoder().convert(contents);
+      final dynamic x25519 = JsonDecoder().convert(contents);
 
-      final testGroups = x25519['testGroups'][0];
-      final tests = testGroups['tests'];
+      final dynamic testGroups = x25519['testGroups'][0];
+      final dynamic tests = testGroups['tests'];
 
-      tests.forEach((vector) {
-        final curve = vector['curve'];
-        final comment = vector['comment'];
-        final idx = vector['tcId'];
+      tests.forEach((dynamic vector) {
+        final curve = vector['curve']! as String;
+        final comment = vector['comment']! as String;
+        final idx = vector['tcId']! as int;
         var description = '$curve - $comment ($idx)';
 
         test(description, () {
-          final public = vector['public'];
-          final private = vector['private'];
-          final shared = vector['shared'];
-          final result = vector['result'];
+          final public = vector['public']! as String;
+          final private = vector['private']! as String;
+          final shared = vector['shared']! as String;
+          final result = vector['result']! as String;
 
           if (result == 'valid' || result == 'acceptable') {
             _doShared(private, public, shared);

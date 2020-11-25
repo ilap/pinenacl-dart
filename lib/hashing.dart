@@ -22,7 +22,7 @@ class Hash {
       throw Exception('The message must be either of string or Uint8List');
     }
     var out = Uint8List(32);
-    Sha256.crypto_hash_sha256(out, message);
+    Sha256.crypto_hash_sha256(out, message as Uint8List);
     return out;
   }
 
@@ -34,23 +34,23 @@ class Hash {
       throw Exception('The message must be either of string or Uint8List');
     }
     var out = Uint8List(hashLength);
-    TweetNaCl.crypto_hash(out, message);
+    TweetNaCl.crypto_hash(out, message as Uint8List);
     return out;
   }
 
   /// Returns a Blake2b hash of the message.
   static Uint8List blake2b(dynamic message,
-      {int digestSize,
-      Uint8List key,
-      Uint8List salt,
-      Uint8List personalisation}) {
+      {int? digestSize,
+      Uint8List? key,
+      Uint8List? salt,
+      Uint8List? personalisation}) {
     if (message is String) {
       message = Uint8List.fromList(utf8.encode(message));
     } else if (message is! Uint8List) {
       throw Exception('The message must be either of string or Uint8List');
     }
 
-    return Blake2b.digest(message,
+    return Blake2b.digest(message as Uint8List,
         digestSize: digestSize ?? hashLength,
         key: key,
         salt: salt,

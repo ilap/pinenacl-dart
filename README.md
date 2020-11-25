@@ -1,6 +1,9 @@
 # PineNaCl
 
-[![pub package](https://img.shields.io/pub/v/pinenacl.svg)](https://pub.dartlang.org/packages/pinenacl) [![Dart Test CI](https://github.com/ilap/pinenacl-dart/workflows/Dart%20Test%20CI/badge.svg)](https://github.com/ilap/pinenacl-dart/actions?query=workflow%3A%22Dart+Test+CI%22)
+[![Pub Version (stable)](https://img.shields.io/pub/v/pinenacl?color=important&label=pub%20stable&logo=dart)](https://pub.dartlang.org/packages/pinenacl) 
+[![Pub Version (including pre-releases)](https://img.shields.io/pub/v/pinenacl?color=blueviolet&label=pub%20prerelease&include_prereleases&logo=dart)](https://pub.dartlang.org/packages/pinenacl)
+[![Dart Test CI](https://github.com/ilap/pinenacl-dart/workflows/Dart%20Test%20CI/badge.svg)](https://github.com/ilap/pinenacl-dart/actions?query=workflow%3A%22Dart+Test+CI%22)
+
 
 PineNaCl is a Dart implementation of the [`TweetNaCl`](https://tweetnacl.cr.yp.to/) the world's first auditable [high-security cryptographic library](https://tweetnacl.cr.yp.to/tweetnacl-20140917.pdf).
 
@@ -275,13 +278,11 @@ void main() {
   final verifyKey = signingKey.verifyKey;
 
   // Serialize the verify key to send it to a third party
-  // TODO: implements similar: verifyKey.encode(Bech32Encoder(hrp: 'ed25519_pk'));
   final verifyKeyHex = hex.encode(verifyKey);
 
   /// 
   /// Verifier’s perspective (VerifyKey)
   /// 
-  // TODO: implements similar: VerifyKey.decode(verifyKeyHex, decoder: HexEncoder());
   final verifyKey2 = VerifyKey.fromHexString(verifyKeyHex);
   assert(verifyKey == verifyKey2);
   print('The "$message" is successfully verified');

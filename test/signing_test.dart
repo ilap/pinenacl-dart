@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:convert/convert.dart';
+import 'package:pinenacl/encoding.dart';
 import 'package:test/test.dart';
 
 import 'package:pinenacl/signing.dart';
@@ -37,18 +37,19 @@ const _cardanoVectors = [
 ];
 
 void main() {
+  const hex = HexCoder.instance;
   group('Digital Signatures #1', () {
     group('Basic tests', () {
       test('simple signing test', () {
-        final seed = _vectors['seed'];
+        final seed = _vectors['seed']!;
         //final public = _vectors['public'];
-        final message = _vectors['message'];
-        final signature = _vectors['signature'];
+        final message = _vectors['message']!;
+        final signature = _vectors['signature']!;
         final expected = SignedMessage.fromList(
-            signedMessage: hex.decode(_vectors['expected']));
+            signedMessage: hex.decode(_vectors['expected']!));
 
-        final signingKey = SigningKey(seed: hex.decode(seed));
-        final signed = signingKey.sign(hex.decode(message));
+        final signingKey = SigningKey.decode(seed, hex);
+        final signed = signingKey.sign(hex.decode(message).toList());
 
         assert(signed == expected);
         assert(hex.encode(signed.message) == message);
@@ -61,9 +62,9 @@ void main() {
       _cardanoVectors.forEach((vector) {
         final description = ' (${++idx})';
         test(description, () {
-          final seed = vector['seed'];
-          final message = vector['message'];
-          final signature = vector['signature'];
+          final seed = vector['seed']!;
+          final message = vector['message']!;
+          final signature = vector['signature']!;
 
           final signingKey = SigningKey(seed: hex.decode(seed));
           final signed = signingKey.sign(hex.decode(message));
@@ -78,16 +79,16 @@ void main() {
       final dir = Directory.current;
       final file = File('${dir.path}/test/data/eddsa_ed25519_vectors.json');
       final contents = file.readAsStringSync();
-      final tests = JsonDecoder().convert(contents);
+      final dynamic tests = JsonDecoder().convert(contents);
 
       var idx = 0;
-      tests.forEach((vector) {
+      tests.forEach((dynamic vector) {
         var description = ' (${++idx})';
         test(description, () {
-          final seed = hex.decode(vector['seed']).sublist(0, 32);
-          final public = hex.decode(vector['publ']);
-          final message = hex.decode(vector['mesg']);
-          final signedMessage = hex.decode(vector['sigd']);
+          final seed = hex.decode(vector['seed']! as String).sublist(0, 32);
+          final public = hex.decode(vector['publ']! as String);
+          final message = hex.decode(vector['mesg']! as String);
+          final signedMessage = hex.decode(vector['sigd']! as String);
           final signature = signedMessage.sublist(0, 64);
           final expected = SignedMessage.fromList(signedMessage: signedMessage);
 

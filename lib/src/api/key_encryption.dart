@@ -6,12 +6,12 @@ typedef Crypting = Uint8List Function(
 abstract class BoxBase extends AsymmetricKey {
   BoxBase.fromList(List<int> list) : super.fromList(list);
 
-  Crypting doEncrypt;
-  Crypting doDecrypt;
+  late Crypting doEncrypt;
+  late Crypting doDecrypt;
   ByteList get key;
 
-  Uint8List decrypt(Uint8List encryptedMessage, {Uint8List nonce}) {
-    var ciphertext;
+  Uint8List decrypt(Uint8List encryptedMessage, {Uint8List? nonce}) {
+    Uint8List ciphertext;
     if (encryptedMessage is EncryptedMessage) {
       nonce = encryptedMessage.nonce;
       ciphertext = encryptedMessage.cipherText;
@@ -21,26 +21,29 @@ abstract class BoxBase extends AsymmetricKey {
       throw Exception('Nonce is required for a message');
     }
 
-    final c = Uint8List(TweetNaCl.boxzerobytesLength) + ciphertext;
+    final c =
+        Uint8List(TweetNaCl.boxzerobytesLength).toList() + ciphertext.toList();
     final m = Uint8List(c.length);
     final plaintext = doDecrypt(m, Uint8List.fromList(c), c.length, nonce, key);
     return Uint8List.fromList(plaintext);
   }
 
-  EncryptedMessage encrypt(List<int> plainText, {List<int> nonce}) {
-    nonce = nonce ?? TweetNaCl.randombytes(TweetNaCl.nonceLength);
+  EncryptedMessage encrypt(List<int> plainText, {List<int>? nonce}) {
+    final nonce1 = nonce ?? TweetNaCl.randombytes(TweetNaCl.nonceLength);
 
-    final m = Uint8List(TweetNaCl.zerobytesLength) + plainText;
+    final m = Uint8List(TweetNaCl.zerobytesLength).toList() + plainText;
     final c = Uint8List(m.length);
-    final cipherText =
-        doEncrypt(c, Uint8List.fromList(m), m.length, nonce, key);
 
-    return EncryptedMessage(nonce: nonce, cipherText: cipherText);
+    final cipherText = doEncrypt(
+        c, Uint8List.fromList(m), m.length, Uint8List.fromList(nonce1), key);
+
+    return EncryptedMessage(
+        nonce: nonce1.toList(), cipherText: cipherText.toList());
   }
 }
 
 class EncryptedMessage extends ByteList with Suffix {
-  EncryptedMessage({List<int> nonce, List<int> cipherText})
+  EncryptedMessage({required List<int> nonce, required List<int> cipherText})
       : super.fromList(nonce + cipherText, nonceLength);
 
   EncryptedMessage.fromList(List<int> list) : super.fromList(list, nonceLength);
@@ -61,7 +64,7 @@ class PublicKey extends ByteList implements AsymmetricPublicKey {
     final decoded = defaultDecoder.decode(data);
     return PublicKey(decoded);
   }
-  static const decoder = Bech32Encoder(hrp: 'ed25519_pk');
+  static const decoder = Bech32Coder(hrp: 'ed25519_pk');
 
   @override
   Encoder get encoder => decoder;
@@ -89,7 +92,7 @@ class PrivateKey extends ByteList implements AsymmetricPrivateKey {
     return PrivateKey(decoded);
   }
 
-  static const decoder = Bech32Encoder(hrp: 'ed25519_sk');
+  static const decoder = Bech32Coder(hrp: 'ed25519_sk');
 
   @override
   Encoder get encoder => decoder;
@@ -101,7 +104,7 @@ class PrivateKey extends ByteList implements AsymmetricPrivateKey {
   static final keyLength = TweetNaCl.secretKeyLength;
 
   static Uint8List _seedToPublic(List<int> seed) {
-    if (seed == null || seed.length != seedSize) {
+    if (seed.length != seedSize) {
       throw Exception(
           'PrivateKey\'s seed must be a $seedSize bytes long binary sequence');
     }
@@ -112,7 +115,7 @@ class PrivateKey extends ByteList implements AsymmetricPrivateKey {
 }
 
 class SealedMessage extends ByteList with Suffix {
-  SealedMessage({List<int> public, List<int> cipherText})
+  SealedMessage({required List<int> public, required List<int> cipherText})
       : super(public + cipherText);
 
   @override

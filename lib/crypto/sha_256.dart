@@ -33,19 +33,18 @@ class Sha256 {
   static Int32 _gamma1(Int32 x) => (_rotr(x, 17) ^ _rotr(x, 19) ^ _shr(x, 10));
 
   static Uint8List crypto_hash_sha256(Uint8List out, Uint8List m) {
-    return _crypto_hash_sha256(
-        out, m ?? Uint8List(0), m != null ? m.length : 0);
+    return _crypto_hash_sha256(out, m, m.length);
   }
 
-  static Uint8List _crypto_hash_sha256(Uint8List out, Uint8List m, l) {
-    if (out == null || out.length != 32) {
+  static Uint8List _crypto_hash_sha256(Uint8List out, Uint8List m, int l) {
+    if (out.length != 32) {
       throw Exception('Invalid block for the message to digest.');
     }
 
-    final w = List<Int32>(64);
+    final w = List<Int32>.filled(64, Int32(0));
     Int32 a, b, c, d, e, f, g, h, T1, T2;
 
-    final hh = List<Int32>.from([
+    final hh = List<Int32>.from(<Int32>[
       Int32(0x6a09e667),
       Int32(0xbb67ae85),
       Int32(0x3c6ef372),
@@ -83,30 +82,31 @@ class Sha256 {
         if (j < 16) {
           w[j] = Int32(padded[j + i]);
         } else {
-          w[j] = _gamma1(w[j - 2]) + w[j - 7] + _gamma0(w[j - 15]) + w[j - 16];
+          w[j] = _gamma1(w[j - 2]) + w[j - 7] + _gamma0(w[j - 15]) + w[j - 16]
+              as Int32;
         }
 
-        T1 = _sigma1(e) + _ch(e, f, g) + h + K[j] + w[j];
-        T2 = _sigma0(a) + _maj(a, b, c);
+        T1 = _sigma1(e) + _ch(e, f, g) + h + K[j] + w[j] as Int32;
+        T2 = _sigma0(a) + _maj(a, b, c) as Int32;
 
         h = g;
         g = f;
         f = e;
-        e = d + T1;
+        e = d + T1 as Int32;
         d = c;
         c = b;
         b = a;
-        a = T1 + T2;
+        a = T1 + T2 as Int32;
       }
 
-      hh[0] = a + hh[0];
-      hh[1] = b + hh[1];
-      hh[2] = c + hh[2];
-      hh[3] = d + hh[3];
-      hh[4] = e + hh[4];
-      hh[5] = f + hh[5];
-      hh[6] = g + hh[6];
-      hh[7] = h + hh[7];
+      hh[0] = a + hh[0] as Int32;
+      hh[1] = b + hh[1] as Int32;
+      hh[2] = c + hh[2] as Int32;
+      hh[3] = d + hh[3] as Int32;
+      hh[4] = e + hh[4] as Int32;
+      hh[5] = f + hh[5] as Int32;
+      hh[6] = g + hh[6] as Int32;
+      hh[7] = h + hh[7] as Int32;
     }
 
     for (var i = 0; i < hh.length; i++) {

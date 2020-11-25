@@ -128,9 +128,9 @@ void main() {
       vectors.forEach((vector) {
         final description = 'RFC4231\'s testvectors (${++idx})';
         test(description, () {
-          final k = Uint8List.fromList(hex.decode(vector['key']));
+          final k = Uint8List.fromList(hex.decode(vector['key'] as String));
           final kLen = vector['key_length'];
-          final data = Uint8List.fromList(hex.decode(vector['data']));
+          final data = Uint8List.fromList(hex.decode(vector['data'] as String));
           final mac = vector['hmac-sha-512'];
 
           assert(k.length == kLen);
