@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:convert/convert.dart';
 import 'package:test/test.dart';
 
 import 'package:pinenacl/api.dart';
@@ -122,15 +121,16 @@ const vectors = [
 ];
 
 void main() {
+  const hex = HexCoder.instance;
   group('Hash-based message authentication code', () {
     group('HMAC-SHA-512', () {
       var idx = 0;
       vectors.forEach((vector) {
         final description = 'RFC4231\'s testvectors (${++idx})';
         test(description, () {
-          final k = Uint8List.fromList(hex.decode(vector['key']));
+          final k = Uint8List.fromList(hex.decode(vector['key'] as String));
           final kLen = vector['key_length'];
-          final data = Uint8List.fromList(hex.decode(vector['data']));
+          final data = Uint8List.fromList(hex.decode(vector['data'] as String));
           final mac = vector['hmac-sha-512'];
 
           assert(k.length == kLen);

@@ -64,7 +64,7 @@ class Blake2b {
   /// 64-bit unsigned addition
   /// Sets v[a,a+1] += b
   /// b0 is the low 32 bits of b, b1 represents the high 32 bits
-  static void _add64ac(v, a, b0, b1) {
+  static void _add64ac(Uint32List v, int a, int b0, int b1) {
     var o0 = v[a] + b0;
     if (b0 < 0) {
       o0 += 0x100000000;
@@ -78,7 +78,7 @@ class Blake2b {
   }
 
   /// Little-endian byte access
-  static int _b2bGET32(arr, i) {
+  static int _b2bGET32(Uint8List arr, int i) {
     return (arr[i] ^
         (arr[i + 1] << 8) ^
         (arr[i + 2] << 16) ^
@@ -86,13 +86,13 @@ class Blake2b {
   }
 
   /// Compression function. [last] flag indicates last block.
-  static void _blake2bCompress(_Context context, last) {
+  static void _blake2bCompress(_Context context, bool last) {
     final v = Uint32List(32);
     final m = Uint32List(32);
 
     /// G Mixing function
     /// The ROTRs are inlined for speed
-    void _b2bG(a, b, c, d, ix, iy) {
+    void _b2bG(int a, int b, int c, int d, int ix, int iy) {
       var x0 = m[ix];
       var x1 = m[ix + 1];
       var y0 = m[iy];
@@ -179,7 +179,7 @@ class Blake2b {
   /// Takes an optional Uint8List key, salte and personalisation parameters
   /// for KDF or MAC.
   static _Context init(int outlen,
-      [Uint8List key, Uint8List salt, Uint8List personal]) {
+      [Uint8List? key, Uint8List? salt, Uint8List? personal]) {
     if (outlen <= 0 || outlen > maxBytes) {
       throw Exception('Illegal output length, expected 0 < length <= 64');
     }
@@ -287,7 +287,7 @@ class Blake2b {
   /// - key - optional key Uint8List, up to 64 bytes
   /// - outlen - optional output length in bytes, default 64
   static Uint8List digest(Uint8List data,
-      {int digestSize, Uint8List key, Uint8List salt, Uint8List personal}) {
+      {int? digestSize, Uint8List? key, Uint8List? salt, Uint8List? personal}) {
     digestSize = digestSize ?? 64;
 
     final context = init(digestSize, key, salt, personal);

@@ -3,6 +3,7 @@ library pinenacl.api.public;
 import 'dart:typed_data';
 
 import 'api.dart';
+
 export 'package:pinenacl/api.dart';
 
 /// Public Key Encryption
@@ -40,19 +41,22 @@ export 'package:pinenacl/api.dart';
 ///
 /// Doc comment from: [PyNaCl's readthedocs](https://pynacl.readthedocs.io)
 class Box extends BoxBase {
-  Box({AsymmetricPrivateKey myPrivateKey, AsymmetricPublicKey theirPublicKey})
-      : super.fromList(_beforeNm(theirPublicKey, myPrivateKey, null));
+  Box(
+      {required AsymmetricPrivateKey myPrivateKey,
+      required AsymmetricPublicKey theirPublicKey})
+      : super.fromList(
+            _beforeNm(theirPublicKey, myPrivateKey, null) as List<int>);
 
   Box._fromSharedKey(AsymmetricKey sharedKey)
-      : super.fromList(_beforeNm(null, null, sharedKey));
+      : super.fromList(_beforeNm(null, null, sharedKey) as List<int>);
 
-  factory Box.decode(ByteList encoded) {
+  factory Box.decode(AsymmetricKey encoded) {
     return Box._fromSharedKey(encoded);
   }
 
-  ByteList get sharedKey => this;
+  AsymmetricKey get sharedKey => this;
 
-  static const decoder = hexEncoder;
+  static const decoder = HexCoder.instance;
 
   @override
   Encoder get encoder => decoder;
@@ -68,8 +72,8 @@ class Box extends BoxBase {
   Crypting doDecrypt = TweetNaCl.crypto_box_open_afternm;
 
   // Initialize the sharedKey
-  static ByteList _beforeNm(AsymmetricPublicKey publicKey,
-      AsymmetricPrivateKey secretKey, AsymmetricKey sharedKey) {
+  static ByteList? _beforeNm(AsymmetricPublicKey? publicKey,
+      AsymmetricPrivateKey? secretKey, AsymmetricKey? sharedKey) {
     if (publicKey == null && secretKey == null) {
       /// Using the predefined sharedKey we must have the
       /// publicKey and privateKey unset.
@@ -109,7 +113,7 @@ class Box extends BoxBase {
 /// Doc comment from: [PyNaCl's readthedocs](https://pynacl.readthedocs.io)
 class SealedBox extends AsymmetricKey {
   SealedBox._fromKeyPair(
-      AsymmetricPrivateKey privateKey, AsymmetricPublicKey publicKey)
+      AsymmetricPrivateKey? privateKey, AsymmetricPublicKey publicKey)
       : _privateKey = privateKey,
         super.fromList(publicKey);
 
@@ -125,7 +129,7 @@ class SealedBox extends AsymmetricKey {
     }
   }
 
-  final AsymmetricPrivateKey _privateKey;
+  final AsymmetricPrivateKey? _privateKey;
 
   static const _zerobytesLength = TweetNaCl.zerobytesLength;
   static const _nonceLength = 24;
@@ -134,7 +138,7 @@ class SealedBox extends AsymmetricKey {
   static const _macBytes = TweetNaCl.macBytes;
   static const _sealBytes = _pubLength + _macBytes;
 
-  static const decoder = hexEncoder;
+  static const decoder = HexCoder.instance;
 
   @override
   Encoder get encoder => decoder;
@@ -215,7 +219,7 @@ class SealedBox extends AsymmetricKey {
     TweetNaCl.crypto_stream_xor(
         ciphertext,
         0,
-        Uint8List.fromList(Uint8List(_zerobytesLength) + m),
+        Uint8List.fromList(List<int>.filled(_zerobytesLength, 0) + m),
         0,
         d + _zerobytesLength,
         n,
@@ -248,7 +252,7 @@ class SealedBox extends AsymmetricKey {
     final epk = ciphertext.sublist(0, _pubLength);
 
     final k = Uint8List(_secretLength);
-    TweetNaCl.crypto_box_beforenm(k, epk, _privateKey);
+    TweetNaCl.crypto_box_beforenm(k, epk, _privateKey!);
     final nonce = Uint8List(_nonceLength);
     _generateNonce(nonce, epk, this);
 
@@ -261,7 +265,9 @@ class SealedBox extends AsymmetricKey {
     if (TweetNaCl.crypto_onetimeauth_verify(mac, mm, x) != 0) {
       throw 'The message is forged, malformed or the shared secret is invalid';
     }
-    final cc = Uint8List.fromList(x + mm);
+
+    final a = x.toList() + mm;
+    final cc = Uint8List.fromList(a);
 
     TweetNaCl.crypto_stream_xor(plaintext, 0, cc, 0, cc.length, nonce, k);
 

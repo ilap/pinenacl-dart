@@ -1,6 +1,9 @@
 # PineNaCl
 
-[![pub package](https://img.shields.io/pub/v/pinenacl.svg)](https://pub.dartlang.org/packages/pinenacl) [![Dart Test CI](https://github.com/ilap/pinenacl-dart/workflows/Dart%20Test%20CI/badge.svg)](https://github.com/ilap/pinenacl-dart/actions?query=workflow%3A%22Dart+Test+CI%22)
+[![Pub Version (stable)](https://img.shields.io/pub/v/pinenacl?color=important&label=pub%20stable&logo=dart)](https://pub.dartlang.org/packages/pinenacl) 
+[![Pub Version (including pre-releases)](https://img.shields.io/pub/v/pinenacl?color=blueviolet&label=pub%20prerelease&include_prereleases&logo=dart)](https://pub.dartlang.org/packages/pinenacl)
+[![Dart Test CI](https://github.com/ilap/pinenacl-dart/workflows/Dart%20Test%20CI/badge.svg)](https://github.com/ilap/pinenacl-dart/actions?query=workflow%3A%22Dart+Test+CI%22)
+
 
 PineNaCl is a Dart implementation of the [`TweetNaCl`](https://tweetnacl.cr.yp.to/) the world's first auditable [high-security cryptographic library](https://tweetnacl.cr.yp.to/tweetnacl-20140917.pdf).
 
@@ -275,13 +278,11 @@ void main() {
   final verifyKey = signingKey.verifyKey;
 
   // Serialize the verify key to send it to a third party
-  // TODO: implements similar: verifyKey.encode(Bech32Encoder(hrp: 'ed25519_pk'));
   final verifyKeyHex = hex.encode(verifyKey);
 
   /// 
   /// Verifier’s perspective (VerifyKey)
   /// 
-  // TODO: implements similar: VerifyKey.decode(verifyKeyHex, decoder: HexEncoder());
   final verifyKey2 = VerifyKey.fromHexString(verifyKeyHex);
   assert(verifyKey == verifyKey2);
   print('The "$message" is successfully verified');
@@ -375,12 +376,14 @@ void main() {
 > By repeating the key derivation procedure before encrypting our messages,  and sending the derivationSalt along with the encrypted message, we can expect to never reuse a key, drastically reducing the risks which ensue from such a reuse.
 # TODOS
 
+- [ ] **Important**: refactor for working in 32-bit systems and browser (js).
 - [ ] Implement proper Error/Exception handling.
-- [ ] Implement encoding/decoding) classes. 
-- [ ] Add more unit tests.
-- [ ] Refactor to much simpler code.
-- [ ] Simplify or refactor the APIs and modules' dependencies.
-- [ ] Remove [fixnum] and [convert] pakages' dependency.
+- [x] Implement encoding/decoding) classes. 
+- [x] Add more unit tests.
+- [x] Refactor to much simpler code.
+- [x] Simplify or refactor the APIs and modules' dependencies.
+- [x] Remove [bech32], [hex] and [convert] pakages dependency.
+- [x] Remove [fixnum] pakage dependency.
 
 # Thanks and Credits
 
@@ -388,6 +391,8 @@ void main() {
 - [TweetNaCl dart implementation](https://github.com/jspschool/tweetnacl-dart)
 - [TweetNaCl: a crypto library in 100 tweets](https://tweetnacl.cr.yp.to/index.html)
 - [blake2b](https://github.com/emilbayes/blake2b)
+- [bech32](https://github.com/haarts/bech32)
+- And lot of others...
 
 # License
 

@@ -1,4 +1,6 @@
-import 'package:convert/convert.dart';
+import 'dart:typed_data';
+
+import 'package:pinenacl/encoding.dart';
 import 'package:test/test.dart';
 
 import 'package:pinenacl/secret.dart' show SecretBox;
@@ -20,6 +22,7 @@ const _vectors = {
 };
 
 void main() {
+  const hex = HexCoder.instance;
   group('Secret Key Encryption', () {
     test('SecretBox basic', () {
       final s = SecretBox.decode(
@@ -28,11 +31,11 @@ void main() {
     });
 
     test('SecretBox encryption', () {
-      final box = SecretBox.decode(_vectors['key']);
+      final box = SecretBox.decode(_vectors['key']!);
 
-      final nonce = _vectors['nonce'];
-      final cipherText = _vectors['ciphertext'];
-      final plainText = _vectors['plaintext'];
+      final nonce = _vectors['nonce']!;
+      final cipherText = _vectors['ciphertext']!;
+      final plainText = _vectors['plaintext']!;
 
       final encrypted =
           box.encrypt(hex.decode(plainText), nonce: hex.decode(nonce));
@@ -45,24 +48,24 @@ void main() {
     });
 
     test('SecretBox decryption', () {
-      final box = SecretBox.decode(_vectors['key']);
+      final box = SecretBox.decode(_vectors['key']!);
 
-      final nonce = _vectors['nonce'];
-      final ciphertext = _vectors['ciphertext'];
-      final plaintext = _vectors['plaintext'];
+      final nonce = _vectors['nonce']!;
+      final ciphertext = _vectors['ciphertext']!;
+      final plaintext = _vectors['plaintext']!;
 
-      final decrypted =
-          box.decrypt(hex.decode(ciphertext), nonce: hex.decode(nonce));
+      final decrypted = box.decrypt(Uint8List.fromList(hex.decode(ciphertext)),
+          nonce: Uint8List.fromList(hex.decode(nonce)));
 
       assert(hex.encode(decrypted) == plaintext);
     });
 
     test('SecretBox decryption (no nonce)', () {
-      final box = SecretBox.decode(_vectors['key']);
+      final box = SecretBox.decode(_vectors['key']!);
 
       final plaintext = _vectors['plaintext'];
 
-      final encrypted = box.encrypt(hex.decode(plaintext));
+      final encrypted = box.encrypt(hex.decode(plaintext!));
       final decrypted = box.decrypt(encrypted);
 
       assert(hex.encode(decrypted) == plaintext);

@@ -1,12 +1,12 @@
 part of pinenacl.api;
 
 abstract class AsymmetricKey extends ByteList with Encodable {
-  AsymmetricKey([List<int> data]) : super(data);
+  AsymmetricKey(List<int> data) : super(data);
   AsymmetricKey.fromList(List<int> data) : super.fromList(data);
 }
 
 abstract class AsymmetricPublicKey extends AsymmetricKey {
-  AsymmetricPublicKey([List<int> data]) : super(data);
+  AsymmetricPublicKey(List<int> data) : super(data);
   AsymmetricPublicKey.fromList(List<int> data) : super.fromList(data);
 }
 
@@ -14,19 +14,19 @@ abstract class AsymmetricPrivateKey extends AsymmetricKey {
   factory AsymmetricPrivateKey.generate() {
     throw Exception('AsymmetricPrivateKey - unreachable');
   }
-  final AsymmetricPublicKey publicKey;
+  AsymmetricPublicKey get publicKey;
 }
 
 /// `ByteList` is the base of the PineNaCl cryptographic library,
 /// which is based on the unmodifiable Uin8List class
 class ByteList with ListMixin<int>, Encodable implements Uint8List {
-  ByteList([Iterable<int> bytes, int bytesLength])
+  ByteList(Iterable<int> bytes, [int? bytesLength])
       : _u8l = _constructList(
-            bytes, bytesLength ?? _minLength, bytesLength ?? _maxLength);
+            bytes, bytesLength ?? bytes.length, bytesLength ?? bytes.length);
 
-  ByteList.fromList(List<int> list, [int minLength, int maxLength])
-      : _u8l = _constructList(
-            list, minLength ?? _minLength, maxLength ?? _maxLength);
+  ByteList.fromList(List<int> list,
+      [int minLength = _minLength, int maxLength = _maxLength])
+      : _u8l = _constructList(list, minLength, maxLength);
 
   factory ByteList.decode(String data, [Encoder defaultDecoder = decoder]) {
     return defaultDecoder.decode(data);
@@ -41,15 +41,15 @@ class ByteList with ListMixin<int>, Encodable implements Uint8List {
 
   static Uint8List _constructList(
       Iterable<int> list, int minLength, int maxLength) {
-    if (list == null || list.length < minLength || list.length > maxLength) {
+    if (list.length < minLength || list.length > maxLength) {
       throw Exception(
-          'The list length (${list == null ? 'N/A' : list.length}) is invalid (min: $minLength, max: $maxLength)');
+          'The list length (${list.length}) is invalid (min: $minLength, max: $maxLength)');
     }
     return UnmodifiableUint8ListView(Uint8List.fromList(list.toList()));
   }
 
-  // Default encoder/decoder is the HexEncoder()
-  static const decoder = hexEncoder;
+  // Default encoder/decoder is the HexCoder()
+  static const decoder = HexCoder.instance;
 
   @override
   Encoder get encoder => decoder;
@@ -97,27 +97,27 @@ class ByteList with ListMixin<int>, Encodable implements Uint8List {
   }
 
   @override
-  ByteList sublist(int start, [int end]) {
+  ByteList sublist(int start, [int? end]) {
     final sublist = _u8l.sublist(start, end ?? _u8l.length);
     return ByteList(sublist, sublist.length);
   }
 }
 
 abstract class Encoder {
-  String encode(ByteList data);
+  String encode(Uint8List data);
   ByteList decode(String data);
 }
 
 mixin Encodable {
   Encoder get encoder;
-  String encode([Encoder encoder]) {
+  String encode([Encoder? encoder]) {
     encoder = encoder ?? this.encoder;
-    return encoder.encode(this);
+    return encoder.encode(this as ByteList);
   }
 }
 
 mixin Suffix on ByteList {
-  int prefixLength;
+  late int prefixLength;
   ByteList get prefix => ByteList(take(prefixLength), prefixLength);
   ByteList get suffix => ByteList(skip(prefixLength), length - prefixLength);
 }
