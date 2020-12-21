@@ -1,6 +1,14 @@
 # Changelog
 
-## [Unreleased](https://github.com/ilap/pinenacl-dart/tree/HEAD)
+## [v0.2.0-nullsafety.1](https://github.com/ilap/pinenacl-dart/tree/v0.2.0-nullsafety.1) (2020-12-21)
+
+[Full Changelog](https://github.com/ilap/pinenacl-dart/compare/v0.2.0-nullsafety.0...v0.2.0-nullsafety.1)
+
+**Merged pull requests:**
+
+- Pre-release for the null safety migration of this package. [\#7](https://github.com/ilap/pinenacl-dart/pull/7) ([ilap](https://github.com/ilap))
+
+# Changelog
 
 [Full Changelog](https://github.com/ilap/pinenacl-dart/compare/v0.2.0-nullsafety.0...HEAD)
 
