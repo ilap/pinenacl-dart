@@ -6,10 +6,12 @@ part of pinenacl.api.crypto.tweetnacl;
 /// Extension is just an eye-candy here as it uses only static methods.
 ///
 extension TweetNaClExt on TweetNaCl {
-  // HMAC bytes
+  /// HMAC bytes
+  /// @nodoc
   static const hmacBytes = 64;
 
-  // Extended secret key's length
+  /// Extended secret key's length
+  /// @nodoc
   static const int extendedSecretKeyLength = 32;
 
   static int _crypto_auth(Uint8List out, Uint8List m, Uint8List k) {

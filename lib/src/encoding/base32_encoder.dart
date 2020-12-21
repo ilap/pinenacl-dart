@@ -10,8 +10,8 @@ class Base32Encoder implements Encoder {
 
   @override
   String encode(Uint8List data) {
-
-    final result = _convertBits(data, 8, 5, true).fold<String>('', (prev, item) {
+    final result =
+        _convertBits(data, 8, 5, true).fold<String>('', (prev, item) {
       prev += _alphabet[item];
       return prev;
     });

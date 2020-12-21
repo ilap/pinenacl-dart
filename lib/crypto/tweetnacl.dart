@@ -2356,20 +2356,34 @@ class TweetNaCl {
 // TBD... 64bits of n
   ///int crypto_sign(Uint8List sm, long * smlen, Uint8List m, long n, Uint8List sk)
   static int crypto_sign(Uint8List sm, int dummy /* *smlen not used*/,
-      Uint8List m, final int moff, int /*long*/ n, Uint8List sk) {
+      Uint8List m, final int moff, int /*long*/ n, Uint8List sk,
+      [bool extended = false]) {
     var d = Uint8List(64), h = Uint8List(64), r = Uint8List(64);
 
     int i, j;
 
     var x = Uint64List(64);
     var p = List<Uint64List>.generate(4, (_) => Uint64List(16));
+    var pk_offset = 32;
 
-    _crypto_hash_off(d, sk, 0, 32);
+    /// Added support for extended private keys (96 bytes long))
+    /// Assuming 64 byte-length secret keys
+    /// bits have already cleared and set
+    if (extended) {
+      pk_offset = 64;
+      for (i = 0; i < pk_offset; i++) {
+        d[i] = sk[i];
+      }
+    } else {
+      _crypto_hash_off(d, sk, 0, 32);
+    }
+
+    // For safetiness
     d[0] &= 248;
     d[31] &= 127;
     d[31] |= 64;
 
-    ///*smlen = n+64;
+    //*smlen = n+64;
 
     for (i = 0; i < n; i++) {
       sm[64 + i] = m[i + moff];
@@ -2385,7 +2399,7 @@ class TweetNaCl {
     _pack(sm, p);
 
     for (i = 0; i < 32; i++) {
-      sm[i + 32] = sk[i + 32];
+      sm[i + 32] = sk[i + pk_offset];
     }
     _crypto_hash_off(h, sm, 0, n + 64);
     _reduce(h);
