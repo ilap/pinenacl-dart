@@ -40,68 +40,67 @@ class TweetNaCl {
 
   static const _0 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-  static const _9 = [
+  static final Uint8List _9 = Uint8List.fromList([
     9, 0, 0, 0, 0, 0, 0, 0, // 0-7
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0
+  ]); //32
+
+  static final _gf0 = <Int64>[
+    Int64(0), Int64(0), Int64(0), Int64(0), // 0-3
+    Int64(0), Int64(0), Int64(0), Int64(0),
+    Int64(0), Int64(0), Int64(0), Int64(0),
+    Int64(0), Int64(0), Int64(0), Int64(0)
   ];
 
-  static const _gf0 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; //16
-  static const _gf1 = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; //16
-
-  static const _121665 = [
-    0xDB41,
-    1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-  ]; //16
-
-  static const _D = [
-    0x78a3, 0x1359, 0x4dca, 0x75eb, // 0-3
-    0xd8ab, 0x4141, 0x0a4d, 0x0070,
-    0xe898, 0x7779, 0x4079, 0x8cc7,
-    0xfe73, 0x2b6f, 0x6cee, 0x5203
+  static final _gf1 = <Int64>[
+    Int64(1), Int64(0), Int64(0), Int64(0), // 0-3
+    Int64(0), Int64(0), Int64(0), Int64(0),
+    Int64(0), Int64(0), Int64(0), Int64(0),
+    Int64(0), Int64(0), Int64(0), Int64(0)
   ];
 
-  static const _D2 = [
-    0xf159, 0x26b2, 0x9b94, 0xebd6, // 0-3
-    0xb156, 0x8283, 0x149a, 0x00e0,
-    0xd130, 0xeef3, 0x80f2, 0x198e,
-    0xfce7, 0x56df, 0xd9dc, 0x2406
+  static final _121665 = <Int64>[
+    Int64(0xDB41), Int64(1), Int64(0), Int64(0), // 0-3
+    Int64(0), Int64(0), Int64(0), Int64(0),
+    Int64(0), Int64(0), Int64(0), Int64(0),
+    Int64(0), Int64(0), Int64(0), Int64(0),
   ];
 
-  static const _X = [
-    0xd51a, 0x8f25, 0x2d60, 0xc956, // 0-3
-    0xa7b2, 0x9525, 0xc760, 0x692c,
-    0xdc5c, 0xfdd6, 0xe231, 0xc0a4,
-    0x53fe, 0xcd6e, 0x36d3, 0x2169
+  static final _D = <Int64>[
+    Int64(0x78a3), Int64(0x1359), Int64(0x4dca), Int64(0x75eb), // 0-3
+    Int64(0xd8ab), Int64(0x4141), Int64(0x0a4d), Int64(0x0070),
+    Int64(0xe898), Int64(0x7779), Int64(0x4079), Int64(0x8cc7),
+    Int64(0xfe73), Int64(0x2b6f), Int64(0x6cee), Int64(0x5203)
   ];
 
-  static const _Y = [
-    0x6658, 0x6666, 0x6666, 0x6666, // 0-3
-    0x6666, 0x6666, 0x6666, 0x6666,
-    0x6666, 0x6666, 0x6666, 0x6666,
-    0x6666, 0x6666, 0x6666, 0x6666
+  static final _D2 = <Int64>[
+    Int64(0xf159), Int64(0x26b2), Int64(0x9b94), Int64(0xebd6), // 0-3
+    Int64(0xb156), Int64(0x8283), Int64(0x149a), Int64(0x00e0),
+    Int64(0xd130), Int64(0xeef3), Int64(0x80f2), Int64(0x198e),
+    Int64(0xfce7), Int64(0x56df), Int64(0xd9dc), Int64(0x2406)
   ];
 
-  static const _I = [
-    0xa0b0, 0x4a0e, 0x1b27, 0xc4ee, // 0-3
-    0xe478, 0xad2f, 0x1806, 0x2f43,
-    0xd7a7, 0x3dfb, 0x0099, 0x2b4d,
-    0xdf0b, 0x4fc1, 0x2480, 0x2b83
+  static final _X = <Int64>[
+    Int64(0xd51a), Int64(0x8f25), Int64(0x2d60), Int64(0xc956), // 0-3
+    Int64(0xa7b2), Int64(0x9525), Int64(0xc760), Int64(0x692c),
+    Int64(0xdc5c), Int64(0xfdd6), Int64(0xe231), Int64(0xc0a4),
+    Int64(0x53fe), Int64(0xcd6e), Int64(0x36d3), Int64(0x2169)
+  ];
+
+  static final _Y = <Int64>[
+    Int64(0x6658), Int64(0x6666), Int64(0x6666), Int64(0x6666), // 0-3
+    Int64(0x6666), Int64(0x6666), Int64(0x6666), Int64(0x6666),
+    Int64(0x6666), Int64(0x6666), Int64(0x6666), Int64(0x6666),
+    Int64(0x6666), Int64(0x6666), Int64(0x6666), Int64(0x6666)
+  ];
+
+  static final List<Int64> _I = <Int64>[
+    Int64(0xa0b0), Int64(0x4a0e), Int64(0x1b27), Int64(0xc4ee), // 0-3
+    Int64(0xe478), Int64(0xad2f), Int64(0x1806), Int64(0x2f43),
+    Int64(0xd7a7), Int64(0x3dfb), Int64(0x0099), Int64(0x2b4d),
+    Int64(0xdf0b), Int64(0x4fc1), Int64(0x2480), Int64(0x2b83)
   ];
 
   static void _ts64(Uint8List x, final int xoff, int u) {
@@ -140,6 +139,8 @@ class TweetNaCl {
       Uint8List x, final int xoff, Uint8List y, final int yoff) {
     return _vn(x, xoff, y, yoff, 16);
   }
+
+  static List<Int64> _gf() => List<Int64>.filled(16, Int64());
 
   static int crypto_verify_16(Uint8List x, Uint8List y) {
     return _crypto_verify_16(x, 0, y, 0);
@@ -801,31 +802,31 @@ class TweetNaCl {
     return m.sublist(32);
   }
 
-  static void _set25519(Uint64List r, List<int> a) {
+  static void _set25519(List<Int64> r, List<Int64> a) {
     int i;
     for (i = 0; i < 16; i++) {
       r[i] = a[i];
     }
   }
 
-  static void _car25519(Uint64List o) {
+  static void _car25519(List<Int64> o) {
     int i;
-    int v, c = 1;
+    Int64 v, c = Int64(1);
     for (i = 0; i < 16; i++) {
       v = o[i] + c + 65535;
       c = v >> 16;
       o[i] = v - c * 65536;
     }
-    o[0] += c - 1 + 37 * (c - 1);
+    o[0] += c - 1 + Int64(37) * (c - 1);
   }
 
-  static void _sel25519(Uint64List p, Uint64List q, int b) {
+  static void _sel25519(List<Int64> p, List<Int64> q, int b) {
     _sel25519_off(p, 0, q, 0, b);
   }
 
   static void _sel25519_off(
-      Uint64List p, final int poff, Uint64List q, final int qoff, int b) {
-    int t, c = ~(b - 1);
+      List<Int64> p, final int poff, List<Int64> q, final int qoff, int b) {
+    Int64 t, c = Int64(~(b - 1));
     for (var i = 0; i < 16; i++) {
       t = c & (p[i + poff] ^ q[i + qoff]);
       p[i + poff] ^= t;
@@ -833,9 +834,9 @@ class TweetNaCl {
     }
   }
 
-  static void _pack25519(Uint8List o, Uint64List n, final int noff) {
+  static void _pack25519(Uint8List o, List<Int64> n, final int noff) {
     int i, j, b;
-    var m = Uint64List(16), t = Uint64List(16);
+    var m = _gf(), t = _gf();
     for (i = 0; i < 16; i++) {
       t[i] = n[i + noff];
     }
@@ -849,109 +850,109 @@ class TweetNaCl {
         m[i - 1] &= 0xffff;
       }
       m[15] = t[15] - 0x7fff - ((m[14] >> 16) & 1);
-      b = ((m[15] >> 16) & 1);
+      b = ((m[15] >> 16) & 1).toInt();
       m[14] &= 0xffff;
       _sel25519_off(t, 0, m, 0, 1 - b);
     }
     for (i = 0; i < 16; i++) {
       o[2 * i] = (t[i] & 0xff).toInt();
-      o[2 * i + 1] = (t[i] >> 8);
+      o[2 * i + 1] = (t[i].toInt() >> 8);
     }
   }
 
-  static int _neq25519(Uint64List a, Uint64List b) {
+  static int _neq25519(List<Int64> a, List<Int64> b) {
     return _neq25519_off(a, 0, b, 0);
   }
 
   static int _neq25519_off(
-      Uint64List a, final int aoff, Uint64List b, final int boff) {
+      List<Int64> a, final int aoff, List<Int64> b, final int boff) {
     var c = Uint8List(32), d = Uint8List(32);
     _pack25519(c, a, aoff);
     _pack25519(d, b, boff);
     return _crypto_verify_32(c, 0, d, 0);
   }
 
-  static int _par25519(Uint64List a) {
+  static int _par25519(List<Int64> a) {
     return _par25519_off(a, 0);
   }
 
-  static int _par25519_off(Uint64List a, final int aoff) {
+  static int _par25519_off(List<Int64> a, final int aoff) {
     var d = Uint8List(32);
     _pack25519(d, a, aoff);
     return (d[0] & 1);
   }
 
-  static void _unpack25519(Uint64List o, Uint8List n) {
+  static void _unpack25519(List<Int64> o, Uint8List n) {
     int i;
     for (i = 0; i < 16; i++) {
-      o[i] = (n[2 * i] & 0xff) + (((n[2 * i + 1] << 8) & 0xffff));
+      o[i] = Int64(n[2 * i] & 0xff) + (((n[2 * i + 1] << 8) & 0xffff));
     }
     o[15] &= 0x7fff;
   }
 
-  static void _A(Uint64List o, Uint64List a, Uint64List b) {
+  static void _A(List<Int64> o, List<Int64> a, List<Int64> b) {
     _A_off(o, 0, a, 0, b, 0);
   }
 
-  static void _A_off(Uint64List o, final int ooff, Uint64List a, final int aoff,
-      Uint64List b, final int boff) {
+  static void _A_off(List<Int64> o, final int ooff, List<Int64> a,
+      final int aoff, List<Int64> b, final int boff) {
     int i;
     for (i = 0; i < 16; i++) {
       o[i + ooff] = a[i + aoff] + b[i + boff];
     }
   }
 
-  static void _Z(Uint64List o, Uint64List a, Uint64List b) {
+  static void _Z(List<Int64> o, List<Int64> a, List<Int64> b) {
     _Z_off(o, 0, a, 0, b, 0);
   }
 
-  static void _Z_off(Uint64List o, final int ooff, Uint64List a, final int aoff,
-      Uint64List b, final int boff) {
+  static void _Z_off(List<Int64> o, final int ooff, List<Int64> a,
+      final int aoff, List<Int64> b, final int boff) {
     int i;
     for (i = 0; i < 16; i++) {
       o[i + ooff] = a[i + aoff] - b[i + boff];
     }
   }
 
-  static void _M(Uint64List o, Uint64List a, Uint64List b) {
+  static void _M(List<Int64> o, List<Int64> a, List<Int64> b) {
     _M_off(o, 0, a, 0, b, 0);
   }
 
-  static void _M_off(Uint64List o, final int ooff, Uint64List a, final int aoff,
-      Uint64List b, final int boff) {
-    int v,
+  static void _M_off(List<Int64> o, final int ooff, List<Int64> a,
+      final int aoff, List<Int64> b, final int boff) {
+    Int64 v,
         c,
-        t0 = 0,
-        t1 = 0,
-        t2 = 0,
-        t3 = 0,
-        t4 = 0,
-        t5 = 0,
-        t6 = 0,
-        t7 = 0,
-        t8 = 0,
-        t9 = 0,
-        t10 = 0,
-        t11 = 0,
-        t12 = 0,
-        t13 = 0,
-        t14 = 0,
-        t15 = 0,
-        t16 = 0,
-        t17 = 0,
-        t18 = 0,
-        t19 = 0,
-        t20 = 0,
-        t21 = 0,
-        t22 = 0,
-        t23 = 0,
-        t24 = 0,
-        t25 = 0,
-        t26 = 0,
-        t27 = 0,
-        t28 = 0,
-        t29 = 0,
-        t30 = 0,
+        t0 = Int64(),
+        t1 = Int64(),
+        t2 = Int64(),
+        t3 = Int64(),
+        t4 = Int64(),
+        t5 = Int64(),
+        t6 = Int64(),
+        t7 = Int64(),
+        t8 = Int64(),
+        t9 = Int64(),
+        t10 = Int64(),
+        t11 = Int64(),
+        t12 = Int64(),
+        t13 = Int64(),
+        t14 = Int64(),
+        t15 = Int64(),
+        t16 = Int64(),
+        t17 = Int64(),
+        t18 = Int64(),
+        t19 = Int64(),
+        t20 = Int64(),
+        t21 = Int64(),
+        t22 = Int64(),
+        t23 = Int64(),
+        t24 = Int64(),
+        t25 = Int64(),
+        t26 = Int64(),
+        t27 = Int64(),
+        t28 = Int64(),
+        t29 = Int64(),
+        t30 = Int64(),
         b0 = b[0 + boff],
         b1 = b[1 + boff],
         b2 = b[2 + boff],
@@ -1242,25 +1243,25 @@ class TweetNaCl {
     t29 += v * b14;
     t30 += v * b15;
 
-    t0 += 38 * t16;
-    t1 += 38 * t17;
-    t2 += 38 * t18;
-    t3 += 38 * t19;
-    t4 += 38 * t20;
-    t5 += 38 * t21;
-    t6 += 38 * t22;
-    t7 += 38 * t23;
-    t8 += 38 * t24;
-    t9 += 38 * t25;
-    t10 += 38 * t26;
-    t11 += 38 * t27;
-    t12 += 38 * t28;
-    t13 += 38 * t29;
-    t14 += 38 * t30;
+    t0 += Int64(38) * t16;
+    t1 += Int64(38) * t17;
+    t2 += Int64(38) * t18;
+    t3 += Int64(38) * t19;
+    t4 += Int64(38) * t20;
+    t5 += Int64(38) * t21;
+    t6 += Int64(38) * t22;
+    t7 += Int64(38) * t23;
+    t8 += Int64(38) * t24;
+    t9 += Int64(38) * t25;
+    t10 += Int64(38) * t26;
+    t11 += Int64(38) * t27;
+    t12 += Int64(38) * t28;
+    t13 += Int64(38) * t29;
+    t14 += Int64(38) * t30;
 // t15 left as is
 
 // first car
-    c = 1;
+    c = Int64(1);
     v = t0 + c + 65535;
     c = v >> 16;
     t0 = v - c * 65536;
@@ -1309,10 +1310,10 @@ class TweetNaCl {
     v = t15 + c + 65535;
     c = v >> 16;
     t15 = v - c * 65536;
-    t0 += c - 1 + 37 * (c - 1);
+    t0 += c - 1 + Int64(37) * (c - Int64(1));
 
 // second car
-    c = 1;
+    c = Int64(1);
     v = t0 + c + 65535;
     c = v >> 16;
     t0 = v - c * 65536;
@@ -1361,7 +1362,7 @@ class TweetNaCl {
     v = t15 + c + 65535;
     c = v >> 16;
     t15 = v - c * 65536;
-    t0 += c - 1 + 37 * (c - 1);
+    t0 += c - 1 + Int64(37) * (c - Int64(1));
 
     o[0 + ooff] = t0;
     o[1 + ooff] = t1;
@@ -1381,18 +1382,18 @@ class TweetNaCl {
     o[15 + ooff] = t15;
   }
 
-  static void _S(Uint64List o, Uint64List a) {
+  static void _S(List<Int64> o, List<Int64> a) {
     _S_off(o, 0, a, 0);
   }
 
   static void _S_off(
-      Uint64List o, final int ooff, Uint64List a, final int aoff) {
+      List<Int64> o, final int ooff, List<Int64> a, final int aoff) {
     _M_off(o, ooff, a, aoff, a, aoff);
   }
 
   static void _inv25519(
-      Uint64List o, final int ooff, Uint64List i, final int ioff) {
-    var c = Uint64List(16);
+      List<Int64> o, final int ooff, List<Int64> i, final int ioff) {
+    var c = _gf();
     int a;
     for (a = 0; a < 16; a++) {
       c[a] = i[a + ioff];
@@ -1406,8 +1407,8 @@ class TweetNaCl {
     }
   }
 
-  static void _pow2523(Uint64List o, Uint64List i) {
-    var c = Uint64List(16);
+  static void _pow2523(List<Int64> o, List<Int64> i) {
+    var c = _gf();
     int a;
 
     for (a = 0; a < 16; a++) {
@@ -1426,14 +1427,9 @@ class TweetNaCl {
 
   static Uint8List crypto_scalarmult(Uint8List q, Uint8List n, List<int> p) {
     var z = Int8List(32);
-    var x = Uint64List(80);
+    var x = List<Int64>.filled(80, Int64());
     int r, i;
-    var a = Uint64List(16),
-        b = Uint64List(16),
-        c = Uint64List(16),
-        d = Uint64List(16),
-        e = Uint64List(16),
-        f = Uint64List(16);
+    var a = _gf(), b = _gf(), c = _gf(), d = _gf(), e = _gf(), f = _gf();
     for (i = 0; i < 31; i++) {
       z[i] = n[i];
     }
@@ -1442,9 +1438,9 @@ class TweetNaCl {
     _unpack25519(x, Uint8List.fromList(p));
     for (i = 0; i < 16; i++) {
       b[i] = x[i];
-      d[i] = a[i] = c[i] = 0;
+      d[i] = a[i] = c[i] = Int64(0);
     }
-    a[0] = d[0] = 1;
+    a[0] = d[0] = Int64(1);
     for (i = 254; i >= 0; --i) {
       r = (Int32(z[Int32(i).shiftRightUnsigned(3).toInt()])
                   .shiftRightUnsigned(i & 7))
@@ -1464,7 +1460,7 @@ class TweetNaCl {
       _Z(a, a, c);
       _S(b, a);
       _Z(c, d, f);
-      _M(a, c, Uint64List.fromList(_121665));
+      _M(a, c, _121665);
       _A(a, a, d);
       _M(c, c, a);
       _M(a, d, f);
@@ -2088,8 +2084,8 @@ class TweetNaCl {
 // TBD 64bits of n
   ///int crypto_hash(Uint8List out, Uint8List m, long n)
   ///
-/*  
-    
+/*
+
     hh224[0] = Int32(0x8c3d37c8);
     hh224[1] = Int32(0x73e19966);
     hh224[2] = Int32(0x1dfab7ae);
@@ -2168,16 +2164,16 @@ class TweetNaCl {
 
 // gf: long[16]
   ///private static void add(gf p[4],gf q[4])
-  static void _add(List<Uint64List> p, List<Uint64List> q) {
-    var a = Uint64List(16);
-    var b = Uint64List(16);
-    var c = Uint64List(16);
-    var d = Uint64List(16);
-    var t = Uint64List(16);
-    var e = Uint64List(16);
-    var f = Uint64List(16);
-    var g = Uint64List(16);
-    var h = Uint64List(16);
+  static void _add(List<List<Int64>> p, List<List<Int64>> q) {
+    var a = _gf();
+    var b = _gf();
+    var c = _gf();
+    var d = _gf();
+    var t = _gf();
+    var e = _gf();
+    var f = _gf();
+    var g = _gf();
+    var h = _gf();
 
     var p0 = p[0];
     var p1 = p[1];
@@ -2196,7 +2192,7 @@ class TweetNaCl {
     _A_off(t, 0, q0, 0, q1, 0);
     _M_off(b, 0, b, 0, t, 0);
     _M_off(c, 0, p3, 0, q3, 0);
-    _M_off(c, 0, c, 0, Uint64List.fromList(_D2), 0);
+    _M_off(c, 0, c, 0, _D2, 0);
     _M_off(d, 0, p2, 0, q2, 0);
 
     _A_off(d, 0, d, 0, d, 0);
@@ -2211,7 +2207,7 @@ class TweetNaCl {
     _M_off(p3, 0, e, 0, h, 0);
   }
 
-  static void _cswap(List<Uint64List> p, List<Uint64List> q, int b) {
+  static void _cswap(List<List<Int64>> p, List<List<Int64>> q, int b) {
     int i;
 
     for (i = 0; i < 4; i++) {
@@ -2219,10 +2215,10 @@ class TweetNaCl {
     }
   }
 
-  static void _pack(Uint8List r, List<Uint64List> p) {
-    var tx = Uint64List(16);
-    var ty = Uint64List(16);
-    var zi = Uint64List(16);
+  static void _pack(Uint8List r, List<List<Int64>> p) {
+    var tx = _gf();
+    var ty = _gf();
+    var zi = _gf();
 
     _inv25519(zi, 0, p[2], 0);
 
@@ -2235,7 +2231,7 @@ class TweetNaCl {
   }
 
   static void _scalarmult(
-      List<Uint64List> p, List<Uint64List> q, Uint8List s, final int soff) {
+      List<List<Int64>> p, List<List<Int64>> q, Uint8List s, final int soff) {
     int i;
 
     _set25519(p[0], _gf0);
@@ -2255,19 +2251,19 @@ class TweetNaCl {
     }
   }
 
-  static void _scalarbase(List<Uint64List> p, Uint8List s, final int soff) {
-    var q = List<Uint64List>.generate(4, (_) => Uint64List(16));
+  static void _scalarbase(List<List<Int64>> p, Uint8List s, final int soff) {
+    var q = List<List<Int64>>.generate(4, (_) => _gf());
 
     _set25519(q[0], _X);
     _set25519(q[1], _Y);
     _set25519(q[2], _gf1);
-    _M_off(q[3], 0, Uint64List.fromList(_X), 0, Uint64List.fromList(_Y), 0);
+    _M_off(q[3], 0, _X, 0, _Y, 0);
     _scalarmult(p, q, s, soff);
   }
 
   static int crypto_sign_keypair(Uint8List pk, Uint8List sk, Uint8List seed) {
     var k = Uint8List(64);
-    var p = List<Uint64List>.generate(4, (_) => Uint64List(16));
+    var p = List<List<Int64>>.generate(4, (_) => _gf());
 
     /// ge25519_p3 A;
     ///
@@ -2306,21 +2302,21 @@ class TweetNaCl {
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0x10
   ];
-  static void _modL(Uint8List r, final int roff, Uint64List x) {
-    int carry;
+  static void _modL(Uint8List r, final int roff, List<Int64> x) {
+    Int64 carry;
     int i, j;
 
     for (i = 63; i >= 32; --i) {
-      carry = 0;
+      carry = Int64(0);
       for (j = i - 32; j < i - 12; ++j) {
-        x[j] += carry - 16 * x[i] * _L[j - (i - 32)];
+        x[j] += carry - Int64(16) * x[i] * _L[j - (i - 32)];
         carry = (x[j] + 128) >> 8;
         x[j] -= carry << 8;
       }
       x[j] += carry;
-      x[i] = 0;
+      x[i] = Int64(0);
     }
-    carry = 0;
+    carry = Int64(0);
 
     for (j = 0; j < 32; j++) {
       x[j] += carry - (x[31] >> 4) * _L[j];
@@ -2334,16 +2330,16 @@ class TweetNaCl {
 
     for (i = 0; i < 32; i++) {
       x[i + 1] += x[i] >> 8;
-      r[i + roff] = (x[i] & 255);
+      r[i + roff] = (x[i] & 255).toInt();
     }
   }
 
   static void _reduce(Uint8List r) {
-    var x = Uint64List(64);
+    final x = List<Int64>.filled(64, Int64());
     int i;
 
     for (i = 0; i < 64; i++) {
-      x[i] = (r[i] & 0xff).toInt();
+      x[i] = Int64(r[i]);
     }
 
     for (i = 0; i < 64; i++) {
@@ -2362,8 +2358,8 @@ class TweetNaCl {
 
     int i, j;
 
-    var x = Uint64List(64);
-    var p = List<Uint64List>.generate(4, (_) => Uint64List(16));
+    var x = List<Int64>.filled(64, Int64());
+    var p = List<List<Int64>>.generate(4, (_) => _gf());
     var pk_offset = 32;
 
     /// Added support for extended private keys (96 bytes long))
@@ -2405,11 +2401,11 @@ class TweetNaCl {
     _reduce(h);
 
     for (i = 0; i < 64; i++) {
-      x[i] = 0;
+      x[i] = Int64(0);
     }
 
     for (i = 0; i < 32; i++) {
-      x[i] = (r[i] & 0xff).toInt();
+      x[i] = Int64(r[i] & 0xff);
     }
 
     for (i = 0; i < 32; i++) {
@@ -2423,19 +2419,19 @@ class TweetNaCl {
     return 0;
   }
 
-  static int _unpackneg(List<Uint64List> r, Uint8List p) {
-    var t = Uint64List(16);
-    var chk = Uint64List(16);
-    var num = Uint64List(16);
-    var den = Uint64List(16);
-    var den2 = Uint64List(16);
-    var den4 = Uint64List(16);
-    var den6 = Uint64List(16);
+  static int _unpackneg(List<List<Int64>> r, Uint8List p) {
+    var t = _gf();
+    var chk = _gf();
+    var num = _gf();
+    var den = _gf();
+    var den2 = _gf();
+    var den4 = _gf();
+    var den6 = _gf();
 
     _set25519(r[2], _gf1);
     _unpack25519(r[1], p);
     _S(num, r[1]);
-    _M(den, num, Uint64List.fromList(_D));
+    _M(den, num, _D);
     _Z(num, num, r[2]);
     _A(den, r[2], den);
 
@@ -2453,7 +2449,7 @@ class TweetNaCl {
 
     _S(chk, r[0]);
     _M(chk, chk, den);
-    if (_neq25519(chk, num) != 0) _M(r[0], r[0], Uint64List.fromList(_I));
+    if (_neq25519(chk, num) != 0) _M(r[0], r[0], _I);
 
     _S(chk, r[0]);
     _M(chk, chk, den);
@@ -2461,7 +2457,7 @@ class TweetNaCl {
 
     if (_par25519(r[0]) ==
         (Int32(p[31] & 0xFF).shiftRightUnsigned(7).toInt())) {
-      _Z(r[0], Uint64List.fromList(_gf0), r[0]);
+      _Z(r[0], _gf0, r[0]);
     }
 
     _M(r[3], r[0], r[1]);
@@ -2475,9 +2471,9 @@ class TweetNaCl {
       Uint8List sm, final int smoff, int /*long*/ n, Uint8List pk) {
     int i;
     final t = Uint8List(32), h = Uint8List(64);
-    final p = List<Uint64List>.generate(4, (_) => Uint64List(16));
+    final p = List<List<Int64>>.generate(4, (_) => _gf());
 
-    final q = List<Uint64List>.generate(4, (_) => Uint64List(16));
+    final q = List<List<Int64>>.generate(4, (_) => _gf());
 
     ///*mlen = -1;
 
