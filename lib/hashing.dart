@@ -12,7 +12,7 @@ import 'api.dart';
 /// All of the hash functions exposed in `pinenacl.hashing` can be used as data integrity checkers.
 class Hash {
   //Length of hash in bytes.
-  static final int hashLength = 64;
+  static const int defaultHashLength = 64;
 
   ///  Returns SHA-256 hash of the message.
   static Uint8List sha256(dynamic message) {
@@ -27,15 +27,16 @@ class Hash {
   }
 
   ///  Returns SHA-512 hash of the message.
-  static Uint8List sha512(dynamic message) {
+  static Uint8List sha512(dynamic message,
+      {int hashLength = defaultHashLength}) {
     if (message is String) {
       message = Uint8List.fromList(utf8.encode(message));
     } else if (message is! Uint8List) {
       throw Exception('The message must be either of string or Uint8List');
     }
-    var out = Uint8List(hashLength);
+    final out = Uint8List(defaultHashLength);
     TweetNaCl.crypto_hash(out, message as Uint8List);
-    return out;
+    return out.sublist(0, hashLength);
   }
 
   /// Returns a Blake2b hash of the message.
@@ -51,7 +52,7 @@ class Hash {
     }
 
     return Blake2b.digest(message as Uint8List,
-        digestSize: digestSize ?? hashLength,
+        digestSize: digestSize ?? defaultHashLength,
         key: key,
         salt: salt,
         personal: personalisation);

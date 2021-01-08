@@ -34,6 +34,65 @@ void main() {
         '5c2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798',
         hex);
 
+    test('Test X25519 PrivateKey generation from seed', () {
+      const seed =
+          '77076d0a7318a57d3c16c17251b26645df4c2f87ebc0992ab177fba51db92c2a';
+      // Secret/Private key is simply the first 32 bytes of the SHA512 hash of the seed
+      const secret =
+          'accd44eb8e93319c0570bc11005c0e0189d34ff02f6c17773411ad191293c98f';
+      const public =
+          'ed7749b4d989f6957f3bfde6c56767e988e21c9f8784d91d610011cd553f9b06';
+
+      final prv = PrivateKey.fromSeed(hex.decode(seed));
+      final pub = PublicKey(hex.decode(public));
+      final prv1 = PrivateKey(hex.decode(secret));
+      assert(pub == prv1.publicKey);
+      assert(pub == prv.publicKey);
+      assert(prv == prv1);
+    });
+
+    test('Test the convertion of an Ed25519 keypair to X25519 keypair', () {
+      // Libsodium test vector
+      const seed =
+          '421151a459faeade3d247115f94aedae42318124095afabe4d1451a559faedee';
+      // ignore_for_file: constant_identifier_names
+      const ed25519_sk =
+          '421151a459faeade3d247115f94aedae42318124095afabe4d1451a559faedeeb5076a8474a832daee4dd5b4040983b6623b5f344aca57d4d6ee4baf3f259e6e';
+      const ed25519_pk =
+          'b5076a8474a832daee4dd5b4040983b6623b5f344aca57d4d6ee4baf3f259e6e';
+      const x25519_sk =
+          '8052030376d47112be7f73ed7a019293dd12ad910b654455798b4667d73de166';
+      const x25519_pk =
+          'f1814f0e8ff1043d8a44d25babff3cedcae6c22c3edaa48f857ae70de2baae50';
+
+      final prv = SigningKey.fromSeed(hex.decode(seed));
+
+      final pub = VerifyKey(hex.decode(ed25519_pk));
+
+      final conv_pub = Uint8List(32);
+      TweetNaClExt.crypto_sign_ed25519_pk_to_curve25519(
+          conv_pub, hex.decode(ed25519_pk));
+
+      final conv_pub1 = Uint8List(32);
+      TweetNaClExt.crypto_sign_ed25519_pk_to_curve25519(conv_pub1, pub);
+
+      final conv_prv = Uint8List(32);
+      TweetNaClExt.crypto_sign_ed25519_sk_to_curve25519(conv_prv, prv);
+
+      final prvX = PrivateKey(conv_prv);
+      final pubX = PublicKey(conv_pub);
+
+      final prvX1 = PrivateKey(hex.decode(x25519_sk));
+      final pubX1 = PublicKey(hex.decode(x25519_pk));
+
+      // The x25519_sk must be the same as with the converted ed25519_sk
+      assert(prvX == prvX1);
+      // The x25519_pk must be the same as with the converted ed25519_pk
+      assert(pubX == pubX1);
+      assert(pubX == prvX1.publicKey);
+      assert(ed25519_sk == prv.encode(HexCoder.instance));
+    });
+
     test('Test Box decode', () {
       final b1 = Box(myPrivateKey: priv, theirPublicKey: pub);
       final b2 = Box.decode(b1.sharedKey);

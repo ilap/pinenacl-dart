@@ -40,13 +40,13 @@ import 'package:pinenacl/public.dart';
 `PineNaCl` reuses a lot of terminologies, concepts, sections of documents and implements examples and some features from, the before mentioned [PyNaCl](https://github.com/pyca/pynacl)'s publicly available  [readthedocs.io](https://pynacl.readthedocs.io).
 
 Implemented features:
-- __ECDH__ (with Curve25519) for key exchange
+- __ECDH__ (with Curve25519) for key exchange (authenticated encryptions)
   - Public-key Encryption 
     - Box (public-key authenticated encryption) and
     - SealedBox
   - Private-key encryption
     - SecretBox (private-key authenticated encryption)
-- __EdDSA__ for Digital signatures (signing).
+- __EdDSA__ for Digital signatures (signing). It is complete (they are valid for all points on the curve) and deterministic i.e. no unique random nonce is required.
   - __Ed25519__ Signatures i.e. Curve25519 with SHA-512.
 - Hashing and message authentication
   - SHA-256,
@@ -99,6 +99,20 @@ The following `NaCl` library's high-level functions are implemented as the exten
   1. crypto_auth - HMAC-SHA-512 (NaCl uses HMAC-SHA-512/256)
   2. crypto_auth_verify
   3. scalar_base - for retriving public key `A`, e.g. `A = kB`.
+
+## Key Types
+
+| Key id*     | Alt key id   | Key length | Function                        | Comment                                                                                          |
+|-------------|---------------|------------|---------------------------------|--------------------------------------------------------------------------------------------------|
+| ed25519_sk  | ed25519_skpk  |     64     | Digital Signatures (EdDSA)      | `Ed25519` signing key. It can be converted to `X25519` secret key for authenticated encryption.  |
+| ed25519_pk  |               |     32     | Digital Signatures (EdDSA)      | `Ed25519` verifying key. It can be converted to `X25519` public key for authenticated encryption |
+| x25519_sk   | curve25519_sk |     32     | Authenticated encryption (ECDH) | `X25519` private key.                                                                            |
+| x25519_pk   | curve25519_pk |     32     | Authenticated encryption (ECDH) | `X25519` public key.                                                                             |
+| ed25519e_sk | ed25519_esk   |     64     | EdDSA and ECDH                  | The first 32 byte is a valid `X25519` secret key.                                                |
+| ed25519_pk  | ed25519e_pk   |     32     | EdDSA                           | It's an `Ed25519` verifying key, so it can be converted to `X25519` public key.                  |
+
+
+__*__: Key id is the Human-Readable Part (HRP) of the Bech32 (binary-to-text encoding standard/scheme) encoded keys used in `pinenacl-dart`.
 
 ## Examples
 
@@ -384,6 +398,14 @@ void main() {
 - [x] Simplify or refactor the APIs and modules' dependencies.
 - [x] Remove [bech32], [hex] and [convert] pakages dependency.
 - [x] Remove [fixnum] pakage dependency.
+- [x] Add Ed25519 to X25519 function, to allow Ed25519 to be used in
+authenticated encryption too, see note below.
+
+Note: `Ed25519` keys that are used only for digital signatures (EdDSA), can be
+converted to `Curve25519/X25519` key (that is used only for authenticated encryption i.e.
+ECDH), therefore the same key pairs can be used for
+- digital signatures (EdDSA), as it's already used, using `crypto_sign` and
+- authenticated encryption (ECDH) using `crypto_box`.
 
 # Thanks and Credits
 
@@ -392,7 +414,13 @@ void main() {
 - [TweetNaCl: a crypto library in 100 tweets](https://tweetnacl.cr.yp.to/index.html)
 - [blake2b](https://github.com/emilbayes/blake2b)
 - [bech32](https://github.com/haarts/bech32)
-- And lot of others...
+- And many others...
+
+# References
+- [How do Ed5519 keys work?](https://blog.mozilla.org/warner/2011/11/29/ed25519-keys/)
+- [Using Ed25519 signing keys for authenticated encryption](https://blog.filippo.io/using-ed25519-keys-for-encryption/)
+- [The Provable Security of Ed25519: Theory and Practice](https://eprint.iacr.org/2020/823.pdf)
+- [Implementing Curve25519/X25519: A Tutorial on Elliptic Curve Cryptography](https://martin.kleppmann.com/papers/curve25519.pdf)
 
 # License
 

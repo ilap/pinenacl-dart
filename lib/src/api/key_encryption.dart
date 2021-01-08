@@ -64,35 +64,34 @@ class PublicKey extends ByteList implements AsymmetricPublicKey {
     final decoded = defaultDecoder.decode(data);
     return PublicKey(decoded);
   }
-  static const decoder = Bech32Coder(hrp: 'ed25519_pk');
+  static const decoder = Bech32Coder(hrp: 'x25519_pk');
 
   @override
   Encoder get encoder => decoder;
 }
 
+///
+/// The PrivateKey implements the X25519 key agreement scheme (ECDH) using
+/// Curve25519 that provides a fast, simple, constant time, and fast
+/// `variable-base` scalar multiplication algorithm, which is is optimal for
+/// ECDH
+///
 class PrivateKey extends ByteList implements AsymmetricPrivateKey {
-  // private constructor
-  PrivateKey._fromValidBytes(List<int> secret, List<int> public)
-      : publicKey = PublicKey(public),
-        super(secret, keyLength);
+  PrivateKey(List<int> secret)
+      : publicKey = PublicKey(_secretToPublic(secret)),
+        super(secret, TweetNaCl.secretKeyLength);
 
-  factory PrivateKey(List<int> seed) {
-    return PrivateKey.fromSeed(seed);
-  }
-
-  PrivateKey.fromSeed(List<int> seed)
-      : this._fromValidBytes(seed, _seedToPublic(seed));
+  PrivateKey.fromSeed(List<int> seed) : this(_seedToHash(seed));
 
   @override
-  factory PrivateKey.generate() =>
-      PrivateKey.fromSeed(TweetNaCl.randombytes(seedSize));
+  factory PrivateKey.generate() => PrivateKey(TweetNaCl.randombytes(seedSize));
 
   factory PrivateKey.decode(String data, [Encoder defaultDecoder = decoder]) {
     final decoded = defaultDecoder.decode(data);
     return PrivateKey(decoded);
   }
 
-  static const decoder = Bech32Coder(hrp: 'ed25519_sk');
+  static const decoder = Bech32Coder(hrp: 'x25519_sk');
 
   @override
   Encoder get encoder => decoder;
@@ -103,14 +102,25 @@ class PrivateKey extends ByteList implements AsymmetricPrivateKey {
   static const seedSize = TweetNaCl.seedSize;
   static final keyLength = TweetNaCl.secretKeyLength;
 
-  static Uint8List _seedToPublic(List<int> seed) {
-    if (seed.length != seedSize) {
+  static Uint8List _secretToPublic(List<int> secret) {
+    if (secret.length != keyLength) {
       throw Exception(
           'PrivateKey\'s seed must be a $seedSize bytes long binary sequence');
     }
 
     final public = Uint8List(TweetNaCl.publicKeyLength);
-    return TweetNaCl.crypto_scalarmult_base(public, Uint8List.fromList(seed));
+    return TweetNaCl.crypto_scalarmult_base(public, Uint8List.fromList(secret));
+  }
+
+  static Uint8List _seedToHash(List<int> seed) {
+    if (seed.length != seedSize) {
+      throw Exception(
+          'PrivateKey\'s seed must be a $seedSize bytes long binary sequence');
+    }
+
+    final out = Uint8List(64);
+    TweetNaCl.crypto_hash(out, Uint8List.fromList(seed));
+    return out.sublist(0, keyLength);
   }
 }
 

@@ -3,17 +3,19 @@ import 'dart:typed_data';
 import 'api.dart';
 
 class Signature extends ByteList implements SignatureBase {
-  Signature(List<int> bytes) : super(bytes, bytesLength);
-  static const bytesLength = TweetNaCl.signatureLength;
+  Signature(List<int> bytes) : super(bytes, signatureLength);
+  static const signatureLength = TweetNaCl.signatureLength;
 }
 
 class VerifyKey extends AsymmetricPublicKey implements Verify {
-  VerifyKey(List<int> list) : super(list);
+  VerifyKey(List<int> bytes) : super(bytes, keyLength);
 
   factory VerifyKey.decode(String data, {Encoder coder = decoder}) {
     final decoded = coder.decode(data);
     return VerifyKey(decoded);
   }
+
+  static const keyLength = TweetNaCl.publicKeyLength;
 
   static const decoder = Bech32Coder(hrp: 'ed25519_pk');
 
@@ -49,14 +51,30 @@ class VerifyKey extends AsymmetricPublicKey implements Verify {
   }
 }
 
+///
+/// SigningKey implements the Ed25519 deterministic signature scheme (EdDSA)
+/// using Curve25519, that provides a very fast `fixed-base` and `double-base`
+/// scalar multiplications, which faster on most platform than the
+/// `variable-base` algorithm of X25519, due to the fast and complete twisted
+/// Edwards addition law.
+///
 /// Cannot extends `AsymmetricPrivateKey` as it would have to implement
 /// the final `publicKey`.
+///
 class SigningKey extends ByteList implements AsymmetricPrivateKey, Sign {
   // Private constructor.
   SigningKey._fromValidBytes(List<int> secret, List<int> public)
       : verifyKey = VerifyKey(public),
         super(secret, secret.length);
 
+  ///
+  /// An Ed25519 signingKey is the private key for producing digital signatures
+  /// using the Ed25519 algorithm.
+  ///  simply the concatenation of the seed and
+  /// the generated public key from the `SHA512`-ed and `prone-to-buffer`-ed
+  /// seed as a private key.
+  ///
+  /// seed (i.e. private key) is a random 32-byte value.
   factory SigningKey({required List<int> seed}) {
     return SigningKey.fromSeed(seed);
   }
@@ -124,7 +142,7 @@ class SignedMessage extends ByteList with Suffix implements EncryptionMessage {
   @override
   int prefixLength = signatureLength;
 
-  static const signatureLength = 64;
+  static const signatureLength = TweetNaCl.signatureLength;
 
   @override
   SignatureBase get signature => Signature(prefix);

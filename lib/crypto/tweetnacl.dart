@@ -1491,8 +1491,7 @@ class TweetNaCl {
   }
 
   static Uint8List crypto_box_keypair(Uint8List y, Uint8List x) {
-    // NOTE: Check
-    x = _randombytes_array_len(x, x.length);
+    x = _randombytes_array(x);
     return crypto_scalarmult_base(y, x);
   }
 
@@ -2297,6 +2296,10 @@ class TweetNaCl {
     for (var i = 0; i < 32; i++) {
       sk[i + 32] = pk[i];
     }
+
+    for (var i = 0; i < 64; i++) {
+      k[i] = 0;
+    }
     return 0;
   }
 
@@ -2357,7 +2360,7 @@ class TweetNaCl {
   ///int crypto_sign(Uint8List sm, long * smlen, Uint8List m, long n, Uint8List sk)
   static int crypto_sign(Uint8List sm, int dummy /* *smlen not used*/,
       Uint8List m, final int moff, int /*long*/ n, Uint8List sk,
-      [bool extended = false]) {
+      {bool extended = false}) {
     var d = Uint8List(64), h = Uint8List(64), r = Uint8List(64);
 
     int i, j;
@@ -2519,29 +2522,22 @@ class TweetNaCl {
   static final _krandom = Random.secure();
 
   static Uint8List _randombytes_array(Uint8List x) {
-    return _randombytes_array_len(x, x.length);
+    for (var i = 0; i < x.length; i++) {
+      var rnd = 0;
+      var iter = i % 4;
+
+      if (iter == 0) {
+        // rnd is always a 32-bit positive integer.
+        rnd = _krandom.nextInt(1 << 32);
+      }
+
+      x[i] = (rnd >> (8 * iter)) & 0xFF;
+    }
+
+    return x;
   }
 
   static Uint8List randombytes(int len) {
     return _randombytes_array(Uint8List(len));
-  }
-
-  static Uint8List _randombytes_array_len(Uint8List x, int len) {
-    var ret = len % 4;
-    Int64 rnd;
-    for (var i = 0; i < len - ret; i += 4) {
-      rnd = Int64(_krandom.nextInt(1 << 32));
-      x[i + 0] = (rnd.shiftRightUnsigned(0).toInt());
-      x[i + 1] = (rnd.shiftRightUnsigned(8).toInt());
-      x[i + 2] = (rnd.shiftRightUnsigned(16).toInt());
-      x[i + 3] = (rnd.shiftRightUnsigned(24).toInt());
-    }
-    if (ret > 0) {
-      rnd = Int64(_krandom.nextInt(1 << 32));
-      for (var i = len - ret; i < len; i++) {
-        x[i] = (rnd.shiftRightUnsigned(8 * i).toInt());
-      }
-    }
-    return x;
   }
 }

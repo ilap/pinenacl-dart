@@ -9,14 +9,14 @@ import 'package:pinenacl/api.dart';
 const hex = HexCoder.instance;
 
 void _doShared(String sk, String pk, String sharedSecret) {
-  final priv = PrivateKey.decode(sk, hex);
-  final pub = PublicKey.decode(pk, hex);
+  final bobpriv = PrivateKey.decode(sk, hex);
+  final alicepub = PublicKey.decode(pk, hex);
 
   final expected = Uint8List(32);
 
   /// The expected shared secret, the
   /// K = X25519(a, X25519(b, 9)) = X25519(b, X25519(a, 9))
-  TweetNaCl.crypto_scalarmult(expected, priv, pub);
+  TweetNaCl.crypto_scalarmult(expected, bobpriv, alicepub);
   assert(sharedSecret == hex.encode(expected));
 }
 
