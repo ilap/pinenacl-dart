@@ -35,6 +35,8 @@ class TweetNaCl {
   // Length of overhead added to box compared to original message.
   static const int overheadLength = 16;
 
+  // Default length of the ed25519 signing key in bytes.
+  static const int signingKeyLength = 64;
   // Signature length
   static const int signatureLength = 64;
 
@@ -643,11 +645,11 @@ class TweetNaCl {
     for (i = 0; i < 16; i++) {
       z[i] = 0;
     }
-    ;
+
     for (i = 0; i < 8; i++) {
       z[i] = n[i];
     }
-    ;
+
     for (i = 8; i < 16; i++) {
       z[i] = (ic & 0xff);
       ic >>= 8;
@@ -770,7 +772,6 @@ class TweetNaCl {
     if (d < 32) {
       throw 'SecretBox is invalid';
     }
-    ;
 
     crypto_stream_xor(c, 0, m, 0, d, n, k);
     _crypto_onetimeauth(c, 16, c, 32, d - 32, c);
@@ -2264,6 +2265,11 @@ class TweetNaCl {
     _scalarmult(p, q, s, soff);
   }
 
+  ///
+  /// The `crypto_sign_keypair` function randomly generates a secret key and a corresponding public key.
+  /// It puts the secret key into `sk` and public key into `pk`.
+  /// It returns 0 on success.
+  ///
   static int crypto_sign_keypair(Uint8List pk, Uint8List sk, Uint8List seed) {
     var k = Uint8List(64);
     var p = List<Uint64List>.generate(4, (_) => Uint64List(16));
@@ -2356,10 +2362,25 @@ class TweetNaCl {
     _modL(r, 0, x);
   }
 
-// TBD... 64bits of n
-  ///int crypto_sign(Uint8List sm, long * smlen, Uint8List m, long n, Uint8List sk)
+  // TBD... 64bits of n
+  /// The crypto_sign interface expecting either
+  /// - a standard Ed25519 seed
+  /// - or an extended Ed25519 secret key (meaning already hashed and bits are/cleared and set).
+  ///
+  /// Note: Extended interface simply means that the corresponding 64-byte long private key is
+  /// already hashed and its bits are cleared/set.
+  ///
+  /// The `crypto_sign` function signs a message `m` using the signer's secret
+  /// key `sk`.
+  ///
+  /// The `crypto_sign` function returns the resulting signed message `sm`.
+  ///
+  /// The function raises an exception if
+  ///  - sk (sk || pk) size is not 64 or
+  ///  - sk (esk || pk) size is not 96 (extended).
+  ///
   static int crypto_sign(Uint8List sm, int dummy /* *smlen not used*/,
-      Uint8List m, final int moff, int /*long*/ n, Uint8List sk,
+      Uint8List m, final int moff, int n, Uint8List sk,
       {bool extended = false}) {
     var d = Uint8List(64), h = Uint8List(64), r = Uint8List(64);
 
@@ -2381,7 +2402,10 @@ class TweetNaCl {
       _crypto_hash_off(d, sk, 0, 32);
     }
 
-    // For safetiness
+    // when it's extended then we leave clear/set bit below only for safetiness.
+    // As we can assume that the 64-byte length
+    // extended private key's bits have been already cleared and set.
+    // TODO: throw exception if the above assumption is not met.
     d[0] &= 248;
     d[31] &= 127;
     d[31] |= 64;
@@ -2522,8 +2546,9 @@ class TweetNaCl {
   static final _krandom = Random.secure();
 
   static Uint8List _randombytes_array(Uint8List x) {
+    var rnd = 0;
+
     for (var i = 0; i < x.length; i++) {
-      var rnd = 0;
       var iter = i % 4;
 
       if (iter == 0) {

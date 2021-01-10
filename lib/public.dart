@@ -47,14 +47,14 @@ class Box extends BoxBase {
       : super.fromList(
             _beforeNm(theirPublicKey, myPrivateKey, null) as List<int>);
 
-  Box._fromSharedKey(AsymmetricKey sharedKey)
+  Box._fromSharedKey(Uint8List sharedKey)
       : super.fromList(_beforeNm(null, null, sharedKey) as List<int>);
 
-  factory Box.decode(AsymmetricKey encoded) {
+  factory Box.decode(Uint8List encoded) {
     return Box._fromSharedKey(encoded);
   }
 
-  AsymmetricKey get sharedKey => this;
+  ByteList get sharedKey => this;
 
   static const decoder = HexCoder.instance;
 
@@ -72,8 +72,8 @@ class Box extends BoxBase {
   Crypting doDecrypt = TweetNaCl.crypto_box_open_afternm;
 
   // Initialize the sharedKey
-  static ByteList? _beforeNm(AsymmetricPublicKey? publicKey,
-      AsymmetricPrivateKey? secretKey, AsymmetricKey? sharedKey) {
+  static Uint8List? _beforeNm(AsymmetricPublicKey? publicKey,
+      AsymmetricPrivateKey? secretKey, Uint8List? sharedKey) {
     if (publicKey == null && secretKey == null) {
       /// Using the predefined sharedKey we must have the
       /// publicKey and privateKey unset.
@@ -93,7 +93,7 @@ class Box extends BoxBase {
 
     TweetNaCl.crypto_box_beforenm(k, pub, priv);
     // Returns the constructed sharedKey.
-    return ByteList.fromList(k);
+    return Uint8List.fromList(k);
   }
 }
 
@@ -111,7 +111,7 @@ class Box extends BoxBase {
 /// part of the key cannot be recovered after use.
 ///
 /// Doc comment from: [PyNaCl's readthedocs](https://pynacl.readthedocs.io)
-class SealedBox extends AsymmetricKey {
+class SealedBox extends ByteList {
   SealedBox._fromKeyPair(
       AsymmetricPrivateKey? privateKey, AsymmetricPublicKey publicKey)
       : _privateKey = privateKey,

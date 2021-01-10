@@ -1,8 +1,11 @@
 part of pinenacl.api;
 
-abstract class AsymmetricKey extends ByteList with Encodable {
-  AsymmetricKey(List<int> data, [int? bytesLength]) : super(data, bytesLength);
+abstract class AsymmetricKey extends ByteList with Encodable, Suffix {
+  AsymmetricKey(List<int> data, [int? keyLength]) : super(data, keyLength);
   AsymmetricKey.fromList(List<int> data) : super.fromList(data);
+  //TODO: Check its requirement
+  ByteList get keyBytes => prefix;
+  AsymmetricPublicKey get publicKey;
 }
 
 abstract class AsymmetricPublicKey extends AsymmetricKey {
@@ -12,11 +15,13 @@ abstract class AsymmetricPublicKey extends AsymmetricKey {
 }
 
 abstract class AsymmetricPrivateKey extends AsymmetricKey {
-  AsymmetricPrivateKey(List<int> data, [int? bytesLength])
-      : super(data, bytesLength);
+  AsymmetricPrivateKey(List<int> data, [int? keyLength])
+      : super(data, keyLength);
   factory AsymmetricPrivateKey.generate() {
     throw Exception('AsymmetricPrivateKey - unreachable');
   }
+
+  @override
   AsymmetricPublicKey get publicKey;
 }
 

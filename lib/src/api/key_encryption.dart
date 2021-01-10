@@ -3,7 +3,7 @@ part of pinenacl.api;
 typedef Crypting = Uint8List Function(
     Uint8List out, Uint8List text, int textLen, Uint8List nonce, Uint8List k);
 
-abstract class BoxBase extends AsymmetricKey {
+abstract class BoxBase extends ByteList {
   BoxBase.fromList(List<int> list) : super.fromList(list);
 
   late Crypting doEncrypt;
@@ -57,7 +57,7 @@ class EncryptedMessage extends ByteList with Suffix {
   ByteList get cipherText => suffix;
 }
 
-class PublicKey extends ByteList implements AsymmetricPublicKey {
+class PublicKey extends AsymmetricPublicKey {
   PublicKey(List<int> bytes) : super(bytes, TweetNaCl.publicKeyLength);
 
   factory PublicKey.decode(String data, [Encoder defaultDecoder = decoder]) {
@@ -65,6 +65,9 @@ class PublicKey extends ByteList implements AsymmetricPublicKey {
     return PublicKey(decoded);
   }
   static const decoder = Bech32Coder(hrp: 'x25519_pk');
+
+  @override
+  PublicKey get publicKey => this;
 
   @override
   Encoder get encoder => decoder;
@@ -76,9 +79,9 @@ class PublicKey extends ByteList implements AsymmetricPublicKey {
 /// `variable-base` scalar multiplication algorithm, which is is optimal for
 /// ECDH
 ///
-class PrivateKey extends ByteList implements AsymmetricPrivateKey {
+class PrivateKey extends AsymmetricPrivateKey {
   PrivateKey(List<int> secret)
-      : publicKey = PublicKey(_secretToPublic(secret)),
+      : _publicKey = PublicKey(_secretToPublic(secret)),
         super(secret, TweetNaCl.secretKeyLength);
 
   PrivateKey.fromSeed(List<int> seed) : this(_seedToHash(seed));
@@ -96,8 +99,10 @@ class PrivateKey extends ByteList implements AsymmetricPrivateKey {
   @override
   Encoder get encoder => decoder;
 
+  final PublicKey _publicKey;
+
   @override
-  final PublicKey publicKey;
+  PublicKey get publicKey => _publicKey;
 
   static const seedSize = TweetNaCl.seedSize;
   static final keyLength = TweetNaCl.secretKeyLength;

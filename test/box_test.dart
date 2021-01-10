@@ -65,32 +65,32 @@ void main() {
       const x25519_pk =
           'f1814f0e8ff1043d8a44d25babff3cedcae6c22c3edaa48f857ae70de2baae50';
 
-      final prv = SigningKey.fromSeed(hex.decode(seed));
+      final ed25519Priv = SigningKey.fromSeed(hex.decode(seed));
 
-      final pub = VerifyKey(hex.decode(ed25519_pk));
+      final ed25519Pub = VerifyKey(hex.decode(ed25519_pk));
 
-      final conv_pub = Uint8List(32);
-      TweetNaClExt.crypto_sign_ed25519_pk_to_curve25519(
-          conv_pub, hex.decode(ed25519_pk));
+      final x25519Pub = Uint8List(32);
+      TweetNaClExt.crypto_sign_ed25519_pk_to_x25519_pk(
+          x25519Pub, hex.decode(ed25519_pk));
 
-      final conv_pub1 = Uint8List(32);
-      TweetNaClExt.crypto_sign_ed25519_pk_to_curve25519(conv_pub1, pub);
+      final x25519Pub1 = Uint8List(32);
+      TweetNaClExt.crypto_sign_ed25519_pk_to_x25519_pk(x25519Pub1, ed25519Pub);
 
-      final conv_prv = Uint8List(32);
-      TweetNaClExt.crypto_sign_ed25519_sk_to_curve25519(conv_prv, prv);
+      final x25519Prv = Uint8List(32);
+      TweetNaClExt.crypto_sign_ed25519_sk_to_x25519_sk(x25519Prv, ed25519Priv);
 
-      final prvX = PrivateKey(conv_prv);
-      final pubX = PublicKey(conv_pub);
+      final ed25519Prv2 = PrivateKey(x25519Prv);
+      final ed25519Pub2 = PublicKey(x25519Pub);
 
-      final prvX1 = PrivateKey(hex.decode(x25519_sk));
-      final pubX1 = PublicKey(hex.decode(x25519_pk));
+      final ed25519Prv3 = PrivateKey(hex.decode(x25519_sk));
+      final ed25519Pub3 = PublicKey(hex.decode(x25519_pk));
 
       // The x25519_sk must be the same as with the converted ed25519_sk
-      assert(prvX == prvX1);
+      assert(ed25519Prv2 == ed25519Prv3);
       // The x25519_pk must be the same as with the converted ed25519_pk
-      assert(pubX == pubX1);
-      assert(pubX == prvX1.publicKey);
-      assert(ed25519_sk == prv.encode(HexCoder.instance));
+      assert(ed25519Pub2 == ed25519Pub3);
+      assert(ed25519Pub2 == ed25519Prv3.publicKey);
+      assert(ed25519_sk == ed25519Priv.encode(HexCoder.instance));
     });
 
     test('Test Box decode', () {

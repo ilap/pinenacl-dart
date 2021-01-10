@@ -54,8 +54,8 @@ extension TweetNaClExt on TweetNaCl {
 
   /// Converts Ed25519 private/signing key to Curve25519 private key.
   /// It's just simply the SHA512 and prone-to-buffered seed.
-  static int crypto_sign_ed25519_sk_to_curve25519(
-      Uint8List curve25519_sk, Uint8List ed25519_sk) {
+  static int crypto_sign_ed25519_sk_to_x25519_sk(
+      Uint8List x25519_sk, Uint8List ed25519_sk) {
     final h = Uint8List(64);
 
     TweetNaCl._crypto_hash_off(h, ed25519_sk, 0, 32);
@@ -65,7 +65,7 @@ extension TweetNaClExt on TweetNaCl {
     h[31] |= 64;
 
     for (var i = 0; i < 32; i++) {
-      curve25519_sk[i] = h[i];
+      x25519_sk[i] = h[i];
     }
 
     for (var i = 0; i < 64; i++) {
@@ -76,8 +76,8 @@ extension TweetNaClExt on TweetNaCl {
 
   /// Converts Ed25519 public/verifying key to Curve25519 public key.
   /// Xmont = (1 + Yed)/(1 - Yed) mod p
-  static int crypto_sign_ed25519_pk_to_curve25519(
-      Uint8List curve25519_pk, Uint8List ed25519_pk) {
+  static int crypto_sign_ed25519_pk_to_x25519_pk(
+      Uint8List x25519_pk, Uint8List ed25519_pk) {
     final z = Uint8List(32);
     final q = List<Uint64List>.generate(4, (_) => Uint64List(16));
     final a = Uint64List(16);
@@ -98,7 +98,7 @@ extension TweetNaClExt on TweetNaCl {
     TweetNaCl._pack25519(z, a, 0);
 
     for (var i = 0; i < 32; i++) {
-      curve25519_pk[i] = z[i];
+      x25519_pk[i] = z[i];
     }
 
     return 0;

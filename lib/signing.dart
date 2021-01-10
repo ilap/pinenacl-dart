@@ -8,16 +8,17 @@ class Signature extends ByteList implements SignatureBase {
 }
 
 class VerifyKey extends AsymmetricPublicKey implements Verify {
-  VerifyKey(List<int> bytes) : super(bytes, keyLength);
-
-  factory VerifyKey.decode(String data, {Encoder coder = decoder}) {
-    final decoded = coder.decode(data);
-    return VerifyKey(decoded);
-  }
+  VerifyKey(List<int> bytes, [int keyLength = keyLength])
+      : super(bytes, keyLength);
+  VerifyKey.decode(String data, {Encoder coder = decoder})
+      : this(coder.decode(data), coder.decode(data).length);
 
   static const keyLength = TweetNaCl.publicKeyLength;
 
   static const decoder = Bech32Coder(hrp: 'ed25519_pk');
+
+  @override
+  VerifyKey get publicKey => this;
 
   @override
   Encoder get encoder => decoder;
@@ -61,11 +62,12 @@ class VerifyKey extends AsymmetricPublicKey implements Verify {
 /// Cannot extends `AsymmetricPrivateKey` as it would have to implement
 /// the final `publicKey`.
 ///
-class SigningKey extends ByteList implements AsymmetricPrivateKey, Sign {
+class SigningKey extends AsymmetricPrivateKey implements Sign {
   // Private constructor.
-  SigningKey._fromValidBytes(List<int> secret, List<int> public)
+  SigningKey.fromValidBytes(List<int> secret, List<int> public,
+      {int secretLength = TweetNaCl.signingKeyLength})
       : verifyKey = VerifyKey(public),
-        super(secret, secret.length);
+        super(secret, secretLength);
 
   ///
   /// An Ed25519 signingKey is the private key for producing digital signatures
@@ -93,7 +95,7 @@ class SigningKey extends ByteList implements AsymmetricPrivateKey, Sign {
     final pub = Uint8List(TweetNaCl.publicKeyLength);
     TweetNaCl.crypto_sign_keypair(pub, priv, Uint8List.fromList(seed));
 
-    return SigningKey._fromValidBytes(priv, pub);
+    return SigningKey.fromValidBytes(priv, pub);
   }
 
   factory SigningKey.generate() {
