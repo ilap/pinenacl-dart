@@ -58,12 +58,11 @@ class EncryptedMessage extends ByteList with Suffix {
 }
 
 class PublicKey extends AsymmetricPublicKey {
-  PublicKey(List<int> bytes) : super(bytes, TweetNaCl.publicKeyLength);
+  PublicKey(List<int> bytes) : super(bytes, keyLength);
 
-  factory PublicKey.decode(String data, [Encoder defaultDecoder = decoder]) {
-    final decoded = defaultDecoder.decode(data);
-    return PublicKey(decoded);
-  }
+  PublicKey.decode(String keyString, [Encoder coder = decoder])
+      : this(coder.decode(keyString));
+
   static const decoder = Bech32Coder(hrp: 'x25519_pk');
 
   @override
@@ -71,6 +70,8 @@ class PublicKey extends AsymmetricPublicKey {
 
   @override
   Encoder get encoder => decoder;
+
+  static const keyLength = TweetNaCl.publicKeyLength;
 }
 
 ///
@@ -80,32 +81,26 @@ class PublicKey extends AsymmetricPublicKey {
 /// ECDH
 ///
 class PrivateKey extends AsymmetricPrivateKey {
-  PrivateKey(List<int> secret)
-      : _publicKey = PublicKey(_secretToPublic(secret)),
-        super(secret, TweetNaCl.secretKeyLength);
+  PrivateKey(List<int> secret) : super(secret, keyLength);
 
   PrivateKey.fromSeed(List<int> seed) : this(_seedToHash(seed));
 
-  @override
-  factory PrivateKey.generate() => PrivateKey(TweetNaCl.randombytes(seedSize));
+  PrivateKey.generate() : this(TweetNaCl.randombytes(seedSize));
 
-  factory PrivateKey.decode(String data, [Encoder defaultDecoder = decoder]) {
-    final decoded = defaultDecoder.decode(data);
-    return PrivateKey(decoded);
-  }
+  PrivateKey.decode(String keyString, [Encoder coder = decoder])
+      : this(coder.decode(keyString));
 
   static const decoder = Bech32Coder(hrp: 'x25519_sk');
+  static const seedSize = TweetNaCl.seedSize;
+  static const keyLength = TweetNaCl.secretKeyLength;
 
   @override
   Encoder get encoder => decoder;
 
-  final PublicKey _publicKey;
+  PublicKey? _publicKey;
 
   @override
-  PublicKey get publicKey => _publicKey;
-
-  static const seedSize = TweetNaCl.seedSize;
-  static final keyLength = TweetNaCl.secretKeyLength;
+  PublicKey get publicKey => _publicKey ??= PublicKey(_secretToPublic(this));
 
   static Uint8List _secretToPublic(List<int> secret) {
     if (secret.length != keyLength) {

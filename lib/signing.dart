@@ -10,8 +10,8 @@ class Signature extends ByteList implements SignatureBase {
 class VerifyKey extends AsymmetricPublicKey implements Verify {
   VerifyKey(List<int> bytes, [int keyLength = keyLength])
       : super(bytes, keyLength);
-  VerifyKey.decode(String data, {Encoder coder = decoder})
-      : this(coder.decode(data), coder.decode(data).length);
+  VerifyKey.decode(String keyString, {Encoder coder = decoder})
+      : this(coder.decode(keyString), coder.decode(keyString).length);
 
   static const keyLength = TweetNaCl.publicKeyLength;
 
@@ -63,13 +63,6 @@ class VerifyKey extends AsymmetricPublicKey implements Verify {
 /// the final `publicKey`.
 ///
 class SigningKey extends AsymmetricPrivateKey implements Sign {
-  // Private constructor.
-  SigningKey.fromValidBytes(List<int> secret, List<int> public,
-      {int secretLength = TweetNaCl.signingKeyLength})
-      : verifyKey = VerifyKey(public),
-        super(secret, secretLength);
-
-  ///
   /// An Ed25519 signingKey is the private key for producing digital signatures
   /// using the Ed25519 algorithm.
   ///  simply the concatenation of the seed and
@@ -77,11 +70,37 @@ class SigningKey extends AsymmetricPrivateKey implements Sign {
   /// seed as a private key.
   ///
   /// seed (i.e. private key) is a random 32-byte value.
-  factory SigningKey({required List<int> seed}) {
-    return SigningKey.fromSeed(seed);
-  }
+  SigningKey({required List<int> seed}) : this.fromSeed(seed);
 
-  factory SigningKey.fromSeed(List<int> seed) {
+  SigningKey.fromValidBytes(List<int> secret,
+      {int keyLength = TweetNaCl.signingKeyLength})
+      : super(secret, keyLength);
+
+  SigningKey.fromSeed(List<int> seed)
+      : this.fromValidBytes(_seedToSecret(seed));
+
+  SigningKey.generate()
+      : this.fromSeed(TweetNaCl.randombytes(TweetNaCl.seedSize));
+
+  SigningKey.decode(String keyString, [Encoder coder = decoder])
+      : this(seed: coder.decode(keyString));
+
+  static const decoder = Bech32Coder(hrp: 'ed25519_sk');
+
+  @override
+  Encoder get encoder => decoder;
+
+  static const seedSize = TweetNaCl.seedSize;
+
+  VerifyKey? _verifyKey;
+
+  @override
+  VerifyKey get verifyKey => _verifyKey ??= VerifyKey(sublist(32));
+
+  @override
+  AsymmetricPublicKey get publicKey => verifyKey;
+
+  static List<int> _seedToSecret(List<int> seed) {
     if (seed.length != seedSize) {
       throw Exception('SigningKey must be created from a $seedSize byte seed');
     }
@@ -95,31 +114,8 @@ class SigningKey extends AsymmetricPrivateKey implements Sign {
     final pub = Uint8List(TweetNaCl.publicKeyLength);
     TweetNaCl.crypto_sign_keypair(pub, priv, Uint8List.fromList(seed));
 
-    return SigningKey.fromValidBytes(priv, pub);
+    return SigningKey.fromValidBytes(priv);
   }
-
-  factory SigningKey.generate() {
-    final secret = TweetNaCl.randombytes(seedSize);
-    return SigningKey.fromSeed(secret);
-  }
-
-  factory SigningKey.decode(String data, [Encoder defaultDecoder = decoder]) {
-    final decoded = defaultDecoder.decode(data);
-    return SigningKey(seed: decoded);
-  }
-
-  static const decoder = Bech32Coder(hrp: 'ed25519_sk');
-
-  @override
-  Encoder get encoder => decoder;
-
-  static const seedSize = TweetNaCl.seedSize;
-
-  @override
-  AsymmetricPublicKey get publicKey => verifyKey;
-
-  @override
-  final VerifyKey verifyKey;
 
   @override
   SignedMessage sign(List<int> message) {

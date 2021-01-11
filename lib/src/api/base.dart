@@ -3,7 +3,7 @@ part of pinenacl.api;
 abstract class AsymmetricKey extends ByteList with Encodable, Suffix {
   AsymmetricKey(List<int> data, [int? keyLength]) : super(data, keyLength);
   AsymmetricKey.fromList(List<int> data) : super.fromList(data);
-  //TODO: Check its requirement
+  //TODO: Check its requirements
   ByteList get keyBytes => prefix;
   AsymmetricPublicKey get publicKey;
 }
@@ -17,12 +17,6 @@ abstract class AsymmetricPublicKey extends AsymmetricKey {
 abstract class AsymmetricPrivateKey extends AsymmetricKey {
   AsymmetricPrivateKey(List<int> data, [int? keyLength])
       : super(data, keyLength);
-  factory AsymmetricPrivateKey.generate() {
-    throw Exception('AsymmetricPrivateKey - unreachable');
-  }
-
-  @override
-  AsymmetricPublicKey get publicKey;
 }
 
 /// `ByteList` is the base of the PineNaCl cryptographic library,

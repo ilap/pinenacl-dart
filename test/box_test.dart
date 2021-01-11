@@ -93,6 +93,16 @@ void main() {
       assert(ed25519_sk == ed25519Priv.encode(HexCoder.instance));
     });
 
+    test(
+        'Test libsodium the convertion of an Ed25519 keypair to X25519 keypair',
+        () {
+      // TODO: gather and test testvectors from diff sources.
+      const curve25519Pk =
+          'f1814f0e8ff1043d8a44d25babff3cedcae6c22c3edaa48f857ae70de2baae50';
+      const curve25519Sk =
+          '8052030376d47112be7f73ed7a019293dd12ad910b654455798b4667d73de166';
+    });
+
     test('Test Box decode', () {
       final b1 = Box(myPrivateKey: priv, theirPublicKey: pub);
       final b2 = Box.decode(b1.sharedKey);
