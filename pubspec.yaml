@@ -1,6 +1,6 @@
 name: pinenacl
 description: The Dart implementation of the PyNaCl APIs with the TweetNaCl cryptographic library
-version: 0.2.0-nullsafety.3
+version: 0.2.0-nullsafety.4
 authors:
   - Pal Dorogi <pal.dorogi@gmail.com>
 homepage: https://github.com/ilap/pinenacl-dart

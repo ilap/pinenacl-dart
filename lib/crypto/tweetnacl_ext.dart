@@ -103,4 +103,22 @@ extension TweetNaClExt on TweetNaCl {
 
     return 0;
   }
+
+  static int point_add(Uint8List out, Uint8List p1, Uint8List p2) {
+    final p =
+        List<Uint64List>.generate(4, (_) => Uint64List(16), growable: false);
+
+    final q =
+        List<Uint64List>.generate(4, (_) => Uint64List(16), growable: false);
+
+    if (TweetNaCl._unpackneg(p, p1) != 0) return -1;
+    if (TweetNaCl._unpackneg(q, p2) != 0) return -1;
+
+    TweetNaCl._add(p, q);
+    TweetNaCl._pack(out, p);
+
+    out[31] ^= 0x80;
+
+    return 0;
+  }
 }
