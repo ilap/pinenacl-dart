@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.2.0-nullsafety.4](https://github.com/ilap/pinenacl-dart/tree/v0.2.0-nullsafety.4) (2021-01-13)
+
+[Full Changelog](https://github.com/ilap/pinenacl-dart/compare/v0.2.0-nullsafety.3...v0.2.0-nullsafety.4)
+
+# Changelog
+
 ## [v0.2.0-nullsafety.3](https://github.com/ilap/pinenacl-dart/tree/v0.2.0-nullsafety.3) (2021-01-11)
 
 [Full Changelog](https://github.com/ilap/pinenacl-dart/compare/v0.2.0-nullsafety.2...v0.2.0-nullsafety.3)
