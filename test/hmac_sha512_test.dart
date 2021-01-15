@@ -146,4 +146,27 @@ void main() {
       });
     });
   });
+
+  group('Password Based Key Derivation Funtcion #2 (PBKDF2)', () {
+    final hex = HexCoder.instance;
+    final entropy = '46e62370a138a182a498b8e2885bc032379ddf38';
+    final seedBytes = hex.decode(entropy);
+    final password = <int>[].toUint8List();
+    final outLen = 96;
+
+    test('HMAC-SHA-512 based PBKDF2 with 262144 iterations', () {
+      final iter = 0x40000;
+
+      final out = PBKDF2.hmac_sha512(password, seedBytes, iter, outLen);
+
+      print(hex.encode(out));
+    });
+    test('HMAC-SHA-512 based PBKDF2 with 4096 iterations', () {
+      final iter = 0x1000;
+
+      final out = PBKDF2.hmac_sha512(password, seedBytes, iter, outLen);
+
+      print(hex.encode(out));
+    });
+  });
 }

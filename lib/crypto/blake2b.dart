@@ -221,13 +221,13 @@ class Blake2b {
     params[3] = 1;
 
     if (salt != null) {
-      Utils.listCopy(salt, params, 32);
+      Utils.listCopy(salt, salt.length, params, 32);
     }
 
     if (personal != null) {
       // padding if length < $personalBytes
       final offset = 48 + personalBytes - personal.length;
-      Utils.listCopy(personal, params, offset);
+      Utils.listCopy(personal, personal.length, params, offset);
     }
 
     for (var i = 0; i < 16; i++) {

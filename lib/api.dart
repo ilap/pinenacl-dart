@@ -6,10 +6,13 @@ import 'dart:typed_data';
 import 'crypto/tweetnacl.dart';
 import 'encoding.dart';
 
+export 'dart:typed_data';
+export 'encoding.dart';
 export 'package:pinenacl/crypto/blake2b.dart';
 export 'package:pinenacl/crypto/hmac_sha512.dart';
 export 'package:pinenacl/crypto/sha_256.dart';
 export 'package:pinenacl/crypto/tweetnacl.dart';
+export 'package:pinenacl/crypto/pbkdf2.dart';
 export 'package:pinenacl/encoding.dart';
 export 'package:pinenacl/hashing.dart';
 export 'package:pinenacl/public.dart';

@@ -41,18 +41,22 @@ import 'package:pinenacl/public.dart';
 
 Implemented features:
 - __ECDH__ (with Curve25519) for key exchange (authenticated encryptions)
-  - Public-key Encryption 
+  - **_Public-key Encryption_** 
     - Box (public-key authenticated encryption) and
     - SealedBox
-  - Private-key encryption
+  - **_Private-key encryption_**
     - SecretBox (private-key authenticated encryption)
-- __EdDSA__ for Digital signatures (signing). It is complete (they are valid for all points on the curve) and deterministic i.e. no unique random nonce is required.
+- __EdDSA__ for **_Digital signatures_** (signing). It is complete (they are valid for all points on the curve) and deterministic i.e. no unique random nonce is required.
   - __Ed25519__ Signatures i.e. Curve25519 with SHA-512.
-- Hashing and message authentication
+- **_Hashing_** and **_message authentication_**
   - SHA-256,
   - SHA-512, the default hashing algorithm of the original `TweetNaCl`
   - BLAKE2b for KDF and MAC (not implemented in `TweetNaCl`).
   - HMAC-SHA512.
+- **_Password based key derivation_** and **_password hashing_**.
+  - **PBKDF2** with `HMAC-SHA512`, iterating the `HMAC-SHA512` many times on a combination of the password and a **_random salt_**.
+
+
 ## Low-level Functions supported by `PineNaCl`
 
 This library supports all 25 of the [C NaCl functions](#functions_supported_by_tweetnacl), that can be used to build `NaCl` applications.
@@ -99,6 +103,7 @@ The following `NaCl` library's high-level functions are implemented as the exten
   1. crypto_auth - HMAC-SHA-512 (NaCl uses HMAC-SHA-512/256)
   2. crypto_auth_verify
   3. scalar_base - for retriving public key `A`, e.g. `A = kB`.
+  4. point_add - for adding two public keys' point together `A = y1 + y2`.
 
 ## Key Types
 

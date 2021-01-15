@@ -172,7 +172,7 @@ class SealedBox extends ByteList {
     Blake2b.update(state, in2);
 
     final digest = Blake2b.finalise(state);
-    Utils.listCopy(digest, out, 0);
+    Utils.listCopy(digest, digest.length, out, 0);
   }
 
   /// The `crypto_box_seal` is not in the `TweetNaCl`, that's why
@@ -201,8 +201,8 @@ class SealedBox extends ByteList {
     var mac = ciphertext.sublist(_pubLength, _pubLength + _macBytes);
 
     _cryptoBoxDetached(ciphertext, mac, message, mLen, nonce, k);
-    Utils.listCopy(epk, ciphertext, 0);
-    Utils.listCopy(mac, ciphertext, _pubLength);
+    Utils.listCopy(epk, epk.length, ciphertext, 0);
+    Utils.listCopy(mac, mac.length, ciphertext, _pubLength);
 
     // Clean the sensitive data which are not required anymore.
     Utils.listZero(esk);
@@ -227,7 +227,8 @@ class SealedBox extends ByteList {
 
     final block0 = ciphertext.sublist(0, _zerobytesLength);
     ciphertext = ciphertext.sublist(_zerobytesLength, d + _zerobytesLength);
-    Utils.listCopy(ciphertext, c, _zerobytesLength + _macBytes);
+    Utils.listCopy(
+        ciphertext, ciphertext.length, c, _zerobytesLength + _macBytes);
 
     TweetNaCl.crypto_onetimeauth(mac, ciphertext, d, block0);
   }
