@@ -1,7 +1,11 @@
 import 'dart:typed_data';
 
 import 'package:test/test.dart';
-import 'package:pinenacl/public.dart';
+
+import 'package:pinenacl/api.dart';
+import 'package:pinenacl/tweetnacl.dart' show TweetNaClExt;
+import 'package:pinenacl/src/authenticated_encryption/public.dart';
+import 'package:pinenacl/src/signatures/ed25519.dart';
 
 const _vectors = {
   'privalice':
@@ -51,7 +55,7 @@ void main() {
       assert(prv == prv1);
     });
 
-    test('Test the convertion of an Ed25519 keypair to X25519 keypair', () {
+    test('Test the conversion of an Ed25519 keypair to X25519 keypair', () {
       // Libsodium test vector
       const seed =
           '421151a459faeade3d247115f94aedae42318124095afabe4d1451a559faedee';
@@ -94,13 +98,13 @@ void main() {
     });
 
     test(
-        'Test libsodium the convertion of an Ed25519 keypair to X25519 keypair',
+        'Test libsodium the conversion of an Ed25519 keypair to X25519 keypair',
         () {
       // TODO: gather and test testvectors from diff sources.
-      const curve25519Pk =
-          'f1814f0e8ff1043d8a44d25babff3cedcae6c22c3edaa48f857ae70de2baae50';
-      const curve25519Sk =
-          '8052030376d47112be7f73ed7a019293dd12ad910b654455798b4667d73de166';
+      //const curve25519Pk =
+      //    'f1814f0e8ff1043d8a44d25babff3cedcae6c22c3edaa48f857ae70de2baae50';
+      //const curve25519Sk =
+      //    '8052030376d47112be7f73ed7a019293dd12ad910b654455798b4667d73de166';
     });
 
     test('Test Box decode', () {
@@ -143,13 +147,13 @@ void main() {
     });
 
     test('Test Box decryption', () {
-      final privalice = PrivateKey.decode(_vectors['privalice']!, hex);
-      final pubbob = PublicKey.decode(_vectors['pubbob']!, hex);
+      final privAlice = PrivateKey.decode(_vectors['privalice']!, hex);
+      final pubBob = PublicKey.decode(_vectors['pubbob']!, hex);
       final nonce = _vectors['nonce']!;
       final plaintext = _vectors['plaintext']!;
       final ciphertext = _vectors['ciphertext']!;
 
-      final box = Box(myPrivateKey: privalice, theirPublicKey: pubbob);
+      final box = Box(myPrivateKey: privAlice, theirPublicKey: pubBob);
 
       final decrypted =
           box.decrypt(hex.decode(ciphertext), nonce: hex.decode(nonce));
@@ -195,10 +199,10 @@ void main() {
       final _32 = Uint8List(32);
       final k32 = PublicKey(_32);
 
-      // TODO: Generalise and implement proper Error handling by implementing proper exception classes.
+      // TODO: Generalize and implement proper Error handling by implementing proper exception classes.
       // expect(() => PrivateKey(priv.publicKey), throwsException);
       // expect(() => PrivateKey, returnsNormally);
-      // expect(() => PrivateKey(), throwsA(TypeMatcher<EXCTYPE>()));
+      // expect(() => PrivateKey(), throwsA(TypeMatcher<TYPE>()));
       // expect(() => PrivateKey(priv.publicKey), throwsA(predicate((e) => e is Error)))
       // expect(() => PrivateKey(), throwsA(predicate((e) => e is ArgumentError && e.message == 'Error')));
       // expect(() => PrivateKey(), throwsA(allOf(isArgumentError, predicate((e) => e.message == 'Error'))));

@@ -2,13 +2,10 @@ library pinenacl.utils;
 
 import 'dart:typed_data';
 
-import 'api.dart';
+import 'package:pinenacl/src/tweetnacl/tweetnacl.dart';
 
-/// Utils class, provides secure randomnes and basic
-/// list functions.
-//class Utils2 {
-/// Add a global extension for converting List<int> to Uint8List.
-extension Utils on List<int> {
+/// Utils class, provides basic list functions.
+class PineNaClUtils {
   static Uint8List randombytes(int len) {
     return TweetNaCl.randombytes(len);
   }
@@ -23,10 +20,5 @@ extension Utils on List<int> {
     for (var i = 0; i < list.length; i++) {
       list[i] = 0;
     }
-  }
-
-  /// Add a global extension for converting List<int> to Uint8List.
-  Uint8List toUint8List() {
-    return Uint8List.fromList(this);
   }
 }

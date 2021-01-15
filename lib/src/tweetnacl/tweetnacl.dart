@@ -1,4 +1,4 @@
-library pinenacl.api.crypto.tweetnacl;
+library pinenacl.tweetnacl;
 
 import 'dart:core';
 import 'dart:math';
@@ -6,8 +6,8 @@ import 'dart:typed_data';
 
 import 'package:fixnum/fixnum.dart';
 
-import 'hmac_sha512.dart';
-import 'poly1305.dart';
+import 'package:pinenacl/src/message_authentication/hmac.dart';
+import 'package:pinenacl/src/tweetnacl/poly1305.dart';
 
 part 'tweetnacl_ext.dart';
 // ignore_for_file: constant_identifier_names
@@ -2402,7 +2402,7 @@ class TweetNaCl {
       _crypto_hash_off(d, sk, 0, 32);
     }
 
-    // when it's extended then we leave clear/set bit below only for safetiness.
+    // when it's extended then we leave clear/set bit below only for safeness.
     // As we can assume that the 64-byte length
     // extended private key's bits have been already cleared and set.
     // TODO: throw exception if the above assumption is not met.

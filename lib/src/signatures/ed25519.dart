@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 
-import 'api.dart';
+import 'package:pinenacl/api.dart';
+import 'package:pinenacl/api/signatures.dart';
+import 'package:pinenacl/src/tweetnacl/tweetnacl.dart';
 
 class Signature extends ByteList implements SignatureBase {
   Signature(List<int> bytes) : super(bytes, signatureLength);

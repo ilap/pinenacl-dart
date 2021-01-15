@@ -1,8 +1,5 @@
-library pinenacl.api.secret;
-
-import 'api.dart';
-
-export 'package:pinenacl/api.dart';
+import 'package:pinenacl/api.dart';
+import 'package:pinenacl/src/tweetnacl/tweetnacl.dart';
 
 /// From: [PyNaCl's readthedocs](https://pynacl.readthedocs.io)
 ///

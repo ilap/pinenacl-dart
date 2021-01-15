@@ -1,4 +1,4 @@
-part of pinenacl.api;
+import 'package:pinenacl/api.dart';
 
 abstract class Sign {
   Verify get verifyKey;

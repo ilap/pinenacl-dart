@@ -1,4 +1,4 @@
-part of pinenacl.api.encoding;
+part of pinenacl.encoding;
 
 const _alphabet = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
 final _alphabetMap =

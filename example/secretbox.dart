@@ -1,9 +1,9 @@
 import 'package:pinenacl/api.dart';
-import 'package:pinenacl/secret.dart' show SecretBox;
+import 'package:pinenacl/x25519.dart' show SecretBox;
 
 void main() {
   print('\n### Secret Key Encryption - SecretBox Example ###\n');
-  final key = Utils.randombytes(SecretBox.keyLength);
+  final key = PineNaClUtils.randombytes(SecretBox.keyLength);
   final box = SecretBox(key);
 
   final message =

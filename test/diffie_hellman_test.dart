@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:test/test.dart';
 
 import 'package:pinenacl/api.dart';
+import 'package:pinenacl/tweetnacl.dart';
 
 const hex = HexCoder.instance;
 

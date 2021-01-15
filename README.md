@@ -405,6 +405,9 @@ void main() {
 - [x] Remove [fixnum] pakage dependency.
 - [x] Add Ed25519 to X25519 function, to allow Ed25519 to be used in
 authenticated encryption too, see note below.
+- [ ] Refactor hashers to have some similar methods such: init(), update(), finalize() etc.
+- [ ] Refactor key derivation function to be able to use diff `hmac`s.
+
 
 Note: `Ed25519` keys that are used only for digital signatures (EdDSA), can be
 converted to `Curve25519/X25519` key (that is used only for authenticated encryption i.e.

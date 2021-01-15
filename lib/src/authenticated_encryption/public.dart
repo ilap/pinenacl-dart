@@ -1,10 +1,6 @@
-library pinenacl.api.public;
-
-import 'dart:typed_data';
-
-import 'api.dart';
-
-export 'package:pinenacl/api.dart';
+import 'package:pinenacl/api.dart';
+import 'package:pinenacl/src/hashing/blake2b.dart';
+import 'package:pinenacl/src/tweetnacl/tweetnacl.dart';
 
 /// Public Key Encryption
 ///
@@ -172,7 +168,7 @@ class SealedBox extends ByteList {
     Blake2b.update(state, in2);
 
     final digest = Blake2b.finalise(state);
-    Utils.listCopy(digest, digest.length, out, 0);
+    PineNaClUtils.listCopy(digest, digest.length, out, 0);
   }
 
   /// The `crypto_box_seal` is not in the `TweetNaCl`, that's why
@@ -201,13 +197,13 @@ class SealedBox extends ByteList {
     var mac = ciphertext.sublist(_pubLength, _pubLength + _macBytes);
 
     _cryptoBoxDetached(ciphertext, mac, message, mLen, nonce, k);
-    Utils.listCopy(epk, epk.length, ciphertext, 0);
-    Utils.listCopy(mac, mac.length, ciphertext, _pubLength);
+    PineNaClUtils.listCopy(epk, epk.length, ciphertext, 0);
+    PineNaClUtils.listCopy(mac, mac.length, ciphertext, _pubLength);
 
     // Clean the sensitive data which are not required anymore.
-    Utils.listZero(esk);
-    Utils.listZero(nonce);
-    Utils.listZero(k);
+    PineNaClUtils.listZero(esk);
+    PineNaClUtils.listZero(nonce);
+    PineNaClUtils.listZero(k);
 
     return ciphertext;
   }
@@ -227,7 +223,7 @@ class SealedBox extends ByteList {
 
     final block0 = ciphertext.sublist(0, _zerobytesLength);
     ciphertext = ciphertext.sublist(_zerobytesLength, d + _zerobytesLength);
-    Utils.listCopy(
+    PineNaClUtils.listCopy(
         ciphertext, ciphertext.length, c, _zerobytesLength + _macBytes);
 
     TweetNaCl.crypto_onetimeauth(mac, ciphertext, d, block0);

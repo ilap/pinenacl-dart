@@ -3,7 +3,8 @@ import 'dart:typed_data';
 import 'package:pinenacl/encoding.dart';
 import 'package:test/test.dart';
 
-import 'package:pinenacl/secret.dart' show SecretBox;
+import 'package:pinenacl/src/authenticated_encryption/secret.dart'
+    show SecretBox;
 
 const _vectors = {
   'key': '1b27556473e985d462cd51197a9a46c76009549eac6474f206c4ee0844f68389',

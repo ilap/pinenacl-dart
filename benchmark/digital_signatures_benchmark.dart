@@ -1,7 +1,7 @@
 import 'package:benchmark_harness/benchmark_harness.dart';
 
-import 'package:pinenacl/encoding.dart';
-import 'package:pinenacl/signing.dart';
+//import 'package:pinenacl/encoding.dart';
+import 'package:pinenacl/ed25519.dart';
 
 void main() {
   // Run TemplateBenchmark

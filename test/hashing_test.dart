@@ -1,11 +1,10 @@
 import 'dart:io';
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:pinenacl/encoding.dart';
-import 'package:test/test.dart';
-
 import 'package:pinenacl/hashing.dart';
+
+import 'package:test/test.dart';
 
 void main() {
   const hex = HexCoder.instance;

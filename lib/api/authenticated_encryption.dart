@@ -1,4 +1,6 @@
-part of pinenacl.api;
+//part of pinenacl.api;
+import '../api.dart';
+import '../src/tweetnacl/tweetnacl.dart';
 
 typedef Crypting = Uint8List Function(
     Uint8List out, Uint8List text, int textLen, Uint8List nonce, Uint8List k);

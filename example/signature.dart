@@ -1,4 +1,4 @@
-import 'package:pinenacl/api.dart';
+import 'package:pinenacl/ed25519.dart';
 
 void main() {
   const hex = HexCoder.instance;

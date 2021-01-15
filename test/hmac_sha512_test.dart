@@ -4,6 +4,11 @@ import 'package:test/test.dart';
 
 import 'package:pinenacl/api.dart';
 
+import 'package:pinenacl/encoding.dart';
+
+import 'package:pinenacl/tweetnacl.dart';
+import 'package:pinenacl/key_derivation.dart';
+
 /// The official testvectors from the
 ///  [`Identifiers and Test Vectors for HMAC-SHA-224, HMAC-SHA-256, HMAC-SHA-384, and HMAC-SHA-512`](https://tools.ietf.org/html/rfc4231)
 /// RFC (RFC4231)
@@ -147,20 +152,13 @@ void main() {
     });
   });
 
-  group('Password Based Key Derivation Funtcion #2 (PBKDF2)', () {
+  group('Password Based Key Derivation Function #2 (PBKDF2)', () {
     final hex = HexCoder.instance;
     final entropy = '46e62370a138a182a498b8e2885bc032379ddf38';
     final seedBytes = hex.decode(entropy);
     final password = <int>[].toUint8List();
     final outLen = 96;
 
-    test('HMAC-SHA-512 based PBKDF2 with 262144 iterations', () {
-      final iter = 0x40000;
-
-      final out = PBKDF2.hmac_sha512(password, seedBytes, iter, outLen);
-
-      print(hex.encode(out));
-    });
     test('HMAC-SHA-512 based PBKDF2 with 4096 iterations', () {
       final iter = 0x1000;
 

@@ -1,4 +1,4 @@
-part of pinenacl.api.crypto.tweetnacl;
+part of pinenacl.tweetnacl;
 
 ///
 /// TweetNaCl's extension class.
@@ -15,7 +15,7 @@ extension TweetNaClExt on TweetNaCl {
   static const int extendedSecretKeyLength = 32;
 
   static int _crypto_auth(Uint8List out, Uint8List m, Uint8List k) {
-    HmacSha512.mac(out, m, k);
+    Hmac.sha512(out, m, k);
     return 0;
   }
 

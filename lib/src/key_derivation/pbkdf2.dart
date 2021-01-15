@@ -1,30 +1,22 @@
 import 'dart:typed_data';
 
-import '../api.dart';
+import 'package:pinenacl/src/message_authentication/hmac.dart';
+import 'package:pinenacl/src/utils/utils.dart';
 
 typedef Hasher = void Function(Uint8List out, Uint8List text, Uint8List k);
 
-// TODO: currently it uses only HMAC-SHA512
-/// A very simple implementation of the HMAC-SHA512 based pbkdf2 for Icarus
-/// style master key generation.
+///
+/// PBKDF2 (RFC 2898) is a cryptographic key derivation function, which is
+/// resistant to rainbow table- and dictionary attacks.
+///
+/// This is very simple implementation of the PBKDF2 that iteratively deriving
+/// hmac (currently only HMAC-SHA512) with a cryptographically secure `salt`.
 ///
 class PBKDF2 {
-  static void _memcopy(Uint8List from, int from_length, Uint8List to,
-      [int toOffset = 0]) {
-    for (var i = 0; i < from_length; i++) {
-      to[i + toOffset] = from[i];
-    }
-  }
-
-  static void _memzero(Uint8List list) {
-    for (var i = 0; i < list.length; i++) {
-      list[i] = 0x00;
-    }
-  }
-
+  // TODO: currently only HMAC-SHA512 is implemented.
   static Uint8List hmac_sha512(
       Uint8List password, Uint8List salt, int count, int key_length) {
-    var hasher = HmacSha512.mac;
+    var hasher = Hmac.sha512;
     return _deriveKey(hasher, password, salt, count, key_length);
   }
 
@@ -51,14 +43,14 @@ class PBKDF2 {
 
       final message = Uint8List.fromList([...salt, ...idx]);
 
-      HmacSha512.mac(_U, message, password);
+      Hmac.sha512(_U, message, password);
 
       final offset = (i - 1) * hash_length;
 
-      _memcopy(_U, hash_length, derived_key, offset);
+      PineNaClUtils.listCopy(_U, hash_length, derived_key, offset);
 
       for (var j = 1; j < count; j++) {
-        HmacSha512.mac(_U, _U, password);
+        Hmac.sha512(_U, _U, password);
 
         for (var k = 0; k < hash_length; k++) {
           derived_key[k + offset] ^= _U[k];
@@ -68,22 +60,9 @@ class PBKDF2 {
 
     var result = derived_key.sublist(0, key_length);
 
-    _memzero(_U);
-    _memzero(derived_key);
+    PineNaClUtils.listZero(_U);
+    PineNaClUtils.listZero(derived_key);
 
     return result;
   }
-}
-
-void main() {
-  final hex = HexCoder.instance;
-  final entropy = '46e62370a138a182a498b8e2885bc032379ddf38';
-  final seedBytes = hex.decode(entropy);
-  final password = <int>[].toUint8List();
-  final iter = 4096;
-  final outLen = 96;
-
-  final out = PBKDF2.hmac_sha512(password, seedBytes, iter, outLen);
-
-  print(hex.encode(out));
 }

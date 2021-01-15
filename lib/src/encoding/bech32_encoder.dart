@@ -1,4 +1,4 @@
-part of pinenacl.api.encoding;
+part of pinenacl.encoding;
 
 class Bech32Coder implements Encoder {
   const Bech32Coder({required this.hrp});

@@ -1,4 +1,4 @@
-import 'package:pinenacl/public.dart' show SealedBox, PrivateKey;
+import 'package:pinenacl/x25519.dart' show SealedBox, PrivateKey;
 
 void main() {
   print('\n### Public Key Encryption - SealedBox Example ###\n');

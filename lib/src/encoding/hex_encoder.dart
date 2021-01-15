@@ -1,4 +1,4 @@
-part of pinenacl.api.encoding;
+part of pinenacl.encoding;
 
 class HexCoder implements Encoder {
   const HexCoder._singleton();

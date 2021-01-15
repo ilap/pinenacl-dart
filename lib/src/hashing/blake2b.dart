@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import '../api.dart';
+import 'package:pinenacl/src/utils/utils.dart';
 
 class _Context {
   _Context(this.b, this.h, this.t, this.c, this.outLen);
@@ -209,7 +209,7 @@ class Blake2b {
     // 48-63: personal
     final params = Uint8List(maxBytes);
     // In default, t's filled /w zero but, better safe than sorry
-    Utils.listZero(params);
+    PineNaClUtils.listZero(params);
 
     params[0] = outlen;
     if (key != null) {
@@ -221,13 +221,13 @@ class Blake2b {
     params[3] = 1;
 
     if (salt != null) {
-      Utils.listCopy(salt, salt.length, params, 32);
+      PineNaClUtils.listCopy(salt, salt.length, params, 32);
     }
 
     if (personal != null) {
       // padding if length < $personalBytes
       final offset = 48 + personalBytes - personal.length;
-      Utils.listCopy(personal, personal.length, params, offset);
+      PineNaClUtils.listCopy(personal, personal.length, params, offset);
     }
 
     for (var i = 0; i < 16; i++) {

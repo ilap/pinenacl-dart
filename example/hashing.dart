@@ -1,7 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:pinenacl/api.dart';
-import 'package:pinenacl/hashing.dart';
+import 'package:pinenacl/src/hashing/hashers.dart';
+import 'package:pinenacl/src/message_authentication/hmac.dart';
 
 void main() {
   print('\n### Hashing - Blake2b Example ###\n');
@@ -24,7 +25,7 @@ void main() {
   // the simplest way to get a cryptographic quality authKey
   // is to generate it with a cryptographic quality
   // random number generator
-  final authKey = Utils.randombytes(64);
+  final authKey = PineNaClUtils.randombytes(64);
   final mac = hasher(msg, key: authKey);
 
   print('MAC(msg, authKey): ${hex.encode(mac)}.\n');
@@ -32,8 +33,8 @@ void main() {
   /// # Key derivation example
   /// The blake2b algorithm can replace a key derivation function by following the lines of:
   print('Key derivation example');
-  final masterKey = Utils.randombytes(64);
-  final derivationSalt = Utils.randombytes(16);
+  final masterKey = PineNaClUtils.randombytes(64);
+  final derivationSalt = PineNaClUtils.randombytes(16);
 
   final personalisation = Uint8List.fromList('<DK usage>'.codeUnits);
 
@@ -59,6 +60,6 @@ void main() {
   final text =
       Uint8List.fromList('Sample message for keylen=blocklen'.codeUnits);
 
-  HmacSha512.mac(macOut, text, Uint8List.fromList(k));
+  Hmac.sha512(macOut, text, Uint8List.fromList(k));
   print('MAC: ${hex.encode(macOut)}');
 }

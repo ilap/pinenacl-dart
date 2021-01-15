@@ -105,21 +105,15 @@ class ByteList with ListMixin<int>, Encodable implements Uint8List {
   }
 }
 
-abstract class Encoder {
-  String encode(Uint8List data);
-  ByteList decode(String data);
-}
-
-mixin Encodable {
-  Encoder get encoder;
-  String encode([Encoder? encoder]) {
-    encoder = encoder ?? this.encoder;
-    return encoder.encode(this as ByteList);
-  }
-}
-
 mixin Suffix on ByteList {
   late int prefixLength;
   ByteList get prefix => ByteList(take(prefixLength), prefixLength);
   ByteList get suffix => ByteList(skip(prefixLength), length - prefixLength);
+}
+
+/// Add a global extension for converting List<int> to Uint8List.
+extension IntListExtension on List<int> {
+  Uint8List toUint8List() {
+    return Uint8List.fromList(this);
+  }
 }

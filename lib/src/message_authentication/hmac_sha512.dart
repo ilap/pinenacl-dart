@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 
-import '../api.dart';
+import 'package:pinenacl/api.dart';
+import 'package:pinenacl/src/tweetnacl/tweetnacl.dart';
+import 'package:pinenacl/src/utils/utils.dart';
 
 /// https://csrc.nist.gov/csrc/media/publications/fips/198/1/final/documents/fips-198-1_final.pdf
 /// HMAC-SHA-512 implementation
@@ -34,7 +36,7 @@ class HmacSha512 {
 
   /// `L` Block size (in bytes) of the output of the Approved hash function.
   /// l = 64 for SHA-512
-  static const l = TweetNaClExt.hmacBytes;
+  static const l = 64;
 
   /// `opad `Outer pad; the byte x‘5c’ repeated B times.
   static const opad = <int>[
@@ -69,7 +71,7 @@ class HmacSha512 {
 
     if (k.length == b) {
       /// Step #1 If the length of K = B: set K0 = K. Go to step 4.
-      _memcopy(k, k0);
+      PineNaClUtils.listCopy(k, k.length, k0);
     } else if (k.length > b) {
       /// Step #2 If the length of K > B: hash K to obtain an L byte string, then append (B-L)
       /// zeros to create a B-byte string K0 (i.e., K0 = H(K) || 00...00). Go to step 4.
@@ -77,7 +79,7 @@ class HmacSha512 {
     } else if (k.length < b) {
       /// Step #3 If the length of K < B: append zeros to the end of K to create a B-byte string K0
       /// (e.g., if K is 20 bytes in length and B = 64, then K will be appended with 44 zero bytes x’00’).
-      _memcopy(k, k0);
+      PineNaClUtils.listCopy(k, k.length, k0);
     }
 
     /// Step #4
@@ -109,9 +111,9 @@ class HmacSha512 {
     h(out, Uint8List.fromList(_r));
   }
 
-  static void _memcopy(Uint8List from, Uint8List to, [int toOffset = 0]) {
-    for (var i = 0; i < from.length; i++) {
-      to[i + toOffset] = from[i];
-    }
-  }
+  //static void _memcopy(Uint8List from, Uint8List to, [int toOffset = 0]) {
+  //  for (var i = 0; i < from.length; i++) {
+  //    to[i + toOffset] = from[i];
+  //  }
+  //}
 }

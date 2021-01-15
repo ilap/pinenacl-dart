@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:pinenacl/encoding.dart';
 import 'package:test/test.dart';
 
-import 'package:pinenacl/api.dart' show TweetNaCl;
+import 'package:pinenacl/tweetnacl.dart' show TweetNaCl;
 
 /// The [`NaCl`](https://nacl.cr.yp.to/valid.html) official testvectors from the
 /// [Cryptography in NaCl](https://cr.yp.to/highspeed/naclcrypto-20090310.pdf) paper
