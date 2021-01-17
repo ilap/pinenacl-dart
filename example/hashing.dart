@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:pinenacl/api.dart';
 import 'package:pinenacl/src/hashing/hashers.dart';
-import 'package:pinenacl/src/message_authentication/hmac.dart';
+import 'package:pinenacl/tweetnacl.dart';
 
 void main() {
   print('\n### Hashing - Blake2b Example ###\n');
@@ -60,6 +60,6 @@ void main() {
   final text =
       Uint8List.fromList('Sample message for keylen=blocklen'.codeUnits);
 
-  Hmac.sha512(macOut, text, Uint8List.fromList(k));
+  TweetNaClExt.crypto_auth_hmacsha256(macOut, text, Uint8List.fromList(k));
   print('MAC: ${hex.encode(macOut)}');
 }

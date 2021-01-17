@@ -16,8 +16,9 @@ class PineNaClUtils {
     }
   }
 
-  static void listZero(List list) {
-    for (var i = 0; i < list.length; i++) {
+  static void listZero(List<int> list, [int l = -1]) {
+    final length = l >= 0 ? l : list.length;
+    for (var i = 0; i < length; i++) {
       list[i] = 0;
     }
   }

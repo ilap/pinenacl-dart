@@ -100,10 +100,20 @@ Similarly for signatures
 
 The following `NaCl` library's high-level functions are implemented as the extension to the `TweetNaCl` library.
 
-  1. crypto_auth - HMAC-SHA-512 (NaCl uses HMAC-SHA-512/256)
-  2. crypto_auth_verify
-  3. scalar_base - for retriving public key `A`, e.g. `A = kB`.
-  4. point_add - for adding two public keys' point together `A = y1 + y2`.
+- HMAC-SHA512 and HMAC-SHA256
+   - crypto_auth = crypto_auth_hmacsha512, HMAC-SHA-512
+   - crypto_auth_hmacsha256, HMAC-SHA-256
+ - Hashing algorithm
+   - crypto_hash_sha256, SHA-256
+ - Utils
+   - crypto_verify_64, verifying function for SHA-512 as an example
+ - X25519 conversion utilities
+   - crypto_sign_ed25519_sk_to_x25519_sk
+   - crypto_sign_ed25519_pk_to_x25519_pk
+ - Curve25519 low-level functions
+   - scalar_base, for retrieving different type of public-keys e.g. `A = k * B`.
+   - point_add, for adding two public keys' point together `A = y1 : y2`.
+
 
 ## Key Types
 
@@ -406,8 +416,11 @@ void main() {
 - [x] Add Ed25519 to X25519 function, to allow Ed25519 to be used in
 authenticated encryption too, see note below.
 - [ ] Refactor hashers to have some similar methods such: init(), update(), finalize() etc.
-- [ ] Refactor key derivation function to be able to use diff `hmac`s.
-
+- [x] Refactor key derivation function to be able to use diff `hmac`s.
+- [x] Optimise `SHA-256` for faster execution. Done 5 time faster now 0.41 sec instead of 3.1 sec for 256K iterations.
+- [ ] Optimise `SHA-512` for faster execution. 
+- [x] Add some benchmark files.
+- [ ] **IMPORTANT**. refactor, rewrite source code for security auditing.
 
 Note: `Ed25519` keys that are used only for digital signatures (EdDSA), can be
 converted to `Curve25519/X25519` key (that is used only for authenticated encryption i.e.
