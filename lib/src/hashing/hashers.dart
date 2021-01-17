@@ -3,7 +3,6 @@ library pinenacl.api.hashing;
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:pinenacl/src/hashing/sha_256.dart';
 import 'package:pinenacl/src/hashing/blake2b.dart';
 import 'package:pinenacl/src/tweetnacl/tweetnacl.dart';
 
@@ -24,7 +23,7 @@ class Hash {
       throw Exception('The message must be either of string or Uint8List');
     }
     var out = Uint8List(32);
-    Sha256.crypto_hash_sha256(out, message as Uint8List);
+    TweetNaClExt.crypto_hash_sha256(out, message as Uint8List);
     return out;
   }
 

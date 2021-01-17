@@ -1,7 +1,21 @@
-import 'dart:typed_data';
+import 'package:pinenacl/api.dart';
 
-import 'package:pinenacl/src/utils/utils.dart';
-
+/*
+  TODO: implement this type of API
+  abstract Digest {
+    Digest init(length, key, salt, personalisation)
+    Digest update(List<int> message);
+    Uint8List finalise(); 
+  }
+  
+  var blake = Blake2b(24);
+  /// Context is unmodifiable, therefore new opject is created
+  /// similar to the copyWith();
+  blake = blake.init();
+  blake = blake.update(message);
+  blake = blake.update(message);
+  var result = blake.finalise();
+  */
 class _Context {
   _Context(this.b, this.h, this.t, this.c, this.outLen);
   final Uint8List b;
@@ -23,7 +37,7 @@ class Blake2b {
   static const saltBytes = minBytes;
   static const personalBytes = minBytes;
 
-  static final _blake2bIv32 = <int>[
+  static const _blake2bIv32 = <int>[
     0xF3BCC908, 0x6A09E667, 0x84CAA73B, 0xBB67AE85, // 0-3
     0xFE94F82B, 0x3C6EF372, 0x5F1D36F1, 0xA54FF53A, // 4-7
     0xADE682D1, 0x510E527F, 0x2B3E6C1F, 0x9B05688C,
@@ -295,30 +309,3 @@ class Blake2b {
     return finalise(context);
   }
 }
-
-/*
-void main() {
-  final state = Blake2b.init(24);
-  Blake2b.update(state, List<int>.generate(32, (i) => 1));
-  Blake2b.update(state, List<int>.generate(32, (i) => 2));
-  final result = Blake2b.finalise(state);
-  print(hex.encode(result));
-
-  // FIXME: Implement similar API
-  /*
-  abstract Digest {
-    Digest init(length, key, salt, personalisation)
-    Digest update(List<int> message);
-    Uint8List finalise(); 
-  }
-  
-  var blake = Blake2b(24);
-  /// Context is unmodifiable, therefore new opject is created
-  /// similar to the copyWith();
-  blake = blake.init();
-  blake = blake.update(message);
-  blake = blake.update(message);
-  var result = blake.finalise();
-  */
-}
-*/
