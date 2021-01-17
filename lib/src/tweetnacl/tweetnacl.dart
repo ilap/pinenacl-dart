@@ -6,6 +6,8 @@ import 'dart:typed_data';
 
 import 'package:fixnum/fixnum.dart';
 
+import 'package:pinenacl/src/utils/utils.dart';
+
 import 'package:pinenacl/src/message_authentication/hmac.dart';
 import 'package:pinenacl/src/tweetnacl/poly1305.dart';
 
