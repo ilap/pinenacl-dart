@@ -5,6 +5,7 @@ import 'package:test/test.dart';
 import 'package:pinenacl/api.dart';
 
 import 'package:pinenacl/encoding.dart';
+import 'package:pinenacl/message_authentication.dart';
 
 import 'package:pinenacl/tweetnacl.dart';
 import 'package:pinenacl/key_derivation.dart';
@@ -128,43 +129,36 @@ const vectors = [
 void main() {
   const hex = HexCoder.instance;
   group('Hash-based message authentication code', () {
-    group('HMAC-SHA-512', () {
+    group('HMAC-SHA-', () {
       var idx = 0;
       vectors.forEach((vector) {
         final description = 'RFC4231\'s testvectors (${++idx})';
-        test(description, () {
-          final k = Uint8List.fromList(hex.decode(vector['key'] as String));
-          final kLen = vector['key_length'];
-          final data = Uint8List.fromList(hex.decode(vector['data'] as String));
+        final k = Uint8List.fromList(hex.decode(vector['key'] as String));
+        final kLen = vector['key_length'];
+        final data = Uint8List.fromList(hex.decode(vector['data'] as String));
+
+        test('512 ' + description, () {
           final mac = vector['hmac-sha-512'];
 
           assert(k.length == kLen);
-          final out = Uint8List(TweetNaClExt.hmacBytes);
-          TweetNaClExt.crypto_auth(out, data, k);
+          final out = Uint8List(64);
+          TweetNaClExt.crypto_auth_hmacsha512(out, data, k);
 
           assert(mac == hex.encode(out));
+        });
 
-          var result = TweetNaClExt.crypto_auth_verify(out, data, k);
+        test('256 ' + description, () {
+          final mac = vector['hmac-sha-256'];
 
-          assert(result == 0);
+          assert(k.length == kLen);
+
+          final out = Uint8List(32);
+
+          TweetNaClExt.crypto_auth_hmacsha256(out, data, k);
+
+          assert(mac == hex.encode(out));
         });
       });
-    });
-  });
-
-  group('Password Based Key Derivation Function #2 (PBKDF2)', () {
-    final hex = HexCoder.instance;
-    final entropy = '46e62370a138a182a498b8e2885bc032379ddf38';
-    final seedBytes = hex.decode(entropy);
-    final password = <int>[].toUint8List();
-    final outLen = 96;
-
-    test('HMAC-SHA-512 based PBKDF2 with 4096 iterations', () {
-      final iter = 0x1000;
-
-      final out = PBKDF2.hmac_sha512(password, seedBytes, iter, outLen);
-
-      print(hex.encode(out));
     });
   });
 }
