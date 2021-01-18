@@ -9,7 +9,6 @@ environment:
   sdk: '>=2.12.0-0 <3.0.0'
 
 dependencies:
-  fixnum: ^1.0.0-nullsafety
 
 dev_dependencies:
   pedantic: ^1.10.0-nullsafety

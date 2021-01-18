@@ -27,5 +27,4 @@ do
 done
 
 echo "Deleting files..."
-
-[ -n "$PROJ_DIR"] && rm -f "$PROJ_DIR/bin"
+[[ -n "$PROJ_DIR" ]] && rm -f "$PROJ_DIR/bin/*"

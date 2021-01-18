@@ -4,12 +4,11 @@ import 'dart:core';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:fixnum/fixnum.dart';
-
 import 'package:pinenacl/src/utils/utils.dart';
 
-import 'package:pinenacl/src/message_authentication/hmac.dart';
 import 'package:pinenacl/src/tweetnacl/poly1305.dart';
+
+import '../../api.dart';
 
 part 'tweetnacl_ext.dart';
 // ignore_for_file: constant_identifier_names
@@ -108,27 +107,22 @@ class TweetNaCl {
     0xdf0b, 0x4fc1, 0x2480, 0x2b83
   ];
 
-  static void _ts64(Uint8List x, final int xoff, int u) {
-    ///int i;
-    ///for (i = 7;i >= 0;--i) { x[i+xoff] = (byte)(u&0xff); u >>= 8; }
+  static void _ts64(Uint8List x, final int xoff, int uh, int ul) {
+    x[7 + xoff] = ul & 0xff;
+    ul = ul >> 8;
+    x[6 + xoff] = ul & 0xff;
+    ul = ul >> 8;
+    x[5 + xoff] = ul & 0xff;
+    ul = ul >> 8;
+    x[4 + xoff] = ul & 0xff;
 
-    x[7 + xoff] = (u & 0xff).toInt();
-    u = u >> 8;
-    x[6 + xoff] = (u & 0xff).toInt();
-    u = u >> 8;
-    x[5 + xoff] = (u & 0xff).toInt();
-    u = u >> 8;
-    x[4 + xoff] = (u & 0xff).toInt();
-    u = u >> 8;
-    x[3 + xoff] = (u & 0xff).toInt();
-    u = u >> 8;
-    x[2 + xoff] = (u & 0xff).toInt();
-    u = u >> 8;
-    x[1 + xoff] = (u & 0xff).toInt();
-    u = u >> 8;
-    x[0 + xoff] = (u & 0xff).toInt();
-
-    ///u >>= 8;
+    x[3 + xoff] = uh & 0xff;
+    uh = uh >> 8;
+    x[2 + xoff] = uh & 0xff;
+    uh = uh >> 8;
+    x[1 + xoff] = uh & 0xff;
+    uh = uh >> 8;
+    x[0 + xoff] = uh & 0xff;
   }
 
   static int _vn(
@@ -225,193 +219,179 @@ class TweetNaCl {
             (c[14] & 0xff) << 16 |
             (c[15] & 0xff) << 24;
 
-    Int32 x0 = Int32(j0),
-        x1 = Int32(j1),
-        x2 = Int32(j2),
-        x3 = Int32(j3),
-        x4 = Int32(j4),
-        x5 = Int32(j5),
-        x6 = Int32(j6),
-        x7 = Int32(j7),
-        x8 = Int32(j8),
-        x9 = Int32(j9),
-        x10 = Int32(j10),
-        x11 = Int32(j11),
-        x12 = Int32(j12),
-        x13 = Int32(j13),
-        x14 = Int32(j14),
-        x15 = Int32(j15),
-        u;
+    final Int32List x = Int32List.fromList(
+        [j0, j1, j2, j3, j4, j5, j6, j7, j8, j9, j10, j11, j12, j13, j14, j15]);
+    int u;
 
     for (var i = 0; i < 20; i += 2) {
-      u = x0 + x12 | 0 as Int32;
-      x4 ^= u << 7 | u.shiftRightUnsigned(32 - 7);
-      u = x4 + x0 | 0 as Int32;
-      x8 ^= u << 9 | u.shiftRightUnsigned(32 - 9);
-      u = x8 + x4 | 0 as Int32;
-      x12 ^= u << 13 | u.shiftRightUnsigned(32 - 13);
-      u = x12 + x8 | 0 as Int32;
-      x0 ^= u << 18 | u.shiftRightUnsigned(32 - 18);
+      u = x[0] + x[12] | 0;
+      x[4] ^= u << 7 | _shr32(u, 32 - 7);
+      u = x[4] + x[0] | 0;
+      x[8] ^= u << 9 | _shr32(u, 32 - 9);
+      u = x[8] + x[4] | 0;
+      x[12] ^= u << 13 | _shr32(u, 32 - 13);
+      u = x[12] + x[8] | 0;
+      x[0] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x5 + x1 | 0 as Int32;
-      x9 ^= u << 7 | u.shiftRightUnsigned(32 - 7);
-      u = x9 + x5 | 0 as Int32;
-      x13 ^= u << 9 | u.shiftRightUnsigned(32 - 9);
-      u = x13 + x9 | 0 as Int32;
-      x1 ^= u << 13 | u.shiftRightUnsigned(32 - 13);
-      u = x1 + x13 | 0 as Int32;
-      x5 ^= u << 18 | u.shiftRightUnsigned(32 - 18);
+      u = x[5] + x[1] | 0;
+      x[9] ^= u << 7 | _shr32(u, 32 - 7);
+      u = x[9] + x[5] | 0;
+      x[13] ^= u << 9 | _shr32(u, 32 - 9);
+      u = x[13] + x[9] | 0;
+      x[1] ^= u << 13 | _shr32(u, 32 - 13);
+      u = x[1] + x[13] | 0;
+      x[5] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x10 + x6 | 0 as Int32;
-      x14 ^= u << 7 | u.shiftRightUnsigned(32 - 7);
-      u = x14 + x10 | 0 as Int32;
-      x2 ^= u << 9 | u.shiftRightUnsigned(32 - 9);
-      u = x2 + x14 | 0 as Int32;
-      x6 ^= u << 13 | u.shiftRightUnsigned(32 - 13);
-      u = x6 + x2 | 0 as Int32;
-      x10 ^= u << 18 | u.shiftRightUnsigned(32 - 18);
+      u = x[10] + x[6] | 0;
+      x[14] ^= u << 7 | _shr32(u, 32 - 7);
+      u = x[14] + x[10] | 0;
+      x[2] ^= u << 9 | _shr32(u, 32 - 9);
+      u = x[2] + x[14] | 0;
+      x[6] ^= u << 13 | _shr32(u, 32 - 13);
+      u = x[6] + x[2] | 0;
+      x[10] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x15 + x11 | 0 as Int32;
-      x3 ^= u << 7 | u.shiftRightUnsigned(32 - 7);
-      u = x3 + x15 | 0 as Int32;
-      x7 ^= u << 9 | u.shiftRightUnsigned(32 - 9);
-      u = x7 + x3 | 0 as Int32;
-      x11 ^= u << 13 | u.shiftRightUnsigned(32 - 13);
-      u = x11 + x7 | 0 as Int32;
-      x15 ^= u << 18 | u.shiftRightUnsigned(32 - 18);
+      u = x[15] + x[11] | 0;
+      x[3] ^= u << 7 | _shr32(u, 32 - 7);
+      u = x[3] + x[15] | 0;
+      x[7] ^= u << 9 | _shr32(u, 32 - 9);
+      u = x[7] + x[3] | 0;
+      x[11] ^= u << 13 | _shr32(u, 32 - 13);
+      u = x[11] + x[7] | 0;
+      x[15] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x0 + x3 | 0 as Int32;
-      x1 ^= u << 7 | u.shiftRightUnsigned(32 - 7);
-      u = x1 + x0 | 0 as Int32;
-      x2 ^= u << 9 | u.shiftRightUnsigned(32 - 9);
-      u = x2 + x1 | 0 as Int32;
-      x3 ^= u << 13 | u.shiftRightUnsigned(32 - 13);
-      u = x3 + x2 | 0 as Int32;
-      x0 ^= u << 18 | u.shiftRightUnsigned(32 - 18);
+      u = x[0] + x[3] | 0;
+      x[1] ^= u << 7 | _shr32(u, 32 - 7);
+      u = x[1] + x[0] | 0;
+      x[2] ^= u << 9 | _shr32(u, 32 - 9);
+      u = x[2] + x[1] | 0;
+      x[3] ^= u << 13 | _shr32(u, 32 - 13);
+      u = x[3] + x[2] | 0;
+      x[0] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x5 + x4 | 0 as Int32;
-      x6 ^= u << 7 | u.shiftRightUnsigned(32 - 7);
-      u = x6 + x5 | 0 as Int32;
-      x7 ^= u << 9 | u.shiftRightUnsigned(32 - 9);
-      u = x7 + x6 | 0 as Int32;
-      x4 ^= u << 13 | u.shiftRightUnsigned(32 - 13);
-      u = x4 + x7 | 0 as Int32;
-      x5 ^= u << 18 | u.shiftRightUnsigned(32 - 18);
+      u = x[5] + x[4] | 0;
+      x[6] ^= u << 7 | _shr32(u, 32 - 7);
+      u = x[6] + x[5] | 0;
+      x[7] ^= u << 9 | _shr32(u, 32 - 9);
+      u = x[7] + x[6] | 0;
+      x[4] ^= u << 13 | _shr32(u, 32 - 13);
+      u = x[4] + x[7] | 0;
+      x[5] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x10 + x9 | 0 as Int32;
-      x11 ^= u << 7 | u.shiftRightUnsigned(32 - 7);
-      u = x11 + x10 | 0 as Int32;
-      x8 ^= u << 9 | u.shiftRightUnsigned(32 - 9);
-      u = x8 + x11 | 0 as Int32;
-      x9 ^= u << 13 | u.shiftRightUnsigned(32 - 13);
-      u = x9 + x8 | 0 as Int32;
-      x10 ^= u << 18 | u.shiftRightUnsigned(32 - 18);
+      u = x[10] + x[9] | 0;
+      x[11] ^= u << 7 | _shr32(u, 32 - 7);
+      u = x[11] + x[10] | 0;
+      x[8] ^= u << 9 | _shr32(u, 32 - 9);
+      u = x[8] + x[11] | 0;
+      x[9] ^= u << 13 | _shr32(u, 32 - 13);
+      u = x[9] + x[8] | 0;
+      x[10] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x15 + x14 | 0 as Int32;
-      x12 ^= u << 7 | u.shiftRightUnsigned(32 - 7);
-      u = x12 + x15 | 0 as Int32;
-      x13 ^= u << 9 | u.shiftRightUnsigned(32 - 9);
-      u = x13 + x12 | 0 as Int32;
-      x14 ^= u << 13 | u.shiftRightUnsigned(32 - 13);
-      u = x14 + x13 | 0 as Int32;
-      x15 ^= u << 18 | u.shiftRightUnsigned(32 - 18);
+      u = x[15] + x[14] | 0;
+      x[12] ^= u << 7 | _shr32(u, 32 - 7);
+      u = x[12] + x[15] | 0;
+      x[13] ^= u << 9 | _shr32(u, 32 - 9);
+      u = x[13] + x[12] | 0;
+      x[14] ^= u << 13 | _shr32(u, 32 - 13);
+      u = x[14] + x[13] | 0;
+      x[15] ^= u << 18 | _shr32(u, 32 - 18);
     }
-    x0 = x0 + j0 | 0 as Int32;
-    x1 = x1 + j1 | 0 as Int32;
-    x2 = x2 + j2 | 0 as Int32;
-    x3 = x3 + j3 | 0 as Int32;
-    x4 = x4 + j4 | 0 as Int32;
-    x5 = x5 + j5 | 0 as Int32;
-    x6 = x6 + j6 | 0 as Int32;
-    x7 = x7 + j7 | 0 as Int32;
-    x8 = x8 + j8 | 0 as Int32;
-    x9 = x9 + j9 | 0 as Int32;
-    x10 = x10 + j10 | 0 as Int32;
-    x11 = x11 + j11 | 0 as Int32;
-    x12 = x12 + j12 | 0 as Int32;
-    x13 = x13 + j13 | 0 as Int32;
-    x14 = x14 + j14 | 0 as Int32;
-    x15 = x15 + j15 | 0 as Int32;
+    x[0] = x[0] + j0 | 0;
+    x[1] = x[1] + j1 | 0;
+    x[2] = x[2] + j2 | 0;
+    x[3] = x[3] + j3 | 0;
+    x[4] = x[4] + j4 | 0;
+    x[5] = x[5] + j5 | 0;
+    x[6] = x[6] + j6 | 0;
+    x[7] = x[7] + j7 | 0;
+    x[8] = x[8] + j8 | 0;
+    x[9] = x[9] + j9 | 0;
+    x[10] = x[10] + j10 | 0;
+    x[11] = x[11] + j11 | 0;
+    x[12] = x[12] + j12 | 0;
+    x[13] = x[13] + j13 | 0;
+    x[14] = x[14] + j14 | 0;
+    x[15] = x[15] + j15 | 0;
 
-    o[0] = (x0.shiftRightUnsigned(0) & 0xff).toInt();
-    o[1] = (x0.shiftRightUnsigned(8) & 0xff).toInt();
-    o[2] = (x0.shiftRightUnsigned(16) & 0xff).toInt();
-    o[3] = (x0.shiftRightUnsigned(24) & 0xff).toInt();
+    o[0] = _shr32(x[0], 0) & 0xff;
+    o[1] = _shr32(x[0], 8) & 0xff;
+    o[2] = _shr32(x[0], 16) & 0xff;
+    o[3] = _shr32(x[0], 24) & 0xff;
 
-    o[4] = (x1.shiftRightUnsigned(0) & 0xff).toInt();
-    o[5] = (x1.shiftRightUnsigned(8) & 0xff).toInt();
-    o[6] = (x1.shiftRightUnsigned(16) & 0xff).toInt();
-    o[7] = (x1.shiftRightUnsigned(24) & 0xff).toInt();
+    o[4] = _shr32(x[1], 0) & 0xff;
+    o[5] = _shr32(x[1], 8) & 0xff;
+    o[6] = _shr32(x[1], 16) & 0xff;
+    o[7] = _shr32(x[1], 24) & 0xff;
 
-    o[8] = (x2.shiftRightUnsigned(0) & 0xff).toInt();
-    o[9] = (x2.shiftRightUnsigned(8) & 0xff).toInt();
-    o[10] = (x2.shiftRightUnsigned(16) & 0xff).toInt();
-    o[11] = (x2.shiftRightUnsigned(24) & 0xff).toInt();
+    o[8] = _shr32(x[2], 0) & 0xff;
+    o[9] = _shr32(x[2], 8) & 0xff;
+    o[10] = _shr32(x[2], 16) & 0xff;
+    o[11] = _shr32(x[2], 24) & 0xff;
 
-    o[12] = (x3.shiftRightUnsigned(0) & 0xff).toInt();
-    o[13] = (x3.shiftRightUnsigned(8) & 0xff).toInt();
-    o[14] = (x3.shiftRightUnsigned(16) & 0xff).toInt();
-    o[15] = (x3.shiftRightUnsigned(24) & 0xff).toInt();
+    o[12] = _shr32(x[3], 0) & 0xff;
+    o[13] = _shr32(x[3], 8) & 0xff;
+    o[14] = _shr32(x[3], 16) & 0xff;
+    o[15] = _shr32(x[3], 24) & 0xff;
 
-    o[16] = (x4.shiftRightUnsigned(0) & 0xff).toInt();
-    o[17] = (x4.shiftRightUnsigned(8) & 0xff).toInt();
-    o[18] = (x4.shiftRightUnsigned(16) & 0xff).toInt();
-    o[19] = (x4.shiftRightUnsigned(24) & 0xff).toInt();
+    o[16] = _shr32(x[4], 0) & 0xff;
+    o[17] = _shr32(x[4], 8) & 0xff;
+    o[18] = _shr32(x[4], 16) & 0xff;
+    o[19] = _shr32(x[4], 24) & 0xff;
 
-    o[20] = (x5.shiftRightUnsigned(0) & 0xff).toInt();
-    o[21] = (x5.shiftRightUnsigned(8) & 0xff).toInt();
-    o[22] = (x5.shiftRightUnsigned(16) & 0xff).toInt();
-    o[23] = (x5.shiftRightUnsigned(24) & 0xff).toInt();
+    o[20] = _shr32(x[5], 0) & 0xff;
+    o[21] = _shr32(x[5], 8) & 0xff;
+    o[22] = _shr32(x[5], 16) & 0xff;
+    o[23] = _shr32(x[5], 24) & 0xff;
 
-    o[24] = (x6.shiftRightUnsigned(0) & 0xff).toInt();
-    o[25] = (x6.shiftRightUnsigned(8) & 0xff).toInt();
-    o[26] = (x6.shiftRightUnsigned(16) & 0xff).toInt();
-    o[27] = (x6.shiftRightUnsigned(24) & 0xff).toInt();
+    o[24] = _shr32(x[6], 0) & 0xff;
+    o[25] = _shr32(x[6], 8) & 0xff;
+    o[26] = _shr32(x[6], 16) & 0xff;
+    o[27] = _shr32(x[6], 24) & 0xff;
 
-    o[28] = (x7.shiftRightUnsigned(0) & 0xff).toInt();
-    o[29] = (x7.shiftRightUnsigned(8) & 0xff).toInt();
-    o[30] = (x7.shiftRightUnsigned(16) & 0xff).toInt();
-    o[31] = (x7.shiftRightUnsigned(24) & 0xff).toInt();
+    o[28] = _shr32(x[7], 0) & 0xff;
+    o[29] = _shr32(x[7], 8) & 0xff;
+    o[30] = _shr32(x[7], 16) & 0xff;
+    o[31] = _shr32(x[7], 24) & 0xff;
 
-    o[32] = (x8.shiftRightUnsigned(0) & 0xff).toInt();
-    o[33] = (x8.shiftRightUnsigned(8) & 0xff).toInt();
-    o[34] = (x8.shiftRightUnsigned(16) & 0xff).toInt();
-    o[35] = (x8.shiftRightUnsigned(24) & 0xff).toInt();
+    o[32] = _shr32(x[8], 0) & 0xff;
+    o[33] = _shr32(x[8], 8) & 0xff;
+    o[34] = _shr32(x[8], 16) & 0xff;
+    o[35] = _shr32(x[8], 24) & 0xff;
 
-    o[36] = (x9.shiftRightUnsigned(0) & 0xff).toInt();
-    o[37] = (x9.shiftRightUnsigned(8) & 0xff).toInt();
-    o[38] = (x9.shiftRightUnsigned(16) & 0xff).toInt();
-    o[39] = (x9.shiftRightUnsigned(24) & 0xff).toInt();
+    o[36] = _shr32(x[9], 0) & 0xff;
+    o[37] = _shr32(x[9], 8) & 0xff;
+    o[38] = _shr32(x[9], 16) & 0xff;
+    o[39] = _shr32(x[9], 24) & 0xff;
 
-    o[40] = (x10.shiftRightUnsigned(0) & 0xff).toInt();
-    o[41] = (x10.shiftRightUnsigned(8) & 0xff).toInt();
-    o[42] = (x10.shiftRightUnsigned(16) & 0xff).toInt();
-    o[43] = (x10.shiftRightUnsigned(24) & 0xff).toInt();
+    o[40] = _shr32(x[10], 0) & 0xff;
+    o[41] = _shr32(x[10], 8) & 0xff;
+    o[42] = _shr32(x[10], 16) & 0xff;
+    o[43] = _shr32(x[10], 24) & 0xff;
 
-    o[44] = (x11.shiftRightUnsigned(0) & 0xff).toInt();
-    o[45] = (x11.shiftRightUnsigned(8) & 0xff).toInt();
-    o[46] = (x11.shiftRightUnsigned(16) & 0xff).toInt();
-    o[47] = (x11.shiftRightUnsigned(24) & 0xff).toInt();
+    o[44] = _shr32(x[11], 0) & 0xff;
+    o[45] = _shr32(x[11], 8) & 0xff;
+    o[46] = _shr32(x[11], 16) & 0xff;
+    o[47] = _shr32(x[11], 24) & 0xff;
 
-    o[48] = (x12.shiftRightUnsigned(0) & 0xff).toInt();
-    o[49] = (x12.shiftRightUnsigned(8) & 0xff).toInt();
-    o[50] = (x12.shiftRightUnsigned(16) & 0xff).toInt();
-    o[51] = (x12.shiftRightUnsigned(24) & 0xff).toInt();
+    o[48] = _shr32(x[12], 0) & 0xff;
+    o[49] = _shr32(x[12], 8) & 0xff;
+    o[50] = _shr32(x[12], 16) & 0xff;
+    o[51] = _shr32(x[12], 24) & 0xff;
 
-    o[52] = (x13.shiftRightUnsigned(0) & 0xff).toInt();
-    o[53] = (x13.shiftRightUnsigned(8) & 0xff).toInt();
-    o[54] = (x13.shiftRightUnsigned(16) & 0xff).toInt();
-    o[55] = (x13.shiftRightUnsigned(24) & 0xff).toInt();
+    o[52] = _shr32(x[13], 0) & 0xff;
+    o[53] = _shr32(x[13], 8) & 0xff;
+    o[54] = _shr32(x[13], 16) & 0xff;
+    o[55] = _shr32(x[13], 24) & 0xff;
 
-    o[56] = (x14.shiftRightUnsigned(0) & 0xff).toInt();
-    o[57] = (x14.shiftRightUnsigned(8) & 0xff).toInt();
-    o[58] = (x14.shiftRightUnsigned(16) & 0xff).toInt();
-    o[59] = (x14.shiftRightUnsigned(24) & 0xff).toInt();
+    o[56] = _shr32(x[14], 0) & 0xff;
+    o[57] = _shr32(x[14], 8) & 0xff;
+    o[58] = _shr32(x[14], 16) & 0xff;
+    o[59] = _shr32(x[14], 24) & 0xff;
 
-    o[60] = (x15.shiftRightUnsigned(0) & 0xff).toInt();
-    o[61] = (x15.shiftRightUnsigned(8) & 0xff).toInt();
-    o[62] = (x15.shiftRightUnsigned(16) & 0xff).toInt();
-    o[63] = (x15.shiftRightUnsigned(24) & 0xff).toInt();
+    o[60] = _shr32(x[15], 0) & 0xff;
+    o[61] = _shr32(x[15], 8) & 0xff;
+    o[62] = _shr32(x[15], 16) & 0xff;
+    o[63] = _shr32(x[15], 24) & 0xff;
   }
 
   static void _core_hsalsa20(
@@ -483,137 +463,123 @@ class TweetNaCl {
             (c[14] & 0xff) << 16 |
             (c[15] & 0xff) << 24;
 
-    Int32 x0 = Int32(j0),
-        x1 = Int32(j1),
-        x2 = Int32(j2),
-        x3 = Int32(j3),
-        x4 = Int32(j4),
-        x5 = Int32(j5),
-        x6 = Int32(j6),
-        x7 = Int32(j7),
-        x8 = Int32(j8),
-        x9 = Int32(j9),
-        x10 = Int32(j10),
-        x11 = Int32(j11),
-        x12 = Int32(j12),
-        x13 = Int32(j13),
-        x14 = Int32(j14),
-        x15 = Int32(j15),
-        u;
+    final Int32List x = Int32List.fromList(
+        [j0, j1, j2, j3, j4, j5, j6, j7, j8, j9, j10, j11, j12, j13, j14, j15]);
+    int u;
 
     for (var i = 0; i < 20; i += 2) {
-      u = x0 + x12 | 0 as Int32;
-      x4 ^= u << 7 | u.shiftRightUnsigned(32 - 7);
-      u = x4 + x0 | 0 as Int32;
-      x8 ^= u << 9 | u.shiftRightUnsigned(32 - 9);
-      u = x8 + x4 | 0 as Int32;
-      x12 ^= u << 13 | u.shiftRightUnsigned(32 - 13);
-      u = x12 + x8 | 0 as Int32;
-      x0 ^= u << 18 | u.shiftRightUnsigned(32 - 18);
+      u = x[0] + x[12] | 0;
+      x[4] ^= u << 7 | _shr32(u, 32 - 7);
+      u = x[4] + x[0] | 0;
+      x[8] ^= u << 9 | _shr32(u, 32 - 9);
+      u = x[8] + x[4] | 0;
+      x[12] ^= u << 13 | _shr32(u, 32 - 13);
+      u = x[12] + x[8] | 0;
+      x[0] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x5 + x1 | 0 as Int32;
-      x9 ^= u << 7 | u.shiftRightUnsigned(32 - 7);
-      u = x9 + x5 | 0 as Int32;
-      x13 ^= u << 9 | u.shiftRightUnsigned(32 - 9);
-      u = x13 + x9 | 0 as Int32;
-      x1 ^= u << 13 | u.shiftRightUnsigned(32 - 13);
-      u = x1 + x13 | 0 as Int32;
-      x5 ^= u << 18 | u.shiftRightUnsigned(32 - 18);
+      u = x[5] + x[1] | 0;
+      x[9] ^= u << 7 | _shr32(u, 32 - 7);
+      u = x[9] + x[5] | 0;
+      x[13] ^= u << 9 | _shr32(u, 32 - 9);
+      u = x[13] + x[9] | 0;
+      x[1] ^= u << 13 | _shr32(u, 32 - 13);
+      u = x[1] + x[13] | 0;
+      x[5] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x10 + x6 | 0 as Int32;
-      x14 ^= u << 7 | u.shiftRightUnsigned(32 - 7);
-      u = x14 + x10 | 0 as Int32;
-      x2 ^= u << 9 | u.shiftRightUnsigned(32 - 9);
-      u = x2 + x14 | 0 as Int32;
-      x6 ^= u << 13 | u.shiftRightUnsigned(32 - 13);
-      u = x6 + x2 | 0 as Int32;
-      x10 ^= u << 18 | u.shiftRightUnsigned(32 - 18);
+      u = x[10] + x[6] | 0;
+      x[14] ^= u << 7 | _shr32(u, 32 - 7);
+      u = x[14] + x[10] | 0;
+      x[2] ^= u << 9 | _shr32(u, 32 - 9);
+      u = x[2] + x[14] | 0;
+      x[6] ^= u << 13 | _shr32(u, 32 - 13);
+      u = x[6] + x[2] | 0;
+      x[10] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x15 + x11 | 0 as Int32;
-      x3 ^= u << 7 | u.shiftRightUnsigned(32 - 7);
-      u = x3 + x15 | 0 as Int32;
-      x7 ^= u << 9 | u.shiftRightUnsigned(32 - 9);
-      u = x7 + x3 | 0 as Int32;
-      x11 ^= u << 13 | u.shiftRightUnsigned(32 - 13);
-      u = x11 + x7 | 0 as Int32;
-      x15 ^= u << 18 | u.shiftRightUnsigned(32 - 18);
+      u = x[15] + x[11] | 0;
+      x[3] ^= u << 7 | _shr32(u, 32 - 7);
+      u = x[3] + x[15] | 0;
+      x[7] ^= u << 9 | _shr32(u, 32 - 9);
+      u = x[7] + x[3] | 0;
+      x[11] ^= u << 13 | _shr32(u, 32 - 13);
+      u = x[11] + x[7] | 0;
+      x[15] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x0 + x3 | 0 as Int32;
-      x1 ^= u << 7 | u.shiftRightUnsigned(32 - 7);
-      u = x1 + x0 | 0 as Int32;
-      x2 ^= u << 9 | u.shiftRightUnsigned(32 - 9);
-      u = x2 + x1 | 0 as Int32;
-      x3 ^= u << 13 | u.shiftRightUnsigned(32 - 13);
-      u = x3 + x2 | 0 as Int32;
-      x0 ^= u << 18 | u.shiftRightUnsigned(32 - 18);
+      u = x[0] + x[3] | 0;
+      x[1] ^= u << 7 | _shr32(u, 32 - 7);
+      u = x[1] + x[0] | 0;
+      x[2] ^= u << 9 | _shr32(u, 32 - 9);
+      u = x[2] + x[1] | 0;
+      x[3] ^= u << 13 | _shr32(u, 32 - 13);
+      u = x[3] + x[2] | 0;
+      x[0] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x5 + x4 | 0 as Int32;
-      x6 ^= u << 7 | u.shiftRightUnsigned(32 - 7);
-      u = x6 + x5 | 0 as Int32;
-      x7 ^= u << 9 | u.shiftRightUnsigned(32 - 9);
-      u = x7 + x6 | 0 as Int32;
-      x4 ^= u << 13 | u.shiftRightUnsigned(32 - 13);
-      u = x4 + x7 | 0 as Int32;
-      x5 ^= u << 18 | u.shiftRightUnsigned(32 - 18);
+      u = x[5] + x[4] | 0;
+      x[6] ^= u << 7 | _shr32(u, 32 - 7);
+      u = x[6] + x[5] | 0;
+      x[7] ^= u << 9 | _shr32(u, 32 - 9);
+      u = x[7] + x[6] | 0;
+      x[4] ^= u << 13 | _shr32(u, 32 - 13);
+      u = x[4] + x[7] | 0;
+      x[5] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x10 + x9 | 0 as Int32;
-      x11 ^= u << 7 | u.shiftRightUnsigned(32 - 7);
-      u = x11 + x10 | 0 as Int32;
-      x8 ^= u << 9 | u.shiftRightUnsigned(32 - 9);
-      u = x8 + x11 | 0 as Int32;
-      x9 ^= u << 13 | u.shiftRightUnsigned(32 - 13);
-      u = x9 + x8 | 0 as Int32;
-      x10 ^= u << 18 | u.shiftRightUnsigned(32 - 18);
+      u = x[10] + x[9] | 0;
+      x[11] ^= u << 7 | _shr32(u, 32 - 7);
+      u = x[11] + x[10] | 0;
+      x[8] ^= u << 9 | _shr32(u, 32 - 9);
+      u = x[8] + x[11] | 0;
+      x[9] ^= u << 13 | _shr32(u, 32 - 13);
+      u = x[9] + x[8] | 0;
+      x[10] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x15 + x14 | 0 as Int32;
-      x12 ^= u << 7 | u.shiftRightUnsigned(32 - 7);
-      u = x12 + x15 | 0 as Int32;
-      x13 ^= u << 9 | u.shiftRightUnsigned(32 - 9);
-      u = x13 + x12 | 0 as Int32;
-      x14 ^= u << 13 | u.shiftRightUnsigned(32 - 13);
-      u = x14 + x13 | 0 as Int32;
-      x15 ^= u << 18 | u.shiftRightUnsigned(32 - 18);
+      u = x[15] + x[14] | 0;
+      x[12] ^= u << 7 | _shr32(u, 32 - 7);
+      u = x[12] + x[15] | 0;
+      x[13] ^= u << 9 | _shr32(u, 32 - 9);
+      u = x[13] + x[12] | 0;
+      x[14] ^= u << 13 | _shr32(u, 32 - 13);
+      u = x[14] + x[13] | 0;
+      x[15] ^= u << 18 | _shr32(u, 32 - 18);
     }
 
-    o[0] = (x0.shiftRightUnsigned(0) & 0xff).toInt();
-    o[1] = (x0.shiftRightUnsigned(8) & 0xff).toInt();
-    o[2] = (x0.shiftRightUnsigned(16) & 0xff).toInt();
-    o[3] = (x0.shiftRightUnsigned(24) & 0xff).toInt();
+    o[0] = _shr32(x[0], 0) & 0xff;
+    o[1] = _shr32(x[0], 8) & 0xff;
+    o[2] = _shr32(x[0], 16) & 0xff;
+    o[3] = _shr32(x[0], 24) & 0xff;
 
-    o[4] = (x5.shiftRightUnsigned(0) & 0xff).toInt();
-    o[5] = (x5.shiftRightUnsigned(8) & 0xff).toInt();
-    o[6] = (x5.shiftRightUnsigned(16) & 0xff).toInt();
-    o[7] = (x5.shiftRightUnsigned(24) & 0xff).toInt();
+    o[4] = _shr32(x[5], 0) & 0xff;
+    o[5] = _shr32(x[5], 8) & 0xff;
+    o[6] = _shr32(x[5], 16) & 0xff;
+    o[7] = _shr32(x[5], 24) & 0xff;
 
-    o[8] = (x10.shiftRightUnsigned(0) & 0xff).toInt();
-    o[9] = (x10.shiftRightUnsigned(8) & 0xff).toInt();
-    o[10] = (x10.shiftRightUnsigned(16) & 0xff).toInt();
-    o[11] = (x10.shiftRightUnsigned(24) & 0xff).toInt();
+    o[8] = _shr32(x[10], 0) & 0xff;
+    o[9] = _shr32(x[10], 8) & 0xff;
+    o[10] = _shr32(x[10], 16) & 0xff;
+    o[11] = _shr32(x[10], 24) & 0xff;
 
-    o[12] = (x15.shiftRightUnsigned(0) & 0xff).toInt();
-    o[13] = (x15.shiftRightUnsigned(8) & 0xff).toInt();
-    o[14] = (x15.shiftRightUnsigned(16) & 0xff).toInt();
-    o[15] = (x15.shiftRightUnsigned(24) & 0xff).toInt();
+    o[12] = _shr32(x[15], 0) & 0xff;
+    o[13] = _shr32(x[15], 8) & 0xff;
+    o[14] = _shr32(x[15], 16) & 0xff;
+    o[15] = _shr32(x[15], 24) & 0xff;
 
-    o[16] = (x6.shiftRightUnsigned(0) & 0xff).toInt();
-    o[17] = (x6.shiftRightUnsigned(8) & 0xff).toInt();
-    o[18] = (x6.shiftRightUnsigned(16) & 0xff).toInt();
-    o[19] = (x6.shiftRightUnsigned(24) & 0xff).toInt();
+    o[16] = _shr32(x[6], 0) & 0xff;
+    o[17] = _shr32(x[6], 8) & 0xff;
+    o[18] = _shr32(x[6], 16) & 0xff;
+    o[19] = _shr32(x[6], 24) & 0xff;
 
-    o[20] = (x7.shiftRightUnsigned(0) & 0xff).toInt();
-    o[21] = (x7.shiftRightUnsigned(8) & 0xff).toInt();
-    o[22] = (x7.shiftRightUnsigned(16) & 0xff).toInt();
-    o[23] = (x7.shiftRightUnsigned(24) & 0xff).toInt();
+    o[20] = _shr32(x[7], 0) & 0xff;
+    o[21] = _shr32(x[7], 8) & 0xff;
+    o[22] = _shr32(x[7], 16) & 0xff;
+    o[23] = _shr32(x[7], 24) & 0xff;
 
-    o[24] = (x8.shiftRightUnsigned(0) & 0xff).toInt();
-    o[25] = (x8.shiftRightUnsigned(8) & 0xff).toInt();
-    o[26] = (x8.shiftRightUnsigned(16) & 0xff).toInt();
-    o[27] = (x8.shiftRightUnsigned(24) & 0xff).toInt();
+    o[24] = _shr32(x[8], 0) & 0xff;
+    o[25] = _shr32(x[8], 8) & 0xff;
+    o[26] = _shr32(x[8], 16) & 0xff;
+    o[27] = _shr32(x[8], 24) & 0xff;
 
-    o[28] = (x9.shiftRightUnsigned(0) & 0xff).toInt();
-    o[29] = (x9.shiftRightUnsigned(8) & 0xff).toInt();
-    o[30] = (x9.shiftRightUnsigned(16) & 0xff).toInt();
-    o[31] = (x9.shiftRightUnsigned(24) & 0xff).toInt();
+    o[28] = _shr32(x[9], 0) & 0xff;
+    o[29] = _shr32(x[9], 8) & 0xff;
+    o[30] = _shr32(x[9], 16) & 0xff;
+    o[31] = _shr32(x[9], 24) & 0xff;
   }
 
   static int crypto_core_salsa20(
@@ -643,7 +609,7 @@ class TweetNaCl {
       [int ic = 0]) {
     var z = Uint8List(16), x = Uint8List(64);
     int i;
-    Int32 u;
+    int u;
     for (i = 0; i < 16; i++) {
       z[i] = 0;
     }
@@ -653,20 +619,20 @@ class TweetNaCl {
     }
 
     for (i = 8; i < 16; i++) {
-      z[i] = (ic & 0xff);
+      z[i] = ic & 0xff;
       ic >>= 8;
     }
 
     while (b >= 64) {
       crypto_core_salsa20(x, z, k, _sigma);
       for (i = 0; i < 64; i++) {
-        c[cpos + i] = ((m[mpos + i] ^ x[i]) & 0xff).toInt();
+        c[cpos + i] = (m[mpos + i] ^ x[i]) & 0xff;
       }
-      u = Int32(1);
+      u = 1;
       for (i = 8; i < 16; i++) {
-        u = u + (z[i] & 0xff) | 0 as Int32;
-        z[i] = (u & 0xff).toInt();
-        u = u.shiftRightUnsigned(8);
+        u = u + (z[i] & 0xff) | 0;
+        z[i] = u & 0xff;
+        u = _shr32(u, 8);
       }
       b -= 64;
       cpos += 64;
@@ -675,7 +641,7 @@ class TweetNaCl {
     if (b > 0) {
       crypto_core_salsa20(x, z, k, _sigma);
       for (i = 0; i < b; i++) {
-        c[cpos + i] = ((m[mpos + i] ^ x[i]) & 0xff).toInt();
+        c[cpos + i] = (m[mpos + i] ^ x[i]) & 0xff;
       }
     }
 
@@ -686,7 +652,7 @@ class TweetNaCl {
       Uint8List c, int cpos, int b, Uint8List n, Uint8List k) {
     var z = Uint8List(16), x = Uint8List(64);
     int i;
-    Int32 u;
+    int u;
     for (i = 0; i < 16; i++) {
       z[i] = 0;
     }
@@ -698,11 +664,11 @@ class TweetNaCl {
       for (i = 0; i < 64; i++) {
         c[cpos + i] = x[i];
       }
-      u = Int32(1);
+      u = 1;
       for (i = 8; i < 16; i++) {
-        u = u + (z[i] & 0xff) | 0 as Int32;
-        z[i] = (u & 0xff).toInt();
-        u = u.shiftRightUnsigned(8);
+        u = u + (z[i] & 0xff) | 0;
+        z[i] = u & 0xff;
+        u = _shr32(u, 8);
       }
       b -= 64;
       cpos += 64;
@@ -857,7 +823,7 @@ class TweetNaCl {
       _sel25519_off(t, 0, m, 0, 1 - b);
     }
     for (i = 0; i < 16; i++) {
-      o[2 * i] = (t[i] & 0xff).toInt();
+      o[2 * i] = t[i] & 0xff;
       o[2 * i + 1] = (t[i] >> 8);
     }
   }
@@ -1440,7 +1406,7 @@ class TweetNaCl {
     for (i = 0; i < 31; i++) {
       z[i] = n[i];
     }
-    z[31] = (((n[31] & 127) | 64) & 0xff).toInt();
+    z[31] = ((n[31] & 127) | 64) & 0xff;
     z[0] &= 248;
     _unpack25519(x, Uint8List.fromList(p));
     for (i = 0; i < 16; i++) {
@@ -1449,10 +1415,9 @@ class TweetNaCl {
     }
     a[0] = d[0] = 1;
     for (i = 254; i >= 0; --i) {
-      r = (Int32(z[Int32(i).shiftRightUnsigned(3).toInt()])
-                  .shiftRightUnsigned(i & 7))
-              .toInt() &
-          1;
+
+      r = (z[i >> 3] >> (i & 7)) & 1;
+
       _sel25519(a, b, r);
       _sel25519(c, d, r);
       _A(e, a, c);
@@ -1530,310 +1495,351 @@ class TweetNaCl {
     return crypto_box_open_afternm(m, c, d, n, k);
   }
 
-  static final List<Int64> K = <Int64>[
-    Int64.fromInts(0x428a2f98, 0xd728ae22),
-    Int64.fromInts(0x71374491, 0x23ef65cd),
-    Int64.fromInts(0xb5c0fbcf, 0xec4d3b2f),
-    Int64.fromInts(0xe9b5dba5, 0x8189dbbc),
-    Int64.fromInts(0x3956c25b, 0xf348b538),
-    Int64.fromInts(0x59f111f1, 0xb605d019),
-    Int64.fromInts(0x923f82a4, 0xaf194f9b),
-    Int64.fromInts(0xab1c5ed5, 0xda6d8118),
-    Int64.fromInts(0xd807aa98, 0xa3030242),
-    Int64.fromInts(0x12835b01, 0x45706fbe),
-    Int64.fromInts(0x243185be, 0x4ee4b28c),
-    Int64.fromInts(0x550c7dc3, 0xd5ffb4e2),
-    Int64.fromInts(0x72be5d74, 0xf27b896f),
-    Int64.fromInts(0x80deb1fe, 0x3b1696b1),
-    Int64.fromInts(0x9bdc06a7, 0x25c71235),
-    Int64.fromInts(0xc19bf174, 0xcf692694),
-    Int64.fromInts(0xe49b69c1, 0x9ef14ad2),
-    Int64.fromInts(0xefbe4786, 0x384f25e3),
-    Int64.fromInts(0x0fc19dc6, 0x8b8cd5b5),
-    Int64.fromInts(0x240ca1cc, 0x77ac9c65),
-    Int64.fromInts(0x2de92c6f, 0x592b0275),
-    Int64.fromInts(0x4a7484aa, 0x6ea6e483),
-    Int64.fromInts(0x5cb0a9dc, 0xbd41fbd4),
-    Int64.fromInts(0x76f988da, 0x831153b5),
-    Int64.fromInts(0x983e5152, 0xee66dfab),
-    Int64.fromInts(0xa831c66d, 0x2db43210),
-    Int64.fromInts(0xb00327c8, 0x98fb213f),
-    Int64.fromInts(0xbf597fc7, 0xbeef0ee4),
-    Int64.fromInts(0xc6e00bf3, 0x3da88fc2),
-    Int64.fromInts(0xd5a79147, 0x930aa725),
-    Int64.fromInts(0x06ca6351, 0xe003826f),
-    Int64.fromInts(0x14292967, 0x0a0e6e70),
-    Int64.fromInts(0x27b70a85, 0x46d22ffc),
-    Int64.fromInts(0x2e1b2138, 0x5c26c926),
-    Int64.fromInts(0x4d2c6dfc, 0x5ac42aed),
-    Int64.fromInts(0x53380d13, 0x9d95b3df),
-    Int64.fromInts(0x650a7354, 0x8baf63de),
-    Int64.fromInts(0x766a0abb, 0x3c77b2a8),
-    Int64.fromInts(0x81c2c92e, 0x47edaee6),
-    Int64.fromInts(0x92722c85, 0x1482353b),
-    Int64.fromInts(0xa2bfe8a1, 0x4cf10364),
-    Int64.fromInts(0xa81a664b, 0xbc423001),
-    Int64.fromInts(0xc24b8b70, 0xd0f89791),
-    Int64.fromInts(0xc76c51a3, 0x0654be30),
-    Int64.fromInts(0xd192e819, 0xd6ef5218),
-    Int64.fromInts(0xd6990624, 0x5565a910),
-    Int64.fromInts(0xf40e3585, 0x5771202a),
-    Int64.fromInts(0x106aa070, 0x32bbd1b8),
-    Int64.fromInts(0x19a4c116, 0xb8d2d0c8),
-    Int64.fromInts(0x1e376c08, 0x5141ab53),
-    Int64.fromInts(0x2748774c, 0xdf8eeb99),
-    Int64.fromInts(0x34b0bcb5, 0xe19b48a8),
-    Int64.fromInts(0x391c0cb3, 0xc5c95a63),
-    Int64.fromInts(0x4ed8aa4a, 0xe3418acb),
-    Int64.fromInts(0x5b9cca4f, 0x7763e373),
-    Int64.fromInts(0x682e6ff3, 0xd6b2b8a3),
-    Int64.fromInts(0x748f82ee, 0x5defb2fc),
-    Int64.fromInts(0x78a5636f, 0x43172f60),
-    Int64.fromInts(0x84c87814, 0xa1f0ab72),
-    Int64.fromInts(0x8cc70208, 0x1a6439ec),
-    Int64.fromInts(0x90befffa, 0x23631e28),
-    Int64.fromInts(0xa4506ceb, 0xde82bde9),
-    Int64.fromInts(0xbef9a3f7, 0xb2c67915),
-    Int64.fromInts(0xc67178f2, 0xe372532b),
-    Int64.fromInts(0xca273ece, 0xea26619c),
-    Int64.fromInts(0xd186b8c7, 0x21c0c207),
-    Int64.fromInts(0xeada7dd6, 0xcde0eb1e),
-    Int64.fromInts(0xf57d4f7f, 0xee6ed178),
-    Int64.fromInts(0x06f067aa, 0x72176fba),
-    Int64.fromInts(0x0a637dc5, 0xa2c898a6),
-    Int64.fromInts(0x113f9804, 0xbef90dae),
-    Int64.fromInts(0x1b710b35, 0x131c471b),
-    Int64.fromInts(0x28db77f5, 0x23047d84),
-    Int64.fromInts(0x32caab7b, 0x40c72493),
-    Int64.fromInts(0x3c9ebe0a, 0x15c9bebc),
-    Int64.fromInts(0x431d67c4, 0x9c100d4c),
-    Int64.fromInts(0x4cc5d4be, 0xcb3e42b6),
-    Int64.fromInts(0x597f299c, 0xfc657e2a),
-    Int64.fromInts(0x5fcb6fab, 0x3ad6faec),
-    Int64.fromInts(0x6c44198c, 0x4a475817)
+  static const K = <int>[
+    0x428a2f98,
+    0xd728ae22,
+    0x71374491,
+    0x23ef65cd,
+    0xb5c0fbcf,
+    0xec4d3b2f,
+    0xe9b5dba5,
+    0x8189dbbc,
+    0x3956c25b,
+    0xf348b538,
+    0x59f111f1,
+    0xb605d019,
+    0x923f82a4,
+    0xaf194f9b,
+    0xab1c5ed5,
+    0xda6d8118,
+    0xd807aa98,
+    0xa3030242,
+    0x12835b01,
+    0x45706fbe,
+    0x243185be,
+    0x4ee4b28c,
+    0x550c7dc3,
+    0xd5ffb4e2,
+    0x72be5d74,
+    0xf27b896f,
+    0x80deb1fe,
+    0x3b1696b1,
+    0x9bdc06a7,
+    0x25c71235,
+    0xc19bf174,
+    0xcf692694,
+    0xe49b69c1,
+    0x9ef14ad2,
+    0xefbe4786,
+    0x384f25e3,
+    0x0fc19dc6,
+    0x8b8cd5b5,
+    0x240ca1cc,
+    0x77ac9c65,
+    0x2de92c6f,
+    0x592b0275,
+    0x4a7484aa,
+    0x6ea6e483,
+    0x5cb0a9dc,
+    0xbd41fbd4,
+    0x76f988da,
+    0x831153b5,
+    0x983e5152,
+    0xee66dfab,
+    0xa831c66d,
+    0x2db43210,
+    0xb00327c8,
+    0x98fb213f,
+    0xbf597fc7,
+    0xbeef0ee4,
+    0xc6e00bf3,
+    0x3da88fc2,
+    0xd5a79147,
+    0x930aa725,
+    0x06ca6351,
+    0xe003826f,
+    0x14292967,
+    0x0a0e6e70,
+    0x27b70a85,
+    0x46d22ffc,
+    0x2e1b2138,
+    0x5c26c926,
+    0x4d2c6dfc,
+    0x5ac42aed,
+    0x53380d13,
+    0x9d95b3df,
+    0x650a7354,
+    0x8baf63de,
+    0x766a0abb,
+    0x3c77b2a8,
+    0x81c2c92e,
+    0x47edaee6,
+    0x92722c85,
+    0x1482353b,
+    0xa2bfe8a1,
+    0x4cf10364,
+    0xa81a664b,
+    0xbc423001,
+    0xc24b8b70,
+    0xd0f89791,
+    0xc76c51a3,
+    0x0654be30,
+    0xd192e819,
+    0xd6ef5218,
+    0xd6990624,
+    0x5565a910,
+    0xf40e3585,
+    0x5771202a,
+    0x106aa070,
+    0x32bbd1b8,
+    0x19a4c116,
+    0xb8d2d0c8,
+    0x1e376c08,
+    0x5141ab53,
+    0x2748774c,
+    0xdf8eeb99,
+    0x34b0bcb5,
+    0xe19b48a8,
+    0x391c0cb3,
+    0xc5c95a63,
+    0x4ed8aa4a,
+    0xe3418acb,
+    0x5b9cca4f,
+    0x7763e373,
+    0x682e6ff3,
+    0xd6b2b8a3,
+    0x748f82ee,
+    0x5defb2fc,
+    0x78a5636f,
+    0x43172f60,
+    0x84c87814,
+    0xa1f0ab72,
+    0x8cc70208,
+    0x1a6439ec,
+    0x90befffa,
+    0x23631e28,
+    0xa4506ceb,
+    0xde82bde9,
+    0xbef9a3f7,
+    0xb2c67915,
+    0xc67178f2,
+    0xe372532b,
+    0xca273ece,
+    0xea26619c,
+    0xd186b8c7,
+    0x21c0c207,
+    0xeada7dd6,
+    0xcde0eb1e,
+    0xf57d4f7f,
+    0xee6ed178,
+    0x06f067aa,
+    0x72176fba,
+    0x0a637dc5,
+    0xa2c898a6,
+    0x113f9804,
+    0xbef90dae,
+    0x1b710b35,
+    0x131c471b,
+    0x28db77f5,
+    0x23047d84,
+    0x32caab7b,
+    0x40c72493,
+    0x3c9ebe0a,
+    0x15c9bebc,
+    0x431d67c4,
+    0x9c100d4c,
+    0x4cc5d4be,
+    0xcb3e42b6,
+    0x597f299c,
+    0xfc657e2a,
+    0x5fcb6fab,
+    0x3ad6faec,
+    0x6c44198c,
+    0x4a475817
   ];
 
+  static int _shr32(int x, int n) =>
+      (x >= 0 ? x >>= n : (x >> n) & ((1 << (32 - n)) - 1)).toInt32();
+
   static int crypto_hashblocks_hl(
-      List<Int32> hh, List<Int32> hl, Uint8List m, final int moff, int n) {
-    ///String dbgt = "";
-    ///for (var dbg = 0; dbg < n; dbg ++) dbgt += " "+m[dbg+moff];
-    ///Log.d(TAG, "crypto_hashblocks_hl m/"+n + "-> "+dbgt);
+      Int32List hh, Int32List hl, Uint8List m, final int moff, int n) {
+    final wh = Int32List(16), wl = Int32List(16);
+    final bh = Int32List(8), bl = Int32List(8);
+    final ah = Int32List.fromList(hh), al = Int32List.fromList(hl);
 
-    int i, j;
-
-    var wh = List<Int32>.filled(16, Int32(0)),
-        wl = List<Int32>.filled(16, Int32(0));
-    Int32 bh0,
-        bh1,
-        bh2,
-        bh3,
-        bh4,
-        bh5,
-        bh6,
-        bh7,
-        bl0,
-        bl1,
-        bl2,
-        bl3,
-        bl4,
-        bl5,
-        bl6,
-        bl7,
-        th,
-        tl,
-        h,
-        l,
-        a,
-        b,
-        c,
-        d;
-
-    var ah0 = hh[0],
-        ah1 = hh[1],
-        ah2 = hh[2],
-        ah3 = hh[3],
-        ah4 = hh[4],
-        ah5 = hh[5],
-        ah6 = hh[6],
-        ah7 = hh[7],
-        al0 = hl[0],
-        al1 = hl[1],
-        al2 = hl[2],
-        al3 = hl[3],
-        al4 = hl[4],
-        al5 = hl[5],
-        al6 = hl[6],
-        al7 = hl[7];
+    int i, j, th, tl, h, l, a, b, c, d;
 
     var pos = 0;
     while (n >= 128) {
       for (i = 0; i < 16; i++) {
         j = 8 * i + pos;
-        wh[i] = Int32((m[j + 0 + moff] & 0xff) << 24) |
+        wh[i] = ((m[j + 0 + moff] & 0xff) << 24) |
             ((m[j + 1 + moff] & 0xff) << 16) |
             ((m[j + 2 + moff] & 0xff) << 8) |
             ((m[j + 3 + moff] & 0xff) << 0);
-        wl[i] = Int32((m[j + 4 + moff] & 0xff) << 24) |
+        wl[i] = ((m[j + 4 + moff] & 0xff) << 24) |
             ((m[j + 5 + moff] & 0xff) << 16) |
             ((m[j + 6 + moff] & 0xff) << 8) |
             ((m[j + 7 + moff] & 0xff) << 0);
       }
       for (i = 0; i < 80; i++) {
-        bh0 = ah0;
-        bh1 = ah1;
-        bh2 = ah2;
-        bh3 = ah3;
-        bh4 = ah4;
-        bh5 = ah5;
-        bh6 = ah6;
-        bh7 = ah7;
+        bh[0] = ah[0];
+        bh[1] = ah[1];
+        bh[2] = ah[2];
+        bh[3] = ah[3];
+        bh[4] = ah[4];
+        bh[5] = ah[5];
+        bh[6] = ah[6];
+        bh[7] = ah[7];
 
-        bl0 = al0;
-        bl1 = al1;
-        bl2 = al2;
-        bl3 = al3;
-        bl4 = al4;
-        bl5 = al5;
-        bl6 = al6;
-        bl7 = al7;
+        bl[0] = al[0];
+        bl[1] = al[1];
+        bl[2] = al[2];
+        bl[3] = al[3];
+        bl[4] = al[4];
+        bl[5] = al[5];
+        bl[6] = al[6];
+        bl[7] = al[7];
 
         // add
-        h = ah7;
-        l = al7;
+        h = ah[7];
+        l = al[7];
 
         a = l & 0xffff;
-        b = l.shiftRightUnsigned(16);
+        b = _shr32(l, 16);
         c = h & 0xffff;
-        d = h.shiftRightUnsigned(16);
+        d = _shr32(h, 16);
 
         // Sigma1
-        h = ((ah4.shiftRightUnsigned(14)) | (al4 << (32 - 14))) ^
-            ((ah4.shiftRightUnsigned(18)) | (al4 << (32 - 18))) ^
-            ((al4.shiftRightUnsigned((41 - 32))) | (ah4 << (32 - (41 - 32))));
-        l = ((al4.shiftRightUnsigned(14)) | (ah4 << (32 - 14))) ^
-            ((al4.shiftRightUnsigned(18)) | (ah4 << (32 - 18))) ^
-            ((ah4.shiftRightUnsigned((41 - 32))) | (al4 << (32 - (41 - 32))));
+        h = (((_shr32(ah[4], 14)) | (al[4] << (32 - 14))) ^
+                ((_shr32(ah[4], 18)) | (al[4] << (32 - 18))) ^
+                ((_shr32(al[4], (41 - 32))) | (ah[4] << (32 - (41 - 32)))))
+            .toInt32();
+        l = (((_shr32(al[4], 14)) | (ah[4] << (32 - 14))) ^
+                ((_shr32(al[4], 18)) | (ah[4] << (32 - 18))) ^
+                ((_shr32(ah[4], (41 - 32))) | (al[4] << (32 - (41 - 32)))))
+            .toInt32();
 
-        a = a + (l & 0xffff) as Int32;
-        b = b + l.shiftRightUnsigned(16) as Int32;
-        c = c + (h & 0xffff) as Int32;
-        d = d + h.shiftRightUnsigned(16) as Int32;
+        a = a + (l & 0xffff);
+        b = b + _shr32(l, 16);
+        c = c + (h & 0xffff);
+        d = d + _shr32(h, 16);
 
         // Ch
-        h = (ah4 & ah5) ^ (~ah4 & ah6);
-        l = (al4 & al5) ^ (~al4 & al6);
+        h = ((ah[4] & ah[5]) ^ (~ah[4] & ah[6])).toInt32();
+        l = ((al[4] & al[5]) ^ (~al[4] & al[6])).toInt32();
 
-        a = a + (l & 0xffff) as Int32;
-        b = b + l.shiftRightUnsigned(16) as Int32;
-        c = c + (h & 0xffff) as Int32;
-        d = d + h.shiftRightUnsigned(16) as Int32;
+        a = a + (l & 0xffff);
+        b = b + _shr32(l, 16);
+        c = c + (h & 0xffff);
+        d = d + _shr32(h, 16);
 
         // K
-        ///h = K[i*2];
-        ///l = K[i*2+1];
-        h = Int32((K[i].shiftRightUnsigned(32) & 0xffffffff).toInt());
-        l = Int32((K[i].shiftRightUnsigned(0) & 0xffffffff).toInt());
+        h = K[i * 2].toInt32();
+        l = K[i * 2 + 1].toInt32();
 
-        a = a + (l & 0xffff) as Int32;
-        b = b + l.shiftRightUnsigned(16) as Int32;
-        c = c + (h & 0xffff) as Int32;
-        d = d + h.shiftRightUnsigned(16) as Int32;
+        a = a + (l & 0xffff);
+        b = b + _shr32(l, 16);
+        c = c + (h & 0xffff);
+        d = d + _shr32(h, 16);
 
         // w
         h = wh[i % 16];
         l = wl[i % 16];
 
-        a = a + (l & 0xffff) as Int32;
-        b = b + l.shiftRightUnsigned(16) as Int32;
-        c = c + (h & 0xffff) as Int32;
-        d = d + h.shiftRightUnsigned(16) as Int32;
+        a = a + (l & 0xffff);
+        b = b + _shr32(l, 16);
+        c = c + (h & 0xffff);
+        d = d + _shr32(h, 16);
 
-        b = b + a.shiftRightUnsigned(16) as Int32;
-        c = c + b.shiftRightUnsigned(16) as Int32;
-        d = d + c.shiftRightUnsigned(16) as Int32;
+        b = b + _shr32(a, 16);
+        c = c + _shr32(b, 16);
+        d = d + _shr32(c, 16);
 
         th = c & 0xffff | d << 16;
         tl = a & 0xffff | b << 16;
 
         // add
-        h = th;
-        l = tl;
+        h = th.toInt32();
+        l = tl.toInt32();
 
         a = l & 0xffff;
-        b = l.shiftRightUnsigned(16);
+        b = _shr32(l, 16);
         c = h & 0xffff;
-        d = h.shiftRightUnsigned(16);
+        d = _shr32(h, 16);
 
         // Sigma0
-        h = ((ah0.shiftRightUnsigned(28)) | (al0 << (32 - 28))) ^
-            ((al0.shiftRightUnsigned((34 - 32))) | (ah0 << (32 - (34 - 32)))) ^
-            ((al0.shiftRightUnsigned((39 - 32))) | (ah0 << (32 - (39 - 32))));
-        l = ((al0.shiftRightUnsigned(28)) | (ah0 << (32 - 28))) ^
-            ((ah0.shiftRightUnsigned((34 - 32))) | (al0 << (32 - (34 - 32)))) ^
-            ((ah0.shiftRightUnsigned((39 - 32))) | (al0 << (32 - (39 - 32))));
+        h = (((_shr32(ah[0], 28)) | (al[0] << (32 - 28))) ^
+                ((_shr32(al[0], (34 - 32))) | (ah[0] << (32 - (34 - 32)))) ^
+                ((_shr32(al[0], (39 - 32))) | (ah[0] << (32 - (39 - 32)))))
+            .toInt32();
+        l = (((_shr32(al[0], 28)) | (ah[0] << (32 - 28))) ^
+                ((_shr32(ah[0], (34 - 32))) | (al[0] << (32 - (34 - 32)))) ^
+                ((_shr32(ah[0], (39 - 32))) | (al[0] << (32 - (39 - 32)))))
+            .toInt32();
 
-        a = a + (l & 0xffff) as Int32;
-        b = b + l.shiftRightUnsigned(16) as Int32;
-        c = c + (h & 0xffff) as Int32;
-        d = d + h.shiftRightUnsigned(16) as Int32;
+        a = a + (l & 0xffff);
+        b = b + _shr32(l, 16);
+        c = c + (h & 0xffff);
+        d = d + _shr32(h, 16);
 
         // Maj
-        h = (ah0 & ah1) ^ (ah0 & ah2) ^ (ah1 & ah2);
-        l = (al0 & al1) ^ (al0 & al2) ^ (al1 & al2);
+        h = ((ah[0] & ah[1]) ^ (ah[0] & ah[2]) ^ (ah[1] & ah[2])).toInt32();
+        l = ((al[0] & al[1]) ^ (al[0] & al[2]) ^ (al[1] & al[2])).toInt32();
 
-        a = a + (l & 0xffff) as Int32;
-        b = b + l.shiftRightUnsigned(16) as Int32;
-        c = c + (h & 0xffff) as Int32;
-        d = d + h.shiftRightUnsigned(16) as Int32;
+        a = a + (l & 0xffff);
+        b = b + _shr32(l, 16);
+        c = c + (h & 0xffff);
+        d = d + _shr32(h, 16);
 
-        b = b + a.shiftRightUnsigned(16) as Int32;
-        c = c + b.shiftRightUnsigned(16) as Int32;
-        d = d + c.shiftRightUnsigned(16) as Int32;
+        b = b + _shr32(a, 16);
+        c = c + _shr32(b, 16);
+        d = d + _shr32(c, 16);
 
-        bh7 = (c & 0xffff) | (d << 16);
-        bl7 = (a & 0xffff) | (b << 16);
+        bh[7] = ((c & 0xffff) | (d << 16)).toInt32();
+        bl[7] = ((a & 0xffff) | (b << 16)).toInt32();
 
         // add
-        h = bh3;
-        l = bl3;
+        h = bh[3];
+        l = bl[3];
 
         a = l & 0xffff;
-        b = l.shiftRightUnsigned(16);
+        b = _shr32(l, 16);
         c = h & 0xffff;
-        d = h.shiftRightUnsigned(16);
+        d = _shr32(h, 16);
 
-        h = th;
-        l = tl;
+        h = th.toInt32();
+        l = tl.toInt32();
 
-        a = a + (l & 0xffff) as Int32;
-        b = b + l.shiftRightUnsigned(16) as Int32;
-        c = c + (h & 0xffff) as Int32;
-        d = d + h.shiftRightUnsigned(16) as Int32;
+        a = a + (l & 0xffff);
+        b = b + _shr32(l, 16);
+        c = c + (h & 0xffff);
+        d = d + _shr32(h, 16);
 
-        b = b + a.shiftRightUnsigned(16) as Int32;
-        c = c + b.shiftRightUnsigned(16) as Int32;
-        d = d + c.shiftRightUnsigned(16) as Int32;
+        b = b + _shr32(a, 16);
+        c = c + _shr32(b, 16);
+        d = d + _shr32(c, 16);
 
-        bh3 = (c & 0xffff) | (d << 16);
-        bl3 = (a & 0xffff) | (b << 16);
+        bh[3] = ((c & 0xffff) | (d << 16)).toInt32();
+        bl[3] = ((a & 0xffff) | (b << 16)).toInt32();
 
-        ah1 = bh0;
-        ah2 = bh1;
-        ah3 = bh2;
-        ah4 = bh3;
-        ah5 = bh4;
-        ah6 = bh5;
-        ah7 = bh6;
-        ah0 = bh7;
+        ah[1] = bh[0];
+        ah[2] = bh[1];
+        ah[3] = bh[2];
+        ah[4] = bh[3];
+        ah[5] = bh[4];
+        ah[6] = bh[5];
+        ah[7] = bh[6];
+        ah[0] = bh[7];
 
-        al1 = bl0;
-        al2 = bl1;
-        al3 = bl2;
-        al4 = bl3;
-        al5 = bl4;
-        al6 = bl5;
-        al7 = bl6;
-        al0 = bl7;
+        al[1] = bl[0];
+        al[2] = bl[1];
+        al[3] = bl[2];
+        al[4] = bl[3];
+        al[5] = bl[4];
+        al[6] = bl[5];
+        al[7] = bl[6];
+        al[0] = bl[7];
 
         if (i % 16 == 15) {
           for (j = 0; j < 16; j++) {
@@ -1842,53 +1848,55 @@ class TweetNaCl {
             l = wl[j];
 
             a = l & 0xffff;
-            b = l.shiftRightUnsigned(16);
+            b = _shr32(l, 16);
             c = h & 0xffff;
-            d = h.shiftRightUnsigned(16);
+            d = _shr32(h, 16);
 
             h = wh[(j + 9) % 16];
             l = wl[(j + 9) % 16];
 
-            a = a + (l & 0xffff) as Int32;
-            b = b + l.shiftRightUnsigned(16) as Int32;
-            c = c + (h & 0xffff) as Int32;
-            d = d + h.shiftRightUnsigned(16) as Int32;
+            a = a + (l & 0xffff);
+            b = b + _shr32(l, 16);
+            c = c + (h & 0xffff);
+            d = d + _shr32(h, 16);
 
             // sigma0
             th = wh[(j + 1) % 16];
             tl = wl[(j + 1) % 16];
-            h = ((th.shiftRightUnsigned(1)) | (tl << (32 - 1))) ^
-                ((th.shiftRightUnsigned(8)) | (tl << (32 - 8))) ^
-                (th.shiftRightUnsigned(7));
-            l = ((tl.shiftRightUnsigned(1)) | (th << (32 - 1))) ^
-                ((tl.shiftRightUnsigned(8)) | (th << (32 - 8))) ^
-                ((tl.shiftRightUnsigned(7)) | (th << (32 - 7)));
+            h = (((_shr32(th, 1)) | (tl << (32 - 1))) ^
+                    ((_shr32(th, 8)) | (tl << (32 - 8))) ^
+                    (_shr32(th, 7)))
+                .toInt32();
+            l = (((_shr32(tl, 1)) | (th << (32 - 1))) ^
+                    ((_shr32(tl, 8)) | (th << (32 - 8))) ^
+                    ((_shr32(tl, 7)) | (th << (32 - 7))))
+                .toInt32();
 
-            a = a + (l & 0xffff) as Int32;
-            b = b + l.shiftRightUnsigned(16) as Int32;
-            c = c + (h & 0xffff) as Int32;
-            d = d + h.shiftRightUnsigned(16) as Int32;
+            a = a + (l & 0xffff);
+            b = b + _shr32(l, 16);
+            c = c + (h & 0xffff);
+            d = d + _shr32(h, 16);
 
             // sigma1
             th = wh[(j + 14) % 16];
             tl = wl[(j + 14) % 16];
-            h = ((th.shiftRightUnsigned(19)) | (tl << (32 - 19))) ^
-                ((tl.shiftRightUnsigned((61 - 32))) |
-                    (th << (32 - (61 - 32)))) ^
-                (th.shiftRightUnsigned(6));
-            l = ((tl.shiftRightUnsigned(19)) | (th << (32 - 19))) ^
-                ((th.shiftRightUnsigned((61 - 32))) |
-                    (tl << (32 - (61 - 32)))) ^
-                ((tl.shiftRightUnsigned(6)) | (th << (32 - 6)));
+            h = (((_shr32(th, 19)) | (tl << (32 - 19))) ^
+                    ((_shr32(tl, (61 - 32))) | (th << (32 - (61 - 32)))) ^
+                    (_shr32(th, 6)))
+                .toInt32();
+            l = (((_shr32(tl, 19)) | (th << (32 - 19))) ^
+                    ((_shr32(th, (61 - 32))) | (tl << (32 - (61 - 32)))) ^
+                    ((_shr32(tl, 6)) | (th << (32 - 6))))
+                .toInt32();
 
-            a = a + (l & 0xffff) as Int32;
-            b = b + l.shiftRightUnsigned(16) as Int32;
-            c = c + (h & 0xffff) as Int32;
-            d = d + h.shiftRightUnsigned(16) as Int32;
+            a = a + (l & 0xffff);
+            b = b + _shr32(l, 16);
+            c = c + (h & 0xffff);
+            d = d + _shr32(h, 16);
 
-            b = b + a.shiftRightUnsigned(16) as Int32;
-            c = c + b.shiftRightUnsigned(16) as Int32;
-            d = d + c.shiftRightUnsigned(16) as Int32;
+            b = b + _shr32(a, 16);
+            c = c + _shr32(b, 16);
+            d = d + _shr32(c, 16);
 
             wh[j] = ((c & 0xffff) | (d << 16));
             wl[j] = ((a & 0xffff) | (b << 16));
@@ -1897,188 +1905,188 @@ class TweetNaCl {
       }
 
       // add
-      h = ah0;
-      l = al0;
+      h = ah[0];
+      l = al[0];
 
       a = l & 0xffff;
-      b = l.shiftRightUnsigned(16);
+      b = _shr32(l, 16);
       c = h & 0xffff;
-      d = h.shiftRightUnsigned(16);
+      d = _shr32(h, 16);
       h = hh[0];
       l = hl[0];
 
-      a = a + (l & 0xffff) as Int32;
-      b = b + l.shiftRightUnsigned(16) as Int32;
-      c = c + (h & 0xffff) as Int32;
-      d = d + h.shiftRightUnsigned(16) as Int32;
+      a = a + (l & 0xffff);
+      b = b + _shr32(l, 16);
+      c = c + (h & 0xffff);
+      d = d + _shr32(h, 16);
 
-      b = b + a.shiftRightUnsigned(16) as Int32;
-      c = c + b.shiftRightUnsigned(16) as Int32;
-      d = d + c.shiftRightUnsigned(16) as Int32;
+      b = b + _shr32(a, 16);
+      c = c + _shr32(b, 16);
+      d = d + _shr32(c, 16);
 
-      hh[0] = ah0 = (c & 0xffff) | (d << 16);
-      hl[0] = al0 = (a & 0xffff) | (b << 16);
+      hh[0] = ah[0] = (c & 0xffff) | (d << 16);
+      hl[0] = al[0] = (a & 0xffff) | (b << 16);
 
-      h = ah1;
-      l = al1;
+      h = ah[1];
+      l = al[1];
 
       a = l & 0xffff;
-      b = l.shiftRightUnsigned(16);
+      b = _shr32(l, 16);
       c = h & 0xffff;
-      d = h.shiftRightUnsigned(16);
+      d = _shr32(h, 16);
 
       h = hh[1];
       l = hl[1];
 
-      a = a + (l & 0xffff) as Int32;
-      b = b + l.shiftRightUnsigned(16) as Int32;
-      c = c + (h & 0xffff) as Int32;
-      d = d + h.shiftRightUnsigned(16) as Int32;
+      a = a + (l & 0xffff);
+      b = b + _shr32(l, 16);
+      c = c + (h & 0xffff);
+      d = d + _shr32(h, 16);
 
-      b = b + a.shiftRightUnsigned(16) as Int32;
-      c = c + b.shiftRightUnsigned(16) as Int32;
-      d = d + c.shiftRightUnsigned(16) as Int32;
+      b = b + _shr32(a, 16);
+      c = c + _shr32(b, 16);
+      d = d + _shr32(c, 16);
 
-      hh[1] = ah1 = (c & 0xffff) | (d << 16);
-      hl[1] = al1 = (a & 0xffff) | (b << 16);
+      hh[1] = ah[1] = (c & 0xffff) | (d << 16);
+      hl[1] = al[1] = (a & 0xffff) | (b << 16);
 
-      h = ah2;
-      l = al2;
+      h = ah[2];
+      l = al[2];
 
       a = l & 0xffff;
-      b = l.shiftRightUnsigned(16);
+      b = _shr32(l, 16);
       c = h & 0xffff;
-      d = h.shiftRightUnsigned(16);
+      d = _shr32(h, 16);
 
       h = hh[2];
       l = hl[2];
 
-      a = a + (l & 0xffff) as Int32;
-      b = b + l.shiftRightUnsigned(16) as Int32;
-      c = c + (h & 0xffff) as Int32;
-      d = d + h.shiftRightUnsigned(16) as Int32;
+      a = a + (l & 0xffff);
+      b = b + _shr32(l, 16);
+      c = c + (h & 0xffff);
+      d = d + _shr32(h, 16);
 
-      b = b + a.shiftRightUnsigned(16) as Int32;
-      c = c + b.shiftRightUnsigned(16) as Int32;
-      d = d + c.shiftRightUnsigned(16) as Int32;
+      b = b + _shr32(a, 16);
+      c = c + _shr32(b, 16);
+      d = d + _shr32(c, 16);
 
-      hh[2] = ah2 = (c & 0xffff) | (d << 16);
-      hl[2] = al2 = (a & 0xffff) | (b << 16);
+      hh[2] = ah[2] = (c & 0xffff) | (d << 16);
+      hl[2] = al[2] = (a & 0xffff) | (b << 16);
 
-      h = ah3;
-      l = al3;
+      h = ah[3];
+      l = al[3];
 
       a = l & 0xffff;
-      b = l.shiftRightUnsigned(16);
+      b = _shr32(l, 16);
       c = h & 0xffff;
-      d = h.shiftRightUnsigned(16);
+      d = _shr32(h, 16);
 
       h = hh[3];
       l = hl[3];
 
-      a = a + (l & 0xffff) as Int32;
-      b = b + l.shiftRightUnsigned(16) as Int32;
-      c = c + (h & 0xffff) as Int32;
-      d = d + h.shiftRightUnsigned(16) as Int32;
+      a = a + (l & 0xffff);
+      b = b + _shr32(l, 16);
+      c = c + (h & 0xffff);
+      d = d + _shr32(h, 16);
 
-      b = b + a.shiftRightUnsigned(16) as Int32;
-      c = c + b.shiftRightUnsigned(16) as Int32;
-      d = d + c.shiftRightUnsigned(16) as Int32;
+      b = b + _shr32(a, 16);
+      c = c + _shr32(b, 16);
+      d = d + _shr32(c, 16);
 
-      hh[3] = ah3 = (c & 0xffff) | (d << 16);
-      hl[3] = al3 = (a & 0xffff) | (b << 16);
+      hh[3] = ah[3] = (c & 0xffff) | (d << 16);
+      hl[3] = al[3] = (a & 0xffff) | (b << 16);
 
-      h = ah4;
-      l = al4;
+      h = ah[4];
+      l = al[4];
 
       a = l & 0xffff;
-      b = l.shiftRightUnsigned(16);
+      b = _shr32(l, 16);
       c = h & 0xffff;
-      d = h.shiftRightUnsigned(16);
+      d = _shr32(h, 16);
 
       h = hh[4];
       l = hl[4];
 
-      a = a + (l & 0xffff) as Int32;
-      b = b + l.shiftRightUnsigned(16) as Int32;
-      c = c + (h & 0xffff) as Int32;
-      d = d + h.shiftRightUnsigned(16) as Int32;
+      a = a + (l & 0xffff);
+      b = b + _shr32(l, 16);
+      c = c + (h & 0xffff);
+      d = d + _shr32(h, 16);
 
-      b = b + a.shiftRightUnsigned(16) as Int32;
-      c = c + b.shiftRightUnsigned(16) as Int32;
-      d = d + c.shiftRightUnsigned(16) as Int32;
+      b = b + _shr32(a, 16);
+      c = c + _shr32(b, 16);
+      d = d + _shr32(c, 16);
 
-      hh[4] = ah4 = (c & 0xffff) | (d << 16);
-      hl[4] = al4 = (a & 0xffff) | (b << 16);
+      hh[4] = ah[4] = (c & 0xffff) | (d << 16);
+      hl[4] = al[4] = (a & 0xffff) | (b << 16);
 
-      h = ah5;
-      l = al5;
+      h = ah[5];
+      l = al[5];
 
       a = l & 0xffff;
-      b = l.shiftRightUnsigned(16);
+      b = _shr32(l, 16);
       c = h & 0xffff;
-      d = h.shiftRightUnsigned(16);
+      d = _shr32(h, 16);
 
       h = hh[5];
       l = hl[5];
 
-      a = a + (l & 0xffff) as Int32;
-      b = b + l.shiftRightUnsigned(16) as Int32;
-      c = c + (h & 0xffff) as Int32;
-      d = d + h.shiftRightUnsigned(16) as Int32;
+      a = a + (l & 0xffff);
+      b = b + _shr32(l, 16);
+      c = c + (h & 0xffff);
+      d = d + _shr32(h, 16);
 
-      b = b + a.shiftRightUnsigned(16) as Int32;
-      c = c + b.shiftRightUnsigned(16) as Int32;
-      d = d + c.shiftRightUnsigned(16) as Int32;
+      b = b + _shr32(a, 16);
+      c = c + _shr32(b, 16);
+      d = d + _shr32(c, 16);
 
-      hh[5] = ah5 = (c & 0xffff) | (d << 16);
-      hl[5] = al5 = (a & 0xffff) | (b << 16);
+      hh[5] = ah[5] = (c & 0xffff) | (d << 16);
+      hl[5] = al[5] = (a & 0xffff) | (b << 16);
 
-      h = ah6;
-      l = al6;
+      h = ah[6];
+      l = al[6];
 
       a = l & 0xffff;
-      b = l.shiftRightUnsigned(16);
+      b = _shr32(l, 16);
       c = h & 0xffff;
-      d = h.shiftRightUnsigned(16);
+      d = _shr32(h, 16);
 
       h = hh[6];
       l = hl[6];
 
-      a = a + (l & 0xffff) as Int32;
-      b = b + l.shiftRightUnsigned(16) as Int32;
-      c = c + (h & 0xffff) as Int32;
-      d = d + h.shiftRightUnsigned(16) as Int32;
+      a = a + (l & 0xffff);
+      b = b + _shr32(l, 16);
+      c = c + (h & 0xffff);
+      d = d + _shr32(h, 16);
 
-      b = b + a.shiftRightUnsigned(16) as Int32;
-      c = c + b.shiftRightUnsigned(16) as Int32;
-      d = d + c.shiftRightUnsigned(16) as Int32;
+      b = b + _shr32(a, 16);
+      c = c + _shr32(b, 16);
+      d = d + _shr32(c, 16);
 
-      hh[6] = ah6 = (c & 0xffff) | (d << 16);
-      hl[6] = al6 = (a & 0xffff) | (b << 16);
+      hh[6] = ah[6] = (c & 0xffff) | (d << 16);
+      hl[6] = al[6] = (a & 0xffff) | (b << 16);
 
-      h = ah7;
-      l = al7;
+      h = ah[7];
+      l = al[7];
 
       a = l & 0xffff;
-      b = l.shiftRightUnsigned(16);
+      b = _shr32(l, 16);
       c = h & 0xffff;
-      d = h.shiftRightUnsigned(16);
+      d = _shr32(h, 16);
 
       h = hh[7];
       l = hl[7];
 
-      a = a + (l & 0xffff) as Int32;
-      b = b + l.shiftRightUnsigned(16) as Int32;
-      c = c + (h & 0xffff) as Int32;
-      d = d + h.shiftRightUnsigned(16) as Int32;
+      a = a + (l & 0xffff);
+      b = b + _shr32(l, 16);
+      c = c + (h & 0xffff);
+      d = d + _shr32(h, 16);
 
-      b = b + a.shiftRightUnsigned(16) as Int32;
-      c = c + b.shiftRightUnsigned(16) as Int32;
-      d = d + c.shiftRightUnsigned(16) as Int32;
+      b = b + _shr32(a, 16);
+      c = c + _shr32(b, 16);
+      d = d + _shr32(c, 16);
 
-      hh[7] = ah7 = (c & 0xffff) | (d << 16);
-      hl[7] = al7 = (a & 0xffff) | (b << 16);
+      hh[7] = ah[7] = (c & 0xffff) | (d << 16);
+      hl[7] = al[7] = (a & 0xffff) | (b << 16);
 
       pos += 128;
       n -= 128;
@@ -2087,55 +2095,41 @@ class TweetNaCl {
     return n;
   }
 
-// TBD 64bits of n
-  ///int crypto_hash(Uint8List out, Uint8List m, long n)
+  /// Though the maximum SHA-512 message length is 2^128, we set it to
+  /// the maximum 2^53-1 for javascript compatibility.
   ///
-/*  
-    
-    hh224[0] = Int32(0x8c3d37c8);
-    hh224[1] = Int32(0x73e19966);
-    hh224[2] = Int32(0x1dfab7ae);
-    hh224[3] = Int32(0x679dd514);
-    hh224[4] = Int32(0x0f6d2b69);
-    hh224[5] = Int32(0x77e36f73);
-    hh224[6] = Int32(0x3f9d85a8);
-    hh224[7] = Int32(0x1112e6ad);
-
-
-    hl224[0] = Int32(0x19544da2);
-    hl224[1] = Int32(0x89dcd4d6);
-    hl224[2] = Int32(0x32ff9c82);
-    hl224[3] = Int32(0x582f9fcf);
-    hl224[4] = Int32(0x7bd44da8);
-    hl224[5] = Int32(0x04c48942);
-    hl224[6] = Int32(0x6a1d36c8);
-    hl224[7] = Int32(0x91d692a1);
-    */
+  /// TODO: It should be tested whether it works or not.
   static int _crypto_hash_off(
       Uint8List out, Uint8List m, final int moff, int n) {
-    var hh = List<Int32>.filled(8, Int32(0)),
-        hl = List<Int32>.filled(8, Int32(0));
-    var x = Uint8List(256);
-    int i, b = n;
-    int u;
+    if (n > 0x20000000000000) {
+      throw Exception('Maximum message length is 2^53');
+    }
 
-    hh[0] = Int32(0x6a09e667);
-    hh[1] = Int32(0xbb67ae85);
-    hh[2] = Int32(0x3c6ef372);
-    hh[3] = Int32(0xa54ff53a);
-    hh[4] = Int32(0x510e527f);
-    hh[5] = Int32(0x9b05688c);
-    hh[6] = Int32(0x1f83d9ab);
-    hh[7] = Int32(0x5be0cd19);
+    final x = Uint8List(256);
+    int i;
+    final b = n;
 
-    hl[0] = Int32(0xf3bcc908);
-    hl[1] = Int32(0x84caa73b);
-    hl[2] = Int32(0xfe94f82b);
-    hl[3] = Int32(0x5f1d36f1);
-    hl[4] = Int32(0xade682d1);
-    hl[5] = Int32(0x2b3e6c1f);
-    hl[6] = Int32(0xfb41bd6b);
-    hl[7] = Int32(0x137e2179);
+    final hh = Int32List.fromList([
+      0x6a09e667,
+      0xbb67ae85,
+      0x3c6ef372,
+      0xa54ff53a,
+      0x510e527f,
+      0x9b05688c,
+      0x1f83d9ab,
+      0x5be0cd19
+    ]);
+
+    final hl = Int32List.fromList([
+      0xf3bcc908,
+      0x84caa73b,
+      0xfe94f82b,
+      0x5f1d36f1,
+      0xade682d1,
+      0x2b3e6c1f,
+      0xfb41bd6b,
+      0x137e2179
+    ]);
 
     if (n >= 128) {
       crypto_hashblocks_hl(hh, hl, m, moff, n);
@@ -2150,15 +2144,13 @@ class TweetNaCl {
     n = 256 - 128 * (n < 112 ? 1 : 0);
     x[n - 9] = 0;
 
-    _ts64(x, n - 8, b << 3 /*(b / 0x20000000) | 0, b << 3*/);
+    // FIXME:  Split it to two int32
+    _ts64(x, n - 8, 0, b << 3);
 
     crypto_hashblocks_hl(hh, hl, x, 0, n);
 
     for (i = 0; i < 8; i++) {
-      u = hh[i].toInt();
-      u <<= 32;
-      u |= hl[i].toInt() & 0xffffffff;
-      _ts64(out, 8 * i, u);
+      _ts64(out, 8 * i, hh[i], hl[i]);
     }
 
     return 0;
@@ -2246,9 +2238,7 @@ class TweetNaCl {
     _set25519(p[3], _gf0);
 
     for (i = 255; i >= 0; --i) {
-      var b = ((Int32(s[(i / 8 + soff).toInt()]).shiftRightUnsigned(i & 7))
-              .toInt() &
-          1);
+      final b = _shr32(s[i ~/ 8 + soff], i & 7) & 1;
 
       _cswap(p, q, b);
       _add(q, p);
@@ -2354,7 +2344,7 @@ class TweetNaCl {
     int i;
 
     for (i = 0; i < 64; i++) {
-      x[i] = (r[i] & 0xff).toInt();
+      x[i] = r[i] & 0xff;
     }
 
     for (i = 0; i < 64; i++) {
@@ -2438,12 +2428,12 @@ class TweetNaCl {
     }
 
     for (i = 0; i < 32; i++) {
-      x[i] = (r[i] & 0xff).toInt();
+      x[i] = r[i] & 0xff;
     }
 
     for (i = 0; i < 32; i++) {
       for (j = 0; j < 32; j++) {
-        x[i + j] += (h[i] & 0xff) * (d[j] & 0xff).toInt();
+        x[i + j] += (h[i] & 0xff) * (d[j] & 0xff);
       }
     }
 
@@ -2488,8 +2478,8 @@ class TweetNaCl {
     _M(chk, chk, den);
     if (_neq25519(chk, num) != 0) return -1;
 
-    if (_par25519(r[0]) ==
-        (Int32(p[31] & 0xFF).shiftRightUnsigned(7).toInt())) {
+    if (_par25519(r[0]) == _shr32((p[31] & 0xFF), 7)) {
+
       _Z(r[0], Uint64List.fromList(_gf0), r[0]);
     }
 
@@ -2550,7 +2540,7 @@ class TweetNaCl {
   static Uint8List _randombytes_array(Uint8List x) {
     var rnd = 0;
 
-    for (var i = 0; i < x.length; i++) {
+    for (int i = 0; i < x.length; i++) {
       var iter = i % 4;
 
       if (iter == 0) {
@@ -2567,4 +2557,28 @@ class TweetNaCl {
   static Uint8List randombytes(int len) {
     return _randombytes_array(Uint8List(len));
   }
+}
+
+void main() {
+  final hex = HexCoder.instance;
+  const firstKey =
+      '1b27556473e985d462cd51197a9a46c76009549eac6474f206c4ee0844f68389';
+  final zero = Uint8List(32);
+  const c = '657870616e642033322d62797465206b';
+  final _1k = Uint8List(TweetNaCl.secretKeyLength);
+  const sharedSecret =
+      '4a5d9d5ba4ce2de1728e3bf480350f25e07e21c947d19e3376f09b3c1e161742';
+  TweetNaCl.crypto_core_hsalsa20(
+      _1k, zero, hex.decode(sharedSecret), hex.decode(c));
+
+  final fk = hex.encode(_1k);
+  assert(fk == firstKey);
+  final message = Uint8List(0);
+  final digest = hex.decode(
+      'cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e');
+  final out = Uint8List(64);
+  TweetNaCl._crypto_hash_off(out, message, 0, message.length);
+
+  final res = hex.encode(out);
+  print(res);
 }
