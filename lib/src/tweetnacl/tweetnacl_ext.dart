@@ -50,8 +50,8 @@ extension TweetNaClExt on TweetNaCl {
   }
 
   static int scalar_base(Uint8List pk, Uint8List sk) {
-    final p =
-        List<Uint64List>.generate(4, (_) => Uint64List(16), growable: false);
+    final p =List<List<int>>.generate(4, (_) => List<int>.filled(4, 0));
+        //List<Uint64List>.generate(4, (_) => Uint64List(16), growable: false);
 
     TweetNaCl._scalarbase(p, sk, 0);
     TweetNaCl._pack(pk, p);
