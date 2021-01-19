@@ -1,0 +1,41 @@
+name: Dart Test CI on ARMv7
+
+on:
+  push:
+    branches:
+      - master
+      - releases/*
+
+jobs:
+  dart-beta-channel-armv7:
+    runs-on: ubuntu-18.04
+    name: Dart Test on ubuntu-18.04 armv7
+    steps:
+      - uses: actions/checkout@v2.1.0
+      - uses: uraimo/run-on-arch-action@v2.0.5
+        name: Run commands
+        id: runcmd
+        with:
+          arch: armv7
+          distro: ubuntu18.04
+          githubToken: ${{ github.token }} # ${{ secrets.GITHUB_TOKEN }}
+
+          # Set an output parameter `uname` for use in subsequent steps
+          run: |
+            uname -a
+            echo ::set-output name=uname::$(uname -a)
+
+      - name: Get the output
+        # Echo the `uname` output parameter from the `runcmd` step
+        run: |
+          echo "The uname output was ${{ steps.runcmd.outputs.uname }}"
+      - name: Setup Dart VM
+        uses: vanesyan/setup-dart@v1
+        with:
+          version: latest
+          channel: beta
+      - uses: actions/checkout@v1
+      - name: Install dependencies
+        run: pub get
+      - name: Run tests
+        run: pub run test/tweetnacl_validation_test.dart 
