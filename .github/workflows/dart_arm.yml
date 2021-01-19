@@ -11,7 +11,6 @@ jobs:
     runs-on: ubuntu-18.04
     name: Dart Test on ubuntu-18.04 armv7
     steps:
-      - uses: actions/checkout@v2.1.0
       - uses: uraimo/run-on-arch-action@v2.0.5
         name: Run commands
         id: runcmd
@@ -24,7 +23,7 @@ jobs:
           run: |
             uname -a
             echo ::set-output name=uname::$(uname -a)
-
+          shell: "/bin/bash"
       - name: Get the output
         # Echo the `uname` output parameter from the `runcmd` step
         run: |
@@ -34,7 +33,9 @@ jobs:
         with:
           version: latest
           channel: beta
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2.1.0
+      - name: Check host os
+        run: uname -a
       - name: Install dependencies
         run: pub get
       - name: Run tests
