@@ -14,3 +14,6 @@ doc/api/
 # IntelliJ IDEA
 *.iml
 /.idea
+
+# compiled bin files
+bin/
