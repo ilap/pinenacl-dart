@@ -39,10 +39,10 @@ const _cardanoVectors = [
 void main() {
   const hex = HexCoder.instance;
   group('Digital Signatures #1', () {
-    group('Basic tests', () {
-      test('simple signing test', () {
+    group('Signing and/or Verifying tests', () {
+      test('Simple signing and verifying test', () {
         final seed = _vectors['seed']!;
-        //final public = _vectors['public'];
+        final public = _vectors['public'];
         final message = _vectors['message']!;
         final signature = _vectors['signature']!;
         final expected = SignedMessage.fromList(
@@ -51,13 +51,19 @@ void main() {
         final signingKey = SigningKey.decode(seed, hex);
         final signed = signingKey.sign(hex.decode(message).toList());
 
+        final publicKey = VerifyKey(hex.decode(public!));
+        final verifyKey = signingKey.verifyKey;
+
+        assert(publicKey == verifyKey);
+        assert(verifyKey.verifySignedMessage(signedMessage: signed));
+        assert(signed == expected);
         assert(signed == expected);
         assert(hex.encode(signed.message) == message);
         assert(hex.encode(signed.signature) == signature);
       });
     });
 
-    group('Sign and verify Cardano\'s cryptoxide ed25519 testvectors', () {
+    group('Sign Cardano\'s cryptoxide ed25519 testvectors', () {
       var idx = 0;
       _cardanoVectors.forEach((vector) {
         final description = ' (${++idx})';
@@ -93,9 +99,12 @@ void main() {
           final expected = SignedMessage.fromList(signedMessage: signedMessage);
 
           final signingKey = SigningKey(seed: seed);
+          final publicKey = signingKey.verifyKey;
           final signed = signingKey.sign(message);
 
           final verifyKey = VerifyKey(public);
+
+          assert(verifyKey == publicKey);
           expect(() => verifyKey.verifySignedMessage(signedMessage: signed),
               returnsNormally);
           expect(
