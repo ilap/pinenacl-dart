@@ -31,18 +31,24 @@ void main() {
   final iteration = 100000;
 
   sw.start();
-  for (i = 0; i < iteration; i++) Hash.sha256(message);
+  for (i = 0; i < iteration; i++) {
+    Hash.sha256(message);
+  }
   sw.stop();
   _printMessage('SHA-256', iteration, sw.elapsedMilliseconds / 1000);
 
   sw.start();
-  for (i = 0; i < iteration; i++) Hash.blake2b(message);
+  for (i = 0; i < iteration; i++) {
+    Hash.blake2b(message);
+  }
   sw.stop();
   _printMessage('BLAKE2B', iteration, sw.elapsedMilliseconds / 1000);
   // FIXME: Implement similar API
 
   sw.start();
-  for (i = 0; i < iteration; i++) Hash.sha512(message);
+  for (i = 0; i < iteration; i++) {
+    Hash.sha512(message);
+  }
   sw.stop();
   _printMessage('SHA-512', iteration, sw.elapsedMilliseconds / 1000);
 }

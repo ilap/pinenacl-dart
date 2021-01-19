@@ -2,13 +2,8 @@ import 'dart:typed_data';
 
 import 'package:test/test.dart';
 
-import 'package:pinenacl/api.dart';
-
 import 'package:pinenacl/encoding.dart';
-import 'package:pinenacl/message_authentication.dart';
-
 import 'package:pinenacl/tweetnacl.dart';
-import 'package:pinenacl/key_derivation.dart';
 
 /// The official testvectors from the
 ///  [`Identifiers and Test Vectors for HMAC-SHA-224, HMAC-SHA-256, HMAC-SHA-384, and HMAC-SHA-512`](https://tools.ietf.org/html/rfc4231)

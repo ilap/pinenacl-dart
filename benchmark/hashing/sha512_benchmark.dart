@@ -32,7 +32,9 @@ void main() {
   final iteration = 262144;
 
   sw.start();
-  for (i = 0; i < iteration; i++) Hash.sha512(message);
+  for (i = 0; i < iteration; i++) {
+    Hash.sha512(message);
+  }
   sw.stop();
   _printMessage('SHA-512', iteration, sw.elapsedMilliseconds / 1000);
 }

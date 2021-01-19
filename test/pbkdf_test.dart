@@ -24,9 +24,9 @@ void main() {
       final description = 'HMAC-SHA-512 based PBKDF2 (${++idx})';
 
       test(description, () {
-        final id = vector['id']! as int;
-        final pwd_len = vector['pwd_len']! as int;
-        final salt_len = vector['salt_len']! as int;
+        //final id = vector['id']! as int;
+        //final pwd_len = vector['pwd_len']! as int;
+        //final salt_len = vector['salt_len']! as int;
         final password = vector['password']! as String;
         final salt = vector['salt']! as String;
         final iterations = vector['iterations']! as int;
@@ -54,9 +54,9 @@ void main() {
       final description = 'HMAC-SHA-256 based PBKDF2 (${++idx})';
 
       test(description, () {
-        final id = vector['id']! as int;
-        final pwd_len = vector['pwd_len']! as int;
-        final salt_len = vector['salt_len']! as int;
+        //final id = vector['id']! as int;
+        //final pwd_len = vector['pwd_len']! as int;
+        //final salt_len = vector['salt_len']! as int;
         final password = vector['password']! as String;
         final salt = vector['salt']! as String;
         final iterations = vector['iterations']! as int;

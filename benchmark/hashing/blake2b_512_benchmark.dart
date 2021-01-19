@@ -2,8 +2,6 @@ import 'dart:typed_data';
 
 import 'package:pinenacl/hashing.dart';
 
-import 'package:pinenacl/hashing.dart';
-
 /*
 DartVM doc: https://mrale.ph/dartvm/
 Original: JiT on macOS Big Sur
@@ -30,7 +28,9 @@ void main() {
   final iteration = 262144;
 
   sw.start();
-  for (i = 0; i < iteration; i++) Hash.blake2b(message);
+  for (i = 0; i < iteration; i++) {
+    Hash.blake2b(message);
+  }
   sw.stop();
   _printMessage('BLAKE2B_512', iteration, sw.elapsedMilliseconds / 1000);
 }

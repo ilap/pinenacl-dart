@@ -50,8 +50,8 @@ extension TweetNaClExt on TweetNaCl {
   }
 
   static int scalar_base(Uint8List pk, Uint8List sk) {
-    final p =List<List<int>>.generate(4, (_) => List<int>.filled(4, 0));
-        //List<Uint64List>.generate(4, (_) => Uint64List(16), growable: false);
+    final p = List<List<int>>.generate(4, (_) => List<int>.filled(4, 0));
+    //List<Uint64List>.generate(4, (_) => Uint64List(16), growable: false);
 
     TweetNaCl._scalarbase(p, sk, 0);
     TweetNaCl._pack(pk, p);
@@ -254,89 +254,6 @@ extension TweetNaClExt on TweetNaCl {
     }
 
     final w = Uint32List(64);
-    int a, b, c, d, e, f, g, h, T1, T2;
-
-    final hh = Int32List.fromList([
-      0x6a09e667,
-      0xbb67ae85,
-      0x3c6ef372,
-      0xa54ff53a,
-      0x510e527f,
-      0x9b05688c,
-      0x1f83d9ab,
-      0x5be0cd19
-    ]);
-
-    final paddedLen = ((l + 8 >> 6) << 4) + 16;
-    final padded = Uint32List(paddedLen);
-
-    final bitLength = l << 3;
-    final dataLength = bitLength >> 5;
-
-    for (var i = 0; i < bitLength; i += 8) {
-      padded[i >> 5] |= (m[i ~/ 8]) << (24 - i % 32);
-    }
-
-    padded[dataLength] |= 0x80 << (24 - bitLength % 32);
-    padded[paddedLen - 1] = bitLength;
-
-    for (var i = 0; i < padded.length; i += 16) {
-      a = hh[0];
-      b = hh[1];
-      c = hh[2];
-      d = hh[3];
-      e = hh[4];
-      f = hh[5];
-      g = hh[6];
-      h = hh[7];
-
-      for (var j = 0; j < 64; j++) {
-        if (j < 16) {
-          w[j] = padded[j + i];
-        } else {
-          w[j] = _gamma1(w[j - 2]) + w[j - 7] + _gamma0(w[j - 15]) + w[j - 16];
-        }
-
-        T1 = _sigma1(e) + _ch(e, f, g) + h + K[j] + w[j];
-        T2 = _sigma0(a) + _maj(a, b, c);
-
-        h = g;
-        g = f;
-        f = e;
-        e = d + T1.toInt32();
-        d = c;
-        c = b;
-        b = a;
-        a = (T1.toInt32() + T2.toInt32()).toInt32();
-      }
-
-      hh[0] = a + hh[0];
-      hh[1] = b + hh[1];
-      hh[2] = c + hh[2];
-      hh[3] = d + hh[3];
-      hh[4] = e + hh[4];
-      hh[5] = f + hh[5];
-      hh[6] = g + hh[6];
-      hh[7] = h + hh[7];
-    }
-
-    for (var i = 0; i < hh.length; i++) {
-      out[4 * i + 0] = (hh[i] >> 24) & 0xff;
-      out[4 * i + 1] = (hh[i] >> 16) & 0xff;
-      out[4 * i + 2] = (hh[i] >> 8) & 0xff;
-      out[4 * i + 3] = hh[i] & 0xff;
-    }
-
-    return out;
-  }
-
-  static Uint8List _crypto_hash_sha512(Uint8List out, Uint8List m, int l) {
-    /// It assumes at least hash_byte long sequence.
-    if (out.length < 64) {
-      throw Exception('Invalid block for the message to digest.');
-    }
-
-    final w = Int32List(64);
     int a, b, c, d, e, f, g, h, T1, T2;
 
     final hh = Int32List.fromList([

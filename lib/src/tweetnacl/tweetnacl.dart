@@ -768,21 +768,22 @@ class TweetNaCl {
       List<int> p, final int poff, List<int> q, final int qoff, int b) {
     int t, c = ~(b - 1);
     for (var i = 0; i < 16; i++) {
-      t = c & (p[i + poff] ^ q[i + qoff]);
-      p[i + poff] ^= t;
-      q[i + qoff] ^= t;
+      t = c & (p[i + poff] ^ q[i + qoff]).toInt32();
+      p[i + poff] = (p[i + poff] ^ t).toInt32();
+      q[i + qoff] = (q[i + qoff] ^ t).toInt32();
     }
   }
 
   static void _pack25519(Uint8List o, List<int> n, final int noff) {
-    int i, j, b;
     var m = List<int>.filled(16, 0), t = List<int>.filled(16, 0);
-    for (i = 0; i < 16; i++) {
+
+    for (var i = 0; i < 16; i++) {
       t[i] = n[i + noff];
     }
     _car25519(t);
     _car25519(t);
     _car25519(t);
+
     for (var j = 0; j < 2; j++) {
       m[0] = t[0] - 0xffed;
       for (var i = 1; i < 15; i++) {
@@ -1307,22 +1308,22 @@ class TweetNaCl {
     t15 = v - c * 65536;
     t0 += c - 1 + 37 * (c - 1);
 
-    o[0 + ooff] = t0;
-    o[1 + ooff] = t1;
-    o[2 + ooff] = t2;
-    o[3 + ooff] = t3;
-    o[4 + ooff] = t4;
-    o[5 + ooff] = t5;
-    o[6 + ooff] = t6;
-    o[7 + ooff] = t7;
-    o[8 + ooff] = t8;
-    o[9 + ooff] = t9;
-    o[10 + ooff] = t10;
-    o[11 + ooff] = t11;
-    o[12 + ooff] = t12;
-    o[13 + ooff] = t13;
-    o[14 + ooff] = t14;
-    o[15 + ooff] = t15;
+    o[0 + ooff] = t0.toInt32();
+    o[1 + ooff] = t1.toInt32();
+    o[2 + ooff] = t2.toInt32();
+    o[3 + ooff] = t3.toInt32();
+    o[4 + ooff] = t4.toInt32();
+    o[5 + ooff] = t5.toInt32();
+    o[6 + ooff] = t6.toInt32();
+    o[7 + ooff] = t7.toInt32();
+    o[8 + ooff] = t8.toInt32();
+    o[9 + ooff] = t9.toInt32();
+    o[10 + ooff] = t10.toInt32();
+    o[11 + ooff] = t11.toInt32();
+    o[12 + ooff] = t12.toInt32();
+    o[13 + ooff] = t13.toInt32();
+    o[14 + ooff] = t14.toInt32();
+    o[15 + ooff] = t15.toInt32();
   }
 
   static void _S(List<int> o, List<int> a) {
@@ -2203,7 +2204,7 @@ class TweetNaCl {
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0x10
   ];
-  static void _modL(Uint8List r, final int roff, List<int> x) {
+  static void _modL(Uint8List r, final int roff, Int32List x) {
     int carry;
     int i, j;
 
@@ -2211,7 +2212,7 @@ class TweetNaCl {
       carry = 0;
       for (j = i - 32; j < i - 12; ++j) {
         x[j] += carry - 16 * x[i] * _L[j - (i - 32)];
-        carry = (x[j] + 128) >> 8;
+        carry = ((x[j] + 128) >> 8).toInt32();
         x[j] -= carry << 8;
       }
       x[j] += carry;
@@ -2221,7 +2222,7 @@ class TweetNaCl {
 
     for (j = 0; j < 32; j++) {
       x[j] += carry - (x[31] >> 4) * _L[j];
-      carry = x[j] >> 8;
+      carry = (x[j] >> 8).toInt32();
       x[j] &= 255;
     }
 
@@ -2236,7 +2237,7 @@ class TweetNaCl {
   }
 
   static void _reduce(Uint8List r) {
-    final x = List<int>.filled(64, 0);
+    final x = Int32List(64);
 
     int i;
 
@@ -2275,7 +2276,7 @@ class TweetNaCl {
 
     int i, j;
 
-    var x = List<int>.filled(64, 0);
+    var x = Int32List(64);
     var p = List<List<int>>.generate(4, (_) => List<int>.filled(16, 0));
 
     var pk_offset = 32;
