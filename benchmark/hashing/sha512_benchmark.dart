@@ -10,12 +10,16 @@ Original: JiT on macOS Big Sur
 262144 iterations of SHA-512 took 5.486 sec(s)
 262144 iterations of SHA-512 took 5.464 sec(s)
 262144 iterations of SHA-512 took 5.347 sec(s)
+262144 iterations of SHA-512 took 2.57 sec(s)  // After refactored tweetnacl a littlebit. 18/01/2021
+
 
 Original: AoT on macOS Big Sur
 262144 iterations of SHA-512 took 21.078 sec(s)
 262144 iterations of SHA-512 took 21.035 sec(s)
 262144 iterations of SHA-512 took 20.911 sec(s)
 262144 iterations of SHA-512 took 21.060 sec(s)
+262144 iterations of SHA-512 took 4.54 sec(s) // After refactored tweetnacl a littlebit. 18/01/2021
+
 */
 
 void _printMessage(String alg, int iter, double sec) =>

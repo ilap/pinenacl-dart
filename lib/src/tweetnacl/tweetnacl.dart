@@ -1,24 +1,16 @@
 library pinenacl.tweetnacl;
 
-import 'dart:core';
 import 'dart:math';
-import 'dart:typed_data';
 
-import 'package:pinenacl/src/utils/utils.dart';
-
+import 'package:pinenacl/api.dart';
 import 'package:pinenacl/src/tweetnacl/poly1305.dart';
-
-import '../../api.dart';
 
 part 'tweetnacl_ext.dart';
 // ignore_for_file: constant_identifier_names
 
 class TweetNaCl {
   static const int keyLength = 32;
-
   static const int macBytes = 16;
-
-  // Constants
   static const int seedSize = 32;
 
   // Length of public key in bytes.
@@ -54,23 +46,11 @@ class TweetNaCl {
   static const _gf1 = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; //16
 
   static const _121665 = [
-    0xDB41,
-    1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-  ]; //16
+    0xDB41, 1, 0, 0, // 0-3
+    0, 0, 0, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0
+  ];
 
   static const _D = [
     0x78a3, 0x1359, 0x4dca, 0x75eb, // 0-3
@@ -119,7 +99,7 @@ class TweetNaCl {
   }
 
   static int _vn(
-      Uint8List x, final int xoff, Uint8List y, final int yoff, int n) {
+      Uint8List x, final int xoff, Uint8List y, final int yoff, final int n) {
     int i, d = 0;
     for (i = 0; i < n; i++) {
       d |= (x[i + xoff] ^ y[i + yoff]) & 0xff;
@@ -147,7 +127,7 @@ class TweetNaCl {
 
   static void _core_salsa20(
       Uint8List o, List<int> p, Uint8List k, List<int> c) {
-    var j0 = c[0] & 0xff |
+    final j0 = c[0] & 0xff |
             (c[1] & 0xff) << 8 |
             (c[2] & 0xff) << 16 |
             (c[3] & 0xff) << 24,
@@ -212,99 +192,101 @@ class TweetNaCl {
             (c[14] & 0xff) << 16 |
             (c[15] & 0xff) << 24;
 
-    final Int32List x = Int32List.fromList(
+    final x = Int32List.fromList(
         [j0, j1, j2, j3, j4, j5, j6, j7, j8, j9, j10, j11, j12, j13, j14, j15]);
+
     int u;
 
     for (var i = 0; i < 20; i += 2) {
-      u = x[0] + x[12] | 0;
+      u = x[0] + x[12];
       x[4] ^= u << 7 | _shr32(u, 32 - 7);
-      u = x[4] + x[0] | 0;
+      u = x[4] + x[0];
       x[8] ^= u << 9 | _shr32(u, 32 - 9);
-      u = x[8] + x[4] | 0;
+      u = x[8] + x[4];
       x[12] ^= u << 13 | _shr32(u, 32 - 13);
-      u = x[12] + x[8] | 0;
+      u = x[12] + x[8];
       x[0] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x[5] + x[1] | 0;
+      u = x[5] + x[1];
       x[9] ^= u << 7 | _shr32(u, 32 - 7);
-      u = x[9] + x[5] | 0;
+      u = x[9] + x[5];
       x[13] ^= u << 9 | _shr32(u, 32 - 9);
-      u = x[13] + x[9] | 0;
+      u = x[13] + x[9];
       x[1] ^= u << 13 | _shr32(u, 32 - 13);
-      u = x[1] + x[13] | 0;
+      u = x[1] + x[13];
       x[5] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x[10] + x[6] | 0;
+      u = x[10] + x[6];
       x[14] ^= u << 7 | _shr32(u, 32 - 7);
-      u = x[14] + x[10] | 0;
+      u = x[14] + x[10];
       x[2] ^= u << 9 | _shr32(u, 32 - 9);
-      u = x[2] + x[14] | 0;
+      u = x[2] + x[14];
       x[6] ^= u << 13 | _shr32(u, 32 - 13);
-      u = x[6] + x[2] | 0;
+      u = x[6] + x[2];
       x[10] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x[15] + x[11] | 0;
+      u = x[15] + x[11];
       x[3] ^= u << 7 | _shr32(u, 32 - 7);
-      u = x[3] + x[15] | 0;
+      u = x[3] + x[15];
       x[7] ^= u << 9 | _shr32(u, 32 - 9);
-      u = x[7] + x[3] | 0;
+      u = x[7] + x[3];
       x[11] ^= u << 13 | _shr32(u, 32 - 13);
-      u = x[11] + x[7] | 0;
+      u = x[11] + x[7];
       x[15] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x[0] + x[3] | 0;
+      u = x[0] + x[3];
       x[1] ^= u << 7 | _shr32(u, 32 - 7);
-      u = x[1] + x[0] | 0;
+      u = x[1] + x[0];
       x[2] ^= u << 9 | _shr32(u, 32 - 9);
-      u = x[2] + x[1] | 0;
+      u = x[2] + x[1];
       x[3] ^= u << 13 | _shr32(u, 32 - 13);
-      u = x[3] + x[2] | 0;
+      u = x[3] + x[2];
       x[0] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x[5] + x[4] | 0;
+      u = x[5] + x[4];
       x[6] ^= u << 7 | _shr32(u, 32 - 7);
-      u = x[6] + x[5] | 0;
+      u = x[6] + x[5];
       x[7] ^= u << 9 | _shr32(u, 32 - 9);
-      u = x[7] + x[6] | 0;
+      u = x[7] + x[6];
       x[4] ^= u << 13 | _shr32(u, 32 - 13);
-      u = x[4] + x[7] | 0;
+      u = x[4] + x[7];
       x[5] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x[10] + x[9] | 0;
+      u = x[10] + x[9];
       x[11] ^= u << 7 | _shr32(u, 32 - 7);
-      u = x[11] + x[10] | 0;
+      u = x[11] + x[10];
       x[8] ^= u << 9 | _shr32(u, 32 - 9);
-      u = x[8] + x[11] | 0;
+      u = x[8] + x[11];
       x[9] ^= u << 13 | _shr32(u, 32 - 13);
-      u = x[9] + x[8] | 0;
+      u = x[9] + x[8];
       x[10] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x[15] + x[14] | 0;
+      u = x[15] + x[14];
       x[12] ^= u << 7 | _shr32(u, 32 - 7);
-      u = x[12] + x[15] | 0;
+      u = x[12] + x[15];
       x[13] ^= u << 9 | _shr32(u, 32 - 9);
-      u = x[13] + x[12] | 0;
+      u = x[13] + x[12];
       x[14] ^= u << 13 | _shr32(u, 32 - 13);
-      u = x[14] + x[13] | 0;
+      u = x[14] + x[13];
       x[15] ^= u << 18 | _shr32(u, 32 - 18);
     }
-    x[0] = x[0] + j0 | 0;
-    x[1] = x[1] + j1 | 0;
-    x[2] = x[2] + j2 | 0;
-    x[3] = x[3] + j3 | 0;
-    x[4] = x[4] + j4 | 0;
-    x[5] = x[5] + j5 | 0;
-    x[6] = x[6] + j6 | 0;
-    x[7] = x[7] + j7 | 0;
-    x[8] = x[8] + j8 | 0;
-    x[9] = x[9] + j9 | 0;
-    x[10] = x[10] + j10 | 0;
-    x[11] = x[11] + j11 | 0;
-    x[12] = x[12] + j12 | 0;
-    x[13] = x[13] + j13 | 0;
-    x[14] = x[14] + j14 | 0;
-    x[15] = x[15] + j15 | 0;
+
+    x[0] = x[0] + j0;
+    x[1] = x[1] + j1;
+    x[2] = x[2] + j2;
+    x[3] = x[3] + j3;
+    x[4] = x[4] + j4;
+    x[5] = x[5] + j5;
+    x[6] = x[6] + j6;
+    x[7] = x[7] + j7;
+    x[8] = x[8] + j8;
+    x[9] = x[9] + j9;
+    x[10] = x[10] + j10;
+    x[11] = x[11] + j11;
+    x[12] = x[12] + j12;
+    x[13] = x[13] + j13;
+    x[14] = x[14] + j14;
+    x[15] = x[15] + j15;
 
     o[0] = _shr32(x[0], 0) & 0xff;
     o[1] = _shr32(x[0], 8) & 0xff;
@@ -389,9 +371,7 @@ class TweetNaCl {
 
   static void _core_hsalsa20(
       Uint8List o, List<int> p, Uint8List k, List<int> c) {
-    c = _sigma;
-
-    var j0 = c[0] & 0xff |
+    final j0 = c[0] & 0xff |
             (c[1] & 0xff) << 8 |
             (c[2] & 0xff) << 16 |
             (c[3] & 0xff) << 24,
@@ -456,81 +436,82 @@ class TweetNaCl {
             (c[14] & 0xff) << 16 |
             (c[15] & 0xff) << 24;
 
-    final Int32List x = Int32List.fromList(
+    final x = Int32List.fromList(
         [j0, j1, j2, j3, j4, j5, j6, j7, j8, j9, j10, j11, j12, j13, j14, j15]);
+
     int u;
 
     for (var i = 0; i < 20; i += 2) {
-      u = x[0] + x[12] | 0;
+      u = x[0] + x[12];
       x[4] ^= u << 7 | _shr32(u, 32 - 7);
-      u = x[4] + x[0] | 0;
+      u = x[4] + x[0];
       x[8] ^= u << 9 | _shr32(u, 32 - 9);
-      u = x[8] + x[4] | 0;
+      u = x[8] + x[4];
       x[12] ^= u << 13 | _shr32(u, 32 - 13);
-      u = x[12] + x[8] | 0;
+      u = x[12] + x[8];
       x[0] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x[5] + x[1] | 0;
+      u = x[5] + x[1];
       x[9] ^= u << 7 | _shr32(u, 32 - 7);
-      u = x[9] + x[5] | 0;
+      u = x[9] + x[5];
       x[13] ^= u << 9 | _shr32(u, 32 - 9);
-      u = x[13] + x[9] | 0;
+      u = x[13] + x[9];
       x[1] ^= u << 13 | _shr32(u, 32 - 13);
-      u = x[1] + x[13] | 0;
+      u = x[1] + x[13];
       x[5] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x[10] + x[6] | 0;
+      u = x[10] + x[6];
       x[14] ^= u << 7 | _shr32(u, 32 - 7);
-      u = x[14] + x[10] | 0;
+      u = x[14] + x[10];
       x[2] ^= u << 9 | _shr32(u, 32 - 9);
-      u = x[2] + x[14] | 0;
+      u = x[2] + x[14];
       x[6] ^= u << 13 | _shr32(u, 32 - 13);
-      u = x[6] + x[2] | 0;
+      u = x[6] + x[2];
       x[10] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x[15] + x[11] | 0;
+      u = x[15] + x[11];
       x[3] ^= u << 7 | _shr32(u, 32 - 7);
-      u = x[3] + x[15] | 0;
+      u = x[3] + x[15];
       x[7] ^= u << 9 | _shr32(u, 32 - 9);
-      u = x[7] + x[3] | 0;
+      u = x[7] + x[3];
       x[11] ^= u << 13 | _shr32(u, 32 - 13);
-      u = x[11] + x[7] | 0;
+      u = x[11] + x[7];
       x[15] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x[0] + x[3] | 0;
+      u = x[0] + x[3];
       x[1] ^= u << 7 | _shr32(u, 32 - 7);
-      u = x[1] + x[0] | 0;
+      u = x[1] + x[0];
       x[2] ^= u << 9 | _shr32(u, 32 - 9);
-      u = x[2] + x[1] | 0;
+      u = x[2] + x[1];
       x[3] ^= u << 13 | _shr32(u, 32 - 13);
-      u = x[3] + x[2] | 0;
+      u = x[3] + x[2];
       x[0] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x[5] + x[4] | 0;
+      u = x[5] + x[4];
       x[6] ^= u << 7 | _shr32(u, 32 - 7);
-      u = x[6] + x[5] | 0;
+      u = x[6] + x[5];
       x[7] ^= u << 9 | _shr32(u, 32 - 9);
-      u = x[7] + x[6] | 0;
+      u = x[7] + x[6];
       x[4] ^= u << 13 | _shr32(u, 32 - 13);
-      u = x[4] + x[7] | 0;
+      u = x[4] + x[7];
       x[5] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x[10] + x[9] | 0;
+      u = x[10] + x[9];
       x[11] ^= u << 7 | _shr32(u, 32 - 7);
-      u = x[11] + x[10] | 0;
+      u = x[11] + x[10];
       x[8] ^= u << 9 | _shr32(u, 32 - 9);
-      u = x[8] + x[11] | 0;
+      u = x[8] + x[11];
       x[9] ^= u << 13 | _shr32(u, 32 - 13);
-      u = x[9] + x[8] | 0;
+      u = x[9] + x[8];
       x[10] ^= u << 18 | _shr32(u, 32 - 18);
 
-      u = x[15] + x[14] | 0;
+      u = x[15] + x[14];
       x[12] ^= u << 7 | _shr32(u, 32 - 7);
-      u = x[12] + x[15] | 0;
+      u = x[12] + x[15];
       x[13] ^= u << 9 | _shr32(u, 32 - 9);
-      u = x[13] + x[12] | 0;
+      u = x[13] + x[12];
       x[14] ^= u << 13 | _shr32(u, 32 - 13);
-      u = x[14] + x[13] | 0;
+      u = x[14] + x[13];
       x[15] ^= u << 18 | _shr32(u, 32 - 18);
     }
 
@@ -576,15 +557,13 @@ class TweetNaCl {
   }
 
   static int crypto_core_salsa20(
-      Uint8List out, List<int> input, Uint8List k, List<int> c) {
-    ///core(out,in,k,c,0);
+      Uint8List out, Uint8List input, Uint8List k, List<int> c) {
     _core_salsa20(out, input, k, c);
     return 0;
   }
 
   static Uint8List crypto_core_hsalsa20(
       Uint8List out, List<int> input, Uint8List k, List<int> c) {
-    ///core(out,in,k,c,1);
     _core_hsalsa20(out, input, k, c);
     return out;
   }
@@ -600,7 +579,7 @@ class TweetNaCl {
   static int crypto_stream_salsa20_xor(Uint8List c, int cpos, Uint8List m,
       int mpos, int b, Uint8List n, Uint8List k,
       [int ic = 0]) {
-    var z = Uint8List(16), x = Uint8List(64);
+    final z = Uint8List(16), x = Uint8List(64);
     int i;
     int u;
     for (i = 0; i < 16; i++) {
@@ -623,7 +602,7 @@ class TweetNaCl {
       }
       u = 1;
       for (i = 8; i < 16; i++) {
-        u = u + (z[i] & 0xff) | 0;
+        u = u + z[i] & 0xff;
         z[i] = u & 0xff;
         u = _shr32(u, 8);
       }
@@ -643,7 +622,7 @@ class TweetNaCl {
 
   static int crypto_stream_salsa20(
       Uint8List c, int cpos, int b, Uint8List n, Uint8List k) {
-    var z = Uint8List(16), x = Uint8List(64);
+    final z = Uint8List(16), x = Uint8List(64);
     int i;
     int u;
     for (i = 0; i < 16; i++) {
@@ -659,7 +638,7 @@ class TweetNaCl {
       }
       u = 1;
       for (i = 8; i < 16; i++) {
-        u = u + (z[i] & 0xff) | 0;
+        u = u + (z[i] & 0xff);
         z[i] = u & 0xff;
         u = _shr32(u, 8);
       }
@@ -678,9 +657,9 @@ class TweetNaCl {
 
   static int crypto_stream(
       Uint8List c, int cpos, int d, Uint8List n, Uint8List k) {
-    var s = Uint8List(32);
+    final s = Uint8List(32);
     crypto_core_hsalsa20(s, n, k, _sigma);
-    var sn = Uint8List(8);
+    final sn = Uint8List(8);
     for (var i = 0; i < 8; i++) {
       sn[i] = n[i + 16];
     }
@@ -689,10 +668,10 @@ class TweetNaCl {
 
   static int crypto_stream_xor(Uint8List c, int cpos, Uint8List m, int mpos,
       int d, Uint8List n, Uint8List k) {
-    var s = Uint8List(32);
+    final s = Uint8List(32);
 
     crypto_core_hsalsa20(s, n, k, _sigma);
-    var sn = Uint8List(8);
+    final sn = Uint8List(8);
     for (var i = 0; i < 8; i++) {
       sn[i] = n[i + 16];
     }
@@ -708,7 +687,7 @@ class TweetNaCl {
   }
 
   static int crypto_onetimeauth(
-      Uint8List out, Uint8List m, int n, Uint8List k) {
+      Uint8List out, Uint8List m, final int n, Uint8List k) {
     return _crypto_onetimeauth(out, 0, m, 0, n, k);
   }
 
@@ -720,7 +699,7 @@ class TweetNaCl {
   }
 
   static int _crypto_onetimeauth_verify_len(
-      Uint8List h, Uint8List m, int n, Uint8List k) {
+      Uint8List h, Uint8List m, final int n, Uint8List k) {
     return _crypto_onetimeauth_verify(h, 0, m, 0, n, k);
   }
 
@@ -729,7 +708,7 @@ class TweetNaCl {
   }
 
   static Uint8List crypto_secretbox(
-      Uint8List c, Uint8List m, int d, Uint8List n, Uint8List k) {
+      Uint8List c, Uint8List m, final int d, Uint8List n, Uint8List k) {
     if (d < 32) {
       throw 'SecretBox is invalid';
     }
@@ -743,7 +722,7 @@ class TweetNaCl {
   }
 
   static Uint8List crypto_secretbox_open(
-      Uint8List m, Uint8List c, int d, Uint8List n, Uint8List k) {
+      Uint8List m, Uint8List c, final int d, Uint8List n, Uint8List k) {
     final x = Uint8List(32);
     if (d < 32) {
       throw 'The message is forged or malformed or the shared secret is invalid';
@@ -804,18 +783,18 @@ class TweetNaCl {
     _car25519(t);
     _car25519(t);
     _car25519(t);
-    for (j = 0; j < 2; j++) {
+    for (var j = 0; j < 2; j++) {
       m[0] = t[0] - 0xffed;
-      for (i = 1; i < 15; i++) {
+      for (var i = 1; i < 15; i++) {
         m[i] = t[i] - 0xffff - ((m[i - 1] >> 16) & 1);
         m[i - 1] &= 0xffff;
       }
       m[15] = t[15] - 0x7fff - ((m[14] >> 16) & 1);
-      b = ((m[15] >> 16) & 1);
+      var b = ((m[15] >> 16) & 1);
       m[14] &= 0xffff;
       _sel25519_off(t, 0, m, 0, 1 - b);
     }
-    for (i = 0; i < 16; i++) {
+    for (var i = 0; i < 16; i++) {
       o[2 * i] = t[i] & 0xff;
       o[2 * i + 1] = (t[i] >> 8);
     }
@@ -828,6 +807,7 @@ class TweetNaCl {
   static int _neq25519_off(
       List<int> a, final int aoff, List<int> b, final int boff) {
     var c = Uint8List(32), d = Uint8List(32);
+
     _pack25519(c, a, aoff);
     _pack25519(d, b, boff);
     return _crypto_verify_32(c, 0, d, 0);
@@ -1349,14 +1329,14 @@ class TweetNaCl {
     _S_off(o, 0, a, 0);
   }
 
-  static void _S_off(
-      List<int> o, final int ooff, List<int> a, final int aoff) {
+  static void _S_off(List<int> o, final int ooff, List<int> a, final int aoff) {
     _M_off(o, ooff, a, aoff, a, aoff);
   }
 
   static void _inv25519(
       List<int> o, final int ooff, List<int> i, final int ioff) {
     var c = List<int>.filled(16, 0);
+
     int a;
     for (a = 0; a < 16; a++) {
       c[a] = i[a + ioff];
@@ -1372,6 +1352,7 @@ class TweetNaCl {
 
   static void _pow2523(List<int> o, List<int> i) {
     var c = List<int>.filled(16, 0);
+
     int a;
 
     for (a = 0; a < 16; a++) {
@@ -1398,6 +1379,7 @@ class TweetNaCl {
         d = List<int>.filled(16, 0),
         e = List<int>.filled(16, 0),
         f = List<int>.filled(16, 0);
+
     for (i = 0; i < 31; i++) {
       z[i] = n[i];
     }
@@ -1458,7 +1440,7 @@ class TweetNaCl {
   }
 
   static Uint8List crypto_box_beforenm(Uint8List k, Uint8List y, Uint8List x) {
-    var s = Uint8List(32);
+    final s = Uint8List(32);
     crypto_scalarmult(s, x, y);
 
     final res = crypto_core_hsalsa20(k, _0, s, _sigma);
@@ -1490,166 +1472,86 @@ class TweetNaCl {
   }
 
   static const K = <int>[
-    0x428a2f98,
-    0xd728ae22,
-    0x71374491,
-    0x23ef65cd,
-    0xb5c0fbcf,
-    0xec4d3b2f,
-    0xe9b5dba5,
-    0x8189dbbc,
-    0x3956c25b,
-    0xf348b538,
-    0x59f111f1,
-    0xb605d019,
-    0x923f82a4,
-    0xaf194f9b,
-    0xab1c5ed5,
-    0xda6d8118,
-    0xd807aa98,
-    0xa3030242,
-    0x12835b01,
-    0x45706fbe,
-    0x243185be,
-    0x4ee4b28c,
-    0x550c7dc3,
-    0xd5ffb4e2,
-    0x72be5d74,
-    0xf27b896f,
-    0x80deb1fe,
-    0x3b1696b1,
-    0x9bdc06a7,
-    0x25c71235,
-    0xc19bf174,
-    0xcf692694,
-    0xe49b69c1,
-    0x9ef14ad2,
-    0xefbe4786,
-    0x384f25e3,
-    0x0fc19dc6,
-    0x8b8cd5b5,
-    0x240ca1cc,
-    0x77ac9c65,
-    0x2de92c6f,
-    0x592b0275,
-    0x4a7484aa,
-    0x6ea6e483,
-    0x5cb0a9dc,
-    0xbd41fbd4,
-    0x76f988da,
-    0x831153b5,
-    0x983e5152,
-    0xee66dfab,
-    0xa831c66d,
-    0x2db43210,
-    0xb00327c8,
-    0x98fb213f,
-    0xbf597fc7,
-    0xbeef0ee4,
-    0xc6e00bf3,
-    0x3da88fc2,
-    0xd5a79147,
-    0x930aa725,
-    0x06ca6351,
-    0xe003826f,
-    0x14292967,
-    0x0a0e6e70,
-    0x27b70a85,
-    0x46d22ffc,
-    0x2e1b2138,
-    0x5c26c926,
-    0x4d2c6dfc,
-    0x5ac42aed,
-    0x53380d13,
-    0x9d95b3df,
-    0x650a7354,
-    0x8baf63de,
-    0x766a0abb,
-    0x3c77b2a8,
-    0x81c2c92e,
-    0x47edaee6,
-    0x92722c85,
-    0x1482353b,
-    0xa2bfe8a1,
-    0x4cf10364,
-    0xa81a664b,
-    0xbc423001,
-    0xc24b8b70,
-    0xd0f89791,
-    0xc76c51a3,
-    0x0654be30,
-    0xd192e819,
-    0xd6ef5218,
-    0xd6990624,
-    0x5565a910,
-    0xf40e3585,
-    0x5771202a,
-    0x106aa070,
-    0x32bbd1b8,
-    0x19a4c116,
-    0xb8d2d0c8,
-    0x1e376c08,
-    0x5141ab53,
-    0x2748774c,
-    0xdf8eeb99,
-    0x34b0bcb5,
-    0xe19b48a8,
-    0x391c0cb3,
-    0xc5c95a63,
-    0x4ed8aa4a,
-    0xe3418acb,
-    0x5b9cca4f,
-    0x7763e373,
-    0x682e6ff3,
-    0xd6b2b8a3,
-    0x748f82ee,
-    0x5defb2fc,
-    0x78a5636f,
-    0x43172f60,
-    0x84c87814,
-    0xa1f0ab72,
-    0x8cc70208,
-    0x1a6439ec,
-    0x90befffa,
-    0x23631e28,
-    0xa4506ceb,
-    0xde82bde9,
-    0xbef9a3f7,
-    0xb2c67915,
-    0xc67178f2,
-    0xe372532b,
-    0xca273ece,
-    0xea26619c,
-    0xd186b8c7,
-    0x21c0c207,
-    0xeada7dd6,
-    0xcde0eb1e,
-    0xf57d4f7f,
-    0xee6ed178,
-    0x06f067aa,
-    0x72176fba,
-    0x0a637dc5,
-    0xa2c898a6,
-    0x113f9804,
-    0xbef90dae,
-    0x1b710b35,
-    0x131c471b,
-    0x28db77f5,
-    0x23047d84,
-    0x32caab7b,
-    0x40c72493,
-    0x3c9ebe0a,
-    0x15c9bebc,
-    0x431d67c4,
-    0x9c100d4c,
-    0x4cc5d4be,
-    0xcb3e42b6,
-    0x597f299c,
-    0xfc657e2a,
-    0x5fcb6fab,
-    0x3ad6faec,
-    0x6c44198c,
-    0x4a475817
+    0x428a2f98, 0xd728ae22, // 0-2
+    0x71374491, 0x23ef65cd,
+    0xb5c0fbcf, 0xec4d3b2f,
+    0xe9b5dba5, 0x8189dbbc,
+    0x3956c25b, 0xf348b538,
+    0x59f111f1, 0xb605d019,
+    0x923f82a4, 0xaf194f9b,
+    0xab1c5ed5, 0xda6d8118,
+    0xd807aa98, 0xa3030242,
+    0x12835b01, 0x45706fbe,
+    0x243185be, 0x4ee4b28c,
+    0x550c7dc3, 0xd5ffb4e2,
+    0x72be5d74, 0xf27b896f,
+    0x80deb1fe, 0x3b1696b1,
+    0x9bdc06a7, 0x25c71235,
+    0xc19bf174, 0xcf692694,
+    0xe49b69c1, 0x9ef14ad2,
+    0xefbe4786, 0x384f25e3,
+    0x0fc19dc6, 0x8b8cd5b5,
+    0x240ca1cc, 0x77ac9c65,
+    0x2de92c6f, 0x592b0275,
+    0x4a7484aa, 0x6ea6e483,
+    0x5cb0a9dc, 0xbd41fbd4,
+    0x76f988da, 0x831153b5,
+    0x983e5152, 0xee66dfab,
+    0xa831c66d, 0x2db43210,
+    0xb00327c8, 0x98fb213f,
+    0xbf597fc7, 0xbeef0ee4,
+    0xc6e00bf3, 0x3da88fc2,
+    0xd5a79147, 0x930aa725,
+    0x06ca6351, 0xe003826f,
+    0x14292967, 0x0a0e6e70,
+    0x27b70a85, 0x46d22ffc,
+    0x2e1b2138, 0x5c26c926,
+    0x4d2c6dfc, 0x5ac42aed,
+    0x53380d13, 0x9d95b3df,
+    0x650a7354, 0x8baf63de,
+    0x766a0abb, 0x3c77b2a8,
+    0x81c2c92e, 0x47edaee6,
+    0x92722c85, 0x1482353b,
+    0xa2bfe8a1, 0x4cf10364,
+    0xa81a664b, 0xbc423001,
+    0xc24b8b70, 0xd0f89791,
+    0xc76c51a3, 0x0654be30,
+    0xd192e819, 0xd6ef5218,
+    0xd6990624, 0x5565a910,
+    0xf40e3585, 0x5771202a,
+    0x106aa070, 0x32bbd1b8,
+    0x19a4c116, 0xb8d2d0c8,
+    0x1e376c08, 0x5141ab53,
+    0x2748774c, 0xdf8eeb99,
+    0x34b0bcb5, 0xe19b48a8,
+    0x391c0cb3, 0xc5c95a63,
+    0x4ed8aa4a, 0xe3418acb,
+    0x5b9cca4f, 0x7763e373,
+    0x682e6ff3, 0xd6b2b8a3,
+    0x748f82ee, 0x5defb2fc,
+    0x78a5636f, 0x43172f60,
+    0x84c87814, 0xa1f0ab72,
+    0x8cc70208, 0x1a6439ec,
+    0x90befffa, 0x23631e28,
+    0xa4506ceb, 0xde82bde9,
+    0xbef9a3f7, 0xb2c67915,
+    0xc67178f2, 0xe372532b,
+    0xca273ece, 0xea26619c,
+    0xd186b8c7, 0x21c0c207,
+    0xeada7dd6, 0xcde0eb1e,
+    0xf57d4f7f, 0xee6ed178,
+    0x06f067aa, 0x72176fba,
+    0x0a637dc5, 0xa2c898a6,
+    0x113f9804, 0xbef90dae,
+    0x1b710b35, 0x131c471b,
+    0x28db77f5, 0x23047d84,
+    0x32caab7b, 0x40c72493,
+    0x3c9ebe0a, 0x15c9bebc,
+    0x431d67c4, 0x9c100d4c,
+    0x4cc5d4be, 0xcb3e42b6,
+    0x597f299c, 0xfc657e2a,
+    0x5fcb6fab, 0x3ad6faec,
+    0x6c44198c, 0x4a475817
   ];
 
   static int _shr32(int x, int n) =>
@@ -2334,7 +2236,8 @@ class TweetNaCl {
   }
 
   static void _reduce(Uint8List r) {
-    var x = List<int>.filled(64,0);
+    final x = List<int>.filled(64, 0);
+
     int i;
 
     for (i = 0; i < 64; i++) {
@@ -2368,12 +2271,13 @@ class TweetNaCl {
   static int crypto_sign(Uint8List sm, int dummy /* *smlen not used*/,
       Uint8List m, final int moff, int n, Uint8List sk,
       {bool extended = false}) {
-    var d = Uint8List(64), h = Uint8List(64), r = Uint8List(64);
+    final d = Uint8List(64), h = Uint8List(64), r = Uint8List(64);
 
     int i, j;
 
     var x = List<int>.filled(64, 0);
     var p = List<List<int>>.generate(4, (_) => List<int>.filled(16, 0));
+
     var pk_offset = 32;
 
     /// Added support for extended private keys (96 bytes long))
@@ -2528,13 +2432,19 @@ class TweetNaCl {
     return 0;
   }
 
+  // Generates a cryptographically secure random number generator and throws
+  // error otherwise.
   static final _krandom = Random.secure();
+
+  static Uint8List randombytes(int len) {
+    return _randombytes_array(Uint8List(len));
+  }
 
   static Uint8List _randombytes_array(Uint8List x) {
     var rnd = 0;
 
-    for (int i = 0; i < x.length; i++) {
-      var iter = i % 4;
+    for (var i = 0; i < x.length; i++) {
+      final iter = i % 4;
 
       if (iter == 0) {
         // rnd is always a 32-bit positive integer.
@@ -2544,37 +2454,9 @@ class TweetNaCl {
         rnd = _krandom.nextInt(0x100000000);
       }
 
-      x[i] = (rnd >> (8 * iter)) & 0xFF;
+      x[i] = (rnd >> (iter << 3)) & 0xFF;
     }
 
     return x;
   }
-
-  static Uint8List randombytes(int len) {
-    return _randombytes_array(Uint8List(len));
-  }
-}
-
-void main() {
-  final hex = HexCoder.instance;
-  const firstKey =
-      '1b27556473e985d462cd51197a9a46c76009549eac6474f206c4ee0844f68389';
-  final zero = Uint8List(32);
-  const c = '657870616e642033322d62797465206b';
-  final _1k = Uint8List(TweetNaCl.secretKeyLength);
-  const sharedSecret =
-      '4a5d9d5ba4ce2de1728e3bf480350f25e07e21c947d19e3376f09b3c1e161742';
-  TweetNaCl.crypto_core_hsalsa20(
-      _1k, zero, hex.decode(sharedSecret), hex.decode(c));
-
-  final fk = hex.encode(_1k);
-  assert(fk == firstKey);
-  final message = Uint8List(0);
-  final digest = hex.decode(
-      'cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e');
-  final out = Uint8List(64);
-  TweetNaCl._crypto_hash_off(out, message, 0, message.length);
-
-  final res = hex.encode(out);
-  print(res);
 }

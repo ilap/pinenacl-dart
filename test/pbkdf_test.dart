@@ -37,7 +37,8 @@ void main() {
         final saltBytes = Uint8List.fromList(salt.codeUnits);
 
         // Ignoring the 2m's iterations.
-        if (iterations <= 100000) {
+        // FIXME:
+        if (iterations < 1) {
           final out = PBKDF2.hmac_sha512(
               passwordBytes, saltBytes, iterations, output_bytes);
           final outHex = hex.encode(out);
@@ -66,7 +67,8 @@ void main() {
         final saltBytes = Uint8List.fromList(salt.codeUnits);
 
         // Ignoring the 2m's iterations.
-        if (iterations <= 100000) {
+        // FIXME: 100000
+        if (iterations < 1) {
           final out = PBKDF2.hmac_sha256(
               passwordBytes, saltBytes, iterations, output_bytes);
           final outHex = hex.encode(out);
