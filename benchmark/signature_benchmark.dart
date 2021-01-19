@@ -14,6 +14,11 @@ Original AOT
 2000 iterations of ED25519 Verifying took 120.152 sec(s)
 500 iterations of ED25519 Signing took 10.407 sec(s)
 500 iterations of ED25519 Verifying took 31.304 sec(s)
+
+Javascript
+500 iterations of ED25519 Signing took 6.009 sec(s) // 19/01/2021
+500 iterations of ED25519 Verifying took 17.237 sec(s) // 19/01/2021
+
 */
 
 void _printMessage(String alg, int iter, double sec) =>

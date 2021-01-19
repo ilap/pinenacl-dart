@@ -20,6 +20,8 @@ Original: AoT on macOS Big Sur
 262144 iterations of SHA-512 took 21.060 sec(s)
 262144 iterations of SHA-512 took 4.54 sec(s) // After refactored tweetnacl a littlebit. 18/01/2021
 
+Javascript
+262144 iterations of SHA-512 took 19.109 sec(s) // 19/01/2021
 */
 
 void _printMessage(String alg, int iter, double sec) =>

@@ -19,6 +19,13 @@ Original AOT
 100000 iterations of BLAKE2B took 1.079 sec(s) // after tweaked tweetnacl a littlebit. 18/01/2021
 100000 iterations of SHA-512 took 2.842 sec(s)  // after tweaked tweetnacl a littlebit. 18/01/2021
 
+Javascript on 19/01/2021
+262144 iterations of SHA-256 took 1.054 sec(s)
+262144 iterations of BLAKE2B took 2.872 sec(s)
+262144 iterations of SHA-512 took 21.278 sec(s)
+
+
+
 */
 
 void _printMessage(String alg, int iter, double sec) =>
@@ -28,7 +35,7 @@ void main() {
   final message = Uint8List.fromList(
       'People see what they want to see, and bla bla blad'.codeUnits);
   var i = 0;
-  final iteration = 100000;
+  final iteration = 262144;
 
   sw.start();
   for (i = 0; i < iteration; i++) {

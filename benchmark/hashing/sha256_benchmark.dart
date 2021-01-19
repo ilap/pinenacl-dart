@@ -12,6 +12,10 @@ Optimized: 262144 iterations of SHA-256 took 0.494 sec(s)
 AoT on macOS Big Sur
 Original : 262144 iterations of SHA-256 took 6.086 sec(s)
 Optimised: 262144 iterations of SHA-256 took 1.721 sec(s)
+
+Javascript
+262144 iterations of SHA-256 took 1.078 sec(s) // 19/01/2021
+
 */
 
 void _printMessage(String alg, int iter, double sec) =>

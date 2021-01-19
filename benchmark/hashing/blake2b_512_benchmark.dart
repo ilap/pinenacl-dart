@@ -15,6 +15,10 @@ Original: AoT on macOS Big Sur
 262144 iterations of BLAKE2B_512 took 0.984 sec(s)
 262144 iterations of BLAKE2B_512 took 0.973 sec(s)
 262144 iterations of BLAKE2B_512 took 0.993 sec(s)
+
+JavaScript
+262144 iterations of BLAKE2B_512 took 1.83 sec(s) // 19/01/2021
+
 */
 
 void _printMessage(String alg, int iter, double sec) =>

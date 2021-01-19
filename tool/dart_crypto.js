@@ -1,15 +1,15 @@
   // Add this below to the dart2js generated files if it requires 	
   // random numbers. You can use similar to this below:	
   // ```bash	
-  // for i in $(ls -1 ../example/); 	
+  // for i in $(find ../example/ -namne \*.dart); 	
   // do 	
   //   B=$(basename $i .dart)	
   //   O="$B.js"	
-  //   dart2js ../example/$i -o "$B.js"	
-  //   sed -i '/^(function dartProgram() {/r ../tool/dart_crypto.js' "$B.js"	
+  //   dart2js "$i" -o "$B.js"	
+  //   sed -i '' -e '/^(function dartProgram() {/r ../tool/dart_crypto.js' "$B.js"	
   // done```	
   //	One linere example
-  // dart2js ../example/signature.dart -o signature.js && sed -e  '/^(function dartProgram() {/r dart_crypto.js' -i '' signature.js
+  // dart2js ../example/signature.dart -o signature.js && sed -i '' -e '/^(function dartProgram() {/r dart_crypto.js' -i '' signature.js
   var self = typeof self !== 'undefined' ? self : Object.create(global);
   var crypto = typeof self !== 'undefined' ? (self.crypto || self.msCrypto) : null;
 
