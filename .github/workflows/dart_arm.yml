@@ -34,7 +34,7 @@ jobs:
             cd /home/runner/work/pinenacl-dart/pinenacl-dart
             ls -l
             uname -a 
-            file /root/dart-sdk/bin/pub
-            /root/dart-sdk/bin/pub version
-            /root/dart-sdk/bin/pub run test/tweetnacl_validation_test.dart
-            /root/dart-sdk/bin/pub get 
+            file /root/dart-sdk/bin/dart
+            #/root/dart-sdk/bin/pub version
+            #/root/dart-sdk/bin/pub run test/tweetnacl_validation_test.dart
+            #/root/dart-sdk/bin/pub get 
