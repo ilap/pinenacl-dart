@@ -38,4 +38,6 @@ jobs:
             # ls -l /home/runner/work/setup-gleam/setup-gleam/
             df -h
             # /root/dart-sdk/bin/pub run
+            ls -l /home/runner/work/
+            ls -l /home/runner/work/_actions/
           
