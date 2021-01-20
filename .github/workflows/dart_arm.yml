@@ -32,4 +32,8 @@ jobs:
             cd /root
             unzip -q dartsdk-linux-arm-release.zip
             cd /home/runner/work/pinenacl-dart/pinenacl-dart
+            ls -l
+            
+            /root/dart-sdk/bin/pub version
             /root/dart-sdk/bin/pub run test/tweetnacl_validation_test.dart
+            /root/dart-sdk/bin/pub get 
