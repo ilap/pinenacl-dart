@@ -31,13 +31,5 @@ jobs:
           run: |
             cd /root
             unzip -q dartsdk-linux-arm-release.zip
-            echo "/ dir"
-            ls -l /
-            echo "/root dir"
-            ls -l .
-            # ls -l /home/runner/work/setup-gleam/setup-gleam/
-            df -h
-            # /root/dart-sdk/bin/pub run
-            ls -l /home/runner/work/
-            ls -l /home/runner/work/_actions/
-          
+            cd /home/runner/work/pinenacl-dart/pinenacl-dart
+            /root/dart-sdk/bin/pub run test/tweetnacl_validation_test.dart
