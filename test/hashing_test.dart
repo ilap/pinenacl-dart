@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 
 import 'package:pinenacl/encoding.dart';
-import 'package:pinenacl/hashing.dart';
+import 'package:pinenacl/digests.dart';
 
 import 'package:test/test.dart';
 

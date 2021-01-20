@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:pinenacl/api.dart';
-import 'package:pinenacl/src/hashing/hashers.dart';
+import 'package:pinenacl/src/digests/digests.dart';
 import 'package:pinenacl/tweetnacl.dart';
 
 void main() {

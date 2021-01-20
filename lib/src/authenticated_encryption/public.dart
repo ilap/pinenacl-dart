@@ -1,5 +1,5 @@
 import 'package:pinenacl/api.dart';
-import 'package:pinenacl/src/hashing/blake2b.dart';
+import 'package:pinenacl/src/digests/blake2b.dart';
 import 'package:pinenacl/src/tweetnacl/tweetnacl.dart';
 
 /// Public Key Encryption
