@@ -26,11 +26,11 @@ jobs:
             curl -L https://storage.googleapis.com/dart-archive/channels/beta/release/2.12.0-133.7.beta/sdk/dartsdk-linux-arm-release.zip -o /root/dartsdk-linux-arm-release.zip
           
           run: |
-          cd /root
-          unzip -q dartsdk-linux-arm-release.zip
-          echo "/ dir"
-          ls -l /
-          echo "/root dir"
-          ls -l .
-          # /root/dart-sdk/bin/pub run
+            cd /root
+            unzip -q dartsdk-linux-arm-release.zip
+            echo "/ dir"
+            ls -l /
+            echo "/root dir"
+            ls -l .
+            # /root/dart-sdk/bin/pub run
           
