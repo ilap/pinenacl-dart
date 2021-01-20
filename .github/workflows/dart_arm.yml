@@ -25,6 +25,9 @@ jobs:
             apt-get install -q -y git curl unzip
             curl -L https://storage.googleapis.com/dart-archive/channels/beta/release/2.12.0-133.7.beta/sdk/dartsdk-linux-arm-release.zip -o /root/dartsdk-linux-arm-release.zip
           
+          # GITHUB_WORKSPACE
+          # /home/runner/work/setup-gleam/setup-gleam/
+          # /github/workspace/
           run: |
             cd /root
             unzip -q dartsdk-linux-arm-release.zip
@@ -32,5 +35,7 @@ jobs:
             ls -l /
             echo "/root dir"
             ls -l .
+            ls -l /home/runner/work/setup-gleam/setup-gleam/
+            df -h
             # /root/dart-sdk/bin/pub run
           
