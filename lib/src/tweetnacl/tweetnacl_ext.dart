@@ -50,8 +50,7 @@ extension TweetNaClExt on TweetNaCl {
   }
 
   static int scalar_base(Uint8List pk, Uint8List sk) {
-    final p = List<List<int>>.generate(4, (_) => List<int>.filled(4, 0));
-    //List<Uint64List>.generate(4, (_) => Uint64List(16), growable: false);
+    final p = List<Int32List>.generate(4, (_) => Int32List(4));
 
     TweetNaCl._scalarbase(p, sk, 0);
     TweetNaCl._pack(pk, p);
@@ -86,18 +85,18 @@ extension TweetNaClExt on TweetNaCl {
   static int crypto_sign_ed25519_pk_to_x25519_pk(
       Uint8List x25519_pk, Uint8List ed25519_pk) {
     final z = Uint8List(32);
-    final q = List<Uint64List>.generate(4, (_) => Uint64List(16));
-    final a = Uint64List(16);
-    final b = Uint64List(16);
+    final q = List<Int32List>.generate(4, (_) => Int32List(16));
+    final a = Int32List(16);
+    final b = Int32List(16);
 
     if (TweetNaCl._unpackneg(q, ed25519_pk) != 0) return -1;
 
     var y = q[1];
 
     // b = 1 + Yed
-    TweetNaCl._A(a, Uint64List.fromList(TweetNaCl._gf1), y);
+    TweetNaCl._A(a, Uint32List.fromList(TweetNaCl._gf1), y);
     // b = 1 - Yed
-    TweetNaCl._Z(b, Uint64List.fromList(TweetNaCl._gf1), y);
+    TweetNaCl._Z(b, Uint32List.fromList(TweetNaCl._gf1), y);
     // b = inv(b)
     TweetNaCl._inv25519(b, 0, b, 0);
     // a = a * inv(b) i.e. a / b
@@ -113,10 +112,10 @@ extension TweetNaClExt on TweetNaCl {
 
   static int point_add(Uint8List out, Uint8List p1, Uint8List p2) {
     final p =
-        List<Uint64List>.generate(4, (_) => Uint64List(16), growable: false);
+        List<Int32List>.generate(4, (_) => Int32List(16), growable: false);
 
     final q =
-        List<Uint64List>.generate(4, (_) => Uint64List(16), growable: false);
+        List<Int32List>.generate(4, (_) => Int32List(16), growable: false);
 
     if (TweetNaCl._unpackneg(p, p1) != 0) return -1;
     if (TweetNaCl._unpackneg(q, p2) != 0) return -1;
@@ -196,7 +195,7 @@ extension TweetNaClExt on TweetNaCl {
     hasher(out, k0i);
     hasher(out, Uint8List.fromList([...k0o, ...out]));
 
-    // For safetiness clear the key's data
+    // For safeness clear the key's data
     // Check Dart's GC what does it do /w local variables.
     PineNaClUtils.listZero(k0);
     PineNaClUtils.listZero(k0o, blockSize);
