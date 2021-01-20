@@ -20,7 +20,7 @@ jobs:
           distro: ubuntu18.04
           githubToken: ${{ github.token }}
 
-          install:
+          install: |
             apt-get update -q -y
             apt-get install -q -y git curl
             curl -L https://storage.googleapis.com/dart-archive/channels/beta/release/2.12.0-133.7.beta/sdk/dartsdk-linux-arm-release.zip -o /root/dartsdk-linux-arm-release.zip
