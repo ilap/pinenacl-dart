@@ -35,7 +35,7 @@ jobs:
             ls -l /
             echo "/root dir"
             ls -l .
-            ls -l /home/runner/work/setup-gleam/setup-gleam/
+            # ls -l /home/runner/work/setup-gleam/setup-gleam/
             df -h
             # /root/dart-sdk/bin/pub run
           
