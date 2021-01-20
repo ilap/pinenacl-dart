@@ -1,3 +1,4 @@
+# This action is disabled as dart-sdk arm does not support QEMU emulation
 name: Dart Test CI on ARMv7
 
 on:

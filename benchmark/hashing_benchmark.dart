@@ -24,6 +24,11 @@ Javascript on 19/01/2021
 262144 iterations of BLAKE2B took 2.872 sec(s)
 262144 iterations of SHA-512 took 21.278 sec(s)
 
+Wind ia32
+262144 iterations of SHA-256 took 1.12 sec(s)
+262144 iterations of BLAKE2B took 5.485 sec(s)
+262144 iterations of SHA-512 took 378.649 sec(s)
+
 
 
 */
