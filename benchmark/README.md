@@ -7,6 +7,8 @@ There are 3 type of executables in dart:
 
 > Note: Keep in mind that there are `32` and `64` bit architectures, and it seems that the `armv7` compiled `dart-sdk` does not run under `QEMU` emulation.
 
+**All benchmarks used a 1MB large message for hashing, en/decrypt and sign/verify.**
+
 ## JiT (Dart VM) Benhcmark
 
 Just simply run the benchmarks in Dart VM.
