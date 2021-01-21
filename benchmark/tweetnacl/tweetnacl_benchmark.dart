@@ -1,94 +1,93 @@
-import 'dart:typed_data';
-
 import 'package:pinenacl/api.dart';
 import 'package:pinenacl/tweetnacl.dart';
-/*
-JIT - order is important for stopwatch.
-500 iterations of TweetNaCl - scalarmult_base took 0.648 sec(s)
-500 iterations of TweetNaCl - hsalsa20 took 0.699 sec(s)
-10 iterations of TweetNaCl - salsa20 stream 4MB file took 2.411 sec(s)
 
-AOT
-500 iterations of TweetNaCl - scalarmult_base took 3.847 sec(s)
-500 iterations of TweetNaCl - hsalsa20 took 3.848 sec(s)
-10 iterations of TweetNaCl - salsa20 stream 4MB file took 6.274 sec(s)
+import '../helpers/tweetnacl_benchmark.dart';
 
-Javascript
-500 iterations of TweetNaCl - scalarmult_base took 2.272 sec(s)
-500 iterations of TweetNaCl - hsalsa20 took 2.377 sec(s)
-10 iterations of TweetNaCl - salsa20 stream 4MB file took 8.654 sec(s)
-*/
+// TODO: Implement the following too.
+// crypto_onetimeauth(Uint8List out, Uint8List m, final int n, Uint8List k)
+// crypto_onetimeauth_verify(Uint8List h, Uint8List m, Uint8List k)
+// crypto_stream_salsa20(Uint8List c, int cpos, int b, Uint8List n, Uint8List k)
+// crypto_stream_salsa20_xor(Uint8List c, int cpos, Uint8List m, int mpos, int b, Uint8List n, Uint8List k, [int ic = 0])
+// crypto_secretbox(outData, data, dataLength, nonce, sk),
+// crypto_secretbox_open(data, outData, outDataLength, nonce, sk),
 
-void _printMessage(String alg, int iter, double sec) =>
-    print('$iter iterations of $alg took $sec sec(s)');
 void main() {
-  const hex = HexCoder.instance;
-  const aliceSk =
-      '77076d0a7318a57d3c16c17251b26645df4c2f87ebc0992ab177fba51db92c2a';
-  const alicePk =
-      '8520f0098930a754748b7ddcb43ef75a0dbf3a0d26381af4eba4a98eaa9b4e6a';
-  //const bobSk =
-  //    '5dab087e624a8a4b79e17f8b83800ee66f3bb1292618b6fd1c2f8b27ff88e0eb';
+  const dataLength = 1024 * 1024;
+  const outDataLength = dataLength;
 
-  //const bobPk =
-  //    'de9edb7d7b7dc1b4d35b61c2ece435373f8343c85b78674dadfc7e146f882b4f';
+  final data = Uint8List(dataLength);
 
-  const sharedSecret =
-      '4a5d9d5ba4ce2de1728e3bf480350f25e07e21c947d19e3376f09b3c1e161742';
-  final zero = Uint8List(32);
-  const c = '657870616e642033322d62797465206b';
-  const firstKey =
-      '1b27556473e985d462cd51197a9a46c76009549eac6474f206c4ee0844f68389';
+  final sk = PineNaClUtils.randombytes(32);
+  final pk = Uint8List(32);
 
-  const noncesuffix = '8219e0036b7a0b37';
-  const noncePrefix = '69696ee955b62b73cd62bda875fc73d6';
-  const nonce = noncePrefix + noncesuffix;
+  final sharedKey = Uint8List(32);
+  final nonce = PineNaClUtils.randombytes(24);
 
-  final sw = Stopwatch();
+  final randOut16 = PineNaClUtils.randombytes(16);
+  final out32 = Uint8List(32);
+  final out64 = Uint8List(64);
+  final outData = Uint8List(outDataLength);
+  const outSignatureLength = outDataLength + TweetNaCl.signatureLength;
 
-  var i = 0;
-  final iteration = 500;
+  final outSignature = Uint8List(outSignatureLength);
 
-  // Scalarmult
-  final pk = Uint8List(TweetNaCl.publicKeyLength);
+  final funcMap = <String, Function>{
+    // SHA-256 SHA-512
+    'crypto_hash_sha256': () => TweetNaClExt.crypto_hash_sha256(out32, data),
+    'crypto_hash_sha512': () => TweetNaCl.crypto_hash(out64, data),
 
-  sw.start();
-  for (i = 0; i < iteration; i++) {
-    TweetNaCl.crypto_scalarmult_base(pk, hex.decode(aliceSk));
-  }
-  sw.stop();
-  _printMessage(
-      'TweetNaCl - scalarmult_base', iteration, sw.elapsedMilliseconds / 1000);
-  final pkHex = hex.encode(pk);
-  assert(pkHex == alicePk);
+    // HMAC
+    'crypto_auth_hmacsha256': () =>
+        TweetNaClExt.crypto_auth_hmacsha256(out32, data, sk),
+    'crypto_auth_hmacsha512': () =>
+        TweetNaClExt.crypto_auth_hmacsha512(out64, data, sk),
 
-  // hsalsa
-  final _1k = Uint8List(TweetNaCl.secretKeyLength);
-  final decodedShared = hex.decode(sharedSecret);
-  final decodedC = hex.decode(c);
+    // Public - Authenticated Encryption
+    'crypto_box_keypair': () => TweetNaCl.crypto_box_keypair(pk, sk),
+    'crypto_box_curve25519xsalsa20poly1305': () =>
+        TweetNaCl.crypto_box(outData, data, dataLength, nonce, pk, sk),
+    'crypto_box_beforenm': () =>
+        TweetNaCl.crypto_box_beforenm(sharedKey, pk, sk),
+    'crypto_box_afternm': () => TweetNaCl.crypto_box_afternm(
+        outData, data, dataLength, nonce, sharedKey),
+    'crypto_box_open_afternm': () => TweetNaCl.crypto_box_open_afternm(
+        data, outData, outDataLength, nonce, sharedKey),
 
-  sw.start();
-  for (i = 0; i < iteration; i++) {
-    TweetNaCl.crypto_core_hsalsa20(_1k, zero, decodedShared, decodedC);
-  }
-  sw.stop();
-  final encoded1K = hex.encode(_1k);
-  assert(encoded1K == firstKey);
-  _printMessage(
-      'TweetNaCl - hsalsa20', iteration, sw.elapsedMilliseconds / 1000);
+    // Secret-key cryptography - Stream Encryption
+    'crypto_stream': () => TweetNaCl.crypto_stream(out32, 0, 32, nonce, sk),
+    'crypto_stream_xor': () =>
+        TweetNaCl.crypto_stream_xor(outData, 0, data, 0, dataLength, nonce, sk),
 
-  // salsa
-  final outLen = 4194304;
-  final out = Uint8List(outLen);
-  //final hashOut = Uint8List(64);
+    'crypto_core_salsa20': () =>
+        TweetNaCl.crypto_core_salsa20(outData, data, sharedKey, nonce),
+    'crypto_core_hsalsa20': () =>
+        TweetNaCl.crypto_core_hsalsa20(outData, data, sharedKey, nonce),
 
-  sw.start();
-  for (i = 0; i < 10; i++) {
-    TweetNaCl.crypto_stream_salsa20(
-        out, 0, outLen, hex.decode(nonce), hex.decode(firstKey));
-  }
-  sw.stop();
+    // TweetNaCl Extension.
+    'crypto_point_add': () => TweetNaClExt.crypto_point_add(out32, pk, pk),
+    'crypto_scalar_base': () => TweetNaClExt.crypto_scalar_base(out32, sk),
 
-  _printMessage(
-      'TweetNaCl - salsa20 stream 4MB file', 10, sw.elapsedMilliseconds / 1000);
+    'crypto_scalarmult_base': () => TweetNaCl.crypto_scalarmult_base(out32, sk),
+    'crypto_scalarmult': () =>
+        TweetNaCl.crypto_scalarmult(out32, sk, Uint8List(32)),
+
+    'crypto_sign_ed25519_pk_to_x25519_pk': () =>
+        TweetNaClExt.crypto_sign_ed25519_pk_to_x25519_pk(out32, pk),
+    'crypto_sign_ed25519_sk_to_x25519_sk': () =>
+        TweetNaClExt.crypto_sign_ed25519_sk_to_x25519_sk(out64, sk),
+    'crypto_sign_keypair': () =>
+        TweetNaCl.crypto_sign_keypair(pk, out64, out32),
+    'crypto_sign': () =>
+        TweetNaCl.crypto_sign(outSignature, 0, data, 0, dataLength, out64),
+    'crypto_sign_open': () => TweetNaCl.crypto_sign_open(
+        data, 0, outSignature.sublist(64), 0, dataLength, pk),
+
+    'crypto_verify_16': () => TweetNaCl.crypto_verify_16(randOut16, randOut16),
+    'crypto_verify_32': () => TweetNaCl.crypto_verify_32(pk, pk),
+    'crypto_verify_64': () => TweetNaClExt.crypto_verify_64(out64, out64),
+  };
+
+  funcMap.forEach((funcName, func) {
+    TweetNaClBenchmark(func, funcName, data.length).report();
+  });
 }

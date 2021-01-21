@@ -26,8 +26,8 @@ typedef MacHasher = void Function(Uint8List out, Uint8List m, Uint8List k);
 ///   - crypto_sign_ed25519_sk_to_x25519_sk
 ///   - crypto_sign_ed25519_pk_to_x25519_pk
 /// - Curve25519 low-level functions
-///   - scalar_base, for retrieving different type of public-keys e.g. `A = k * B`.
-///   - point_add, for adding two public keys' point together `A = y1 : y2`.
+///   - crypto_scalar_base, for retrieving different type of public-keys e.g. `A = k * B`.
+///   - crypto_point_add, for adding two public keys' point together `A = y1 : y2`.
 ///
 extension TweetNaClExt on TweetNaCl {
   static int crypto_auth_hmacsha512(Uint8List out, Uint8List m, Uint8List k) {
@@ -49,8 +49,8 @@ extension TweetNaClExt on TweetNaCl {
     return _crypto_verify_64(x, 0, y, 0);
   }
 
-  static int scalar_base(Uint8List pk, Uint8List sk) {
-    final p = List<Int32List>.generate(4, (_) => Int32List(4));
+  static int crypto_scalar_base(Uint8List pk, Uint8List sk) {
+    final p = List<Int32List>.generate(4, (_) => Int32List(16));
 
     TweetNaCl._scalarbase(p, sk, 0);
     TweetNaCl._pack(pk, p);
@@ -110,7 +110,7 @@ extension TweetNaClExt on TweetNaCl {
     return 0;
   }
 
-  static int point_add(Uint8List out, Uint8List p1, Uint8List p2) {
+  static int crypto_point_add(Uint8List out, Uint8List p1, Uint8List p2) {
     final p =
         List<Int32List>.generate(4, (_) => Int32List(16), growable: false);
 

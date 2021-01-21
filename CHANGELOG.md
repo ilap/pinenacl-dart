@@ -102,7 +102,7 @@
 - Added SHA-256.
 - Added SHA-256 unit tests with the official testvectors.
 - Fixed some typos.
-- Added scalar_base for Ed25519Bip32 compatibility
+- Added crypto_scalar_base for Ed25519Bip32 compatibility
 - Added Encoding classes.
 - Renamed `ed25519_vectors.json` (RFC8032's EdDSA) to `eddsa_ed25519_vectors.json`.
 

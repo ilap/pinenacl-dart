@@ -111,8 +111,8 @@ The following `NaCl` library's high-level functions are implemented as the exten
    - crypto_sign_ed25519_sk_to_x25519_sk
    - crypto_sign_ed25519_pk_to_x25519_pk
  - Curve25519 low-level functions
-   - scalar_base, for retrieving different type of public-keys e.g. `A = k * B`.
-   - point_add, for adding two public keys' point together `A = y1 : y2`.
+   - crypto_scalar_base, for retrieving different type of public-keys e.g. `A = k * B`.
+   - crypto_point_add, for adding two public keys' point together `A = y1 : y2`.
 
 
 ## Key Types

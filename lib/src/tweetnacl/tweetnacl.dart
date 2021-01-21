@@ -725,8 +725,7 @@ class TweetNaCl {
       Uint8List m, Uint8List c, final int d, Uint8List n, Uint8List k) {
     final x = Uint8List(32);
     if (d < 32) {
-      throw 'The message is forged or malformed or the shared secret is invalid';
-      // return -1;
+      throw 'The encrypted message must be at least 32-byte long';
     }
 
     crypto_stream(x, 0, 32, n, k);
@@ -1458,14 +1457,14 @@ class TweetNaCl {
     return crypto_secretbox_open(m, c, d, n, k);
   }
 
-  Uint8List crypto_box(Uint8List c, Uint8List m, int /*long*/ d, Uint8List n,
-      Uint8List y, Uint8List x) {
+  static Uint8List crypto_box(Uint8List c, Uint8List m, int /*long*/ d,
+      Uint8List n, Uint8List y, Uint8List x) {
     final k = Uint8List(32);
     crypto_box_beforenm(k, y, x);
     return crypto_box_afternm(c, m, d, n, k);
   }
 
-  Uint8List crypto_box_open(Uint8List m, Uint8List c, int /*long*/ d,
+  static Uint8List crypto_box_open(Uint8List m, Uint8List c, int /*long*/ d,
       Uint8List n, Uint8List y, Uint8List x) {
     final k = Uint8List(32);
     crypto_box_beforenm(k, y, x);

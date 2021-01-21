@@ -70,12 +70,14 @@ void main() {
           'f1814f0e8ff1043d8a44d25babff3cedcae6c22c3edaa48f857ae70de2baae50';
 
       final ed25519Priv = SigningKey.fromSeed(hex.decode(seed));
-
       final ed25519Pub = VerifyKey(hex.decode(ed25519_pk));
-
       final x25519Pub = Uint8List(32);
+
       TweetNaClExt.crypto_sign_ed25519_pk_to_x25519_pk(
           x25519Pub, hex.decode(ed25519_pk));
+
+      final x25519PubHex = hex.encode(x25519Pub);
+      assert(x25519PubHex == x25519_pk);
 
       final x25519Pub1 = Uint8List(32);
       TweetNaClExt.crypto_sign_ed25519_pk_to_x25519_pk(x25519Pub1, ed25519Pub);

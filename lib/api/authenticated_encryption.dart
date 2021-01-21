@@ -46,7 +46,8 @@ abstract class BoxBase extends ByteList {
 
 class EncryptedMessage extends ByteList with Suffix {
   EncryptedMessage({required List<int> nonce, required List<int> cipherText})
-      : super.fromList(nonce + cipherText, nonceLength);
+      : super.fromList(
+            nonce + cipherText, nonceLength, nonce.length + cipherText.length);
 
   EncryptedMessage.fromList(List<int> list) : super.fromList(list, nonceLength);
 
