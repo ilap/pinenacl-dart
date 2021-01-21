@@ -94,9 +94,9 @@ extension TweetNaClExt on TweetNaCl {
     var y = q[1];
 
     // b = 1 + Yed
-    TweetNaCl._A(a, Uint32List.fromList(TweetNaCl._gf1), y);
+    TweetNaCl._A(a, TweetNaCl._gf1, y);
     // b = 1 - Yed
-    TweetNaCl._Z(b, Uint32List.fromList(TweetNaCl._gf1), y);
+    TweetNaCl._Z(b, TweetNaCl._gf1, y);
     // b = inv(b)
     TweetNaCl._inv25519(b, 0, b, 0);
     // a = a * inv(b) i.e. a / b

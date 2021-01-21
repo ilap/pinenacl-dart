@@ -1,3 +1,4 @@
+// ignore_for_file: constant_identifier_names
 library pinenacl.tweetnacl;
 
 import 'dart:math';
@@ -6,7 +7,6 @@ import 'package:pinenacl/api.dart';
 import 'package:pinenacl/src/tweetnacl/poly1305.dart';
 
 part 'tweetnacl_ext.dart';
-// ignore_for_file: constant_identifier_names
 
 class TweetNaCl {
   static const int keyLength = 32;
@@ -33,59 +33,63 @@ class TweetNaCl {
   // Signature length
   static const int signatureLength = 64;
 
-  static const _0 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  static final _0 =
+      Uint8List.fromList([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
 
-  static const _9 = [
+  static final _9 = Uint8List.fromList([
     9, 0, 0, 0, 0, 0, 0, 0, // 0-7
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0
-  ];
+  ]);
 
-  static const _gf0 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; //16
-  static const _gf1 = [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; //16
+  static final _gf0 =
+      Int32List.fromList([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); //16
 
-  static const _121665 = [
+  static final _gf1 =
+      Int32List.fromList([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); //16
+
+  static final _121665 = Int32List.fromList([
     0xDB41, 1, 0, 0, // 0-3
     0, 0, 0, 0,
     0, 0, 0, 0,
     0, 0, 0, 0
-  ];
+  ]);
 
-  static const _D = [
+  static final _D = Int32List.fromList([
     0x78a3, 0x1359, 0x4dca, 0x75eb, // 0-3
     0xd8ab, 0x4141, 0x0a4d, 0x0070,
     0xe898, 0x7779, 0x4079, 0x8cc7,
     0xfe73, 0x2b6f, 0x6cee, 0x5203
-  ];
+  ]);
 
-  static const _D2 = [
+  static final _D2 = Int32List.fromList([
     0xf159, 0x26b2, 0x9b94, 0xebd6, // 0-3
     0xb156, 0x8283, 0x149a, 0x00e0,
     0xd130, 0xeef3, 0x80f2, 0x198e,
     0xfce7, 0x56df, 0xd9dc, 0x2406
-  ];
+  ]);
 
-  static const _X = [
+  static final _X = Int32List.fromList([
     0xd51a, 0x8f25, 0x2d60, 0xc956, // 0-3
     0xa7b2, 0x9525, 0xc760, 0x692c,
     0xdc5c, 0xfdd6, 0xe231, 0xc0a4,
     0x53fe, 0xcd6e, 0x36d3, 0x2169
-  ];
+  ]);
 
-  static const _Y = [
+  static final _Y = Int32List.fromList([
     0x6658, 0x6666, 0x6666, 0x6666, // 0-3
     0x6666, 0x6666, 0x6666, 0x6666,
     0x6666, 0x6666, 0x6666, 0x6666,
     0x6666, 0x6666, 0x6666, 0x6666
-  ];
+  ]);
 
-  static const _I = [
+  static final _I = Int32List.fromList([
     0xa0b0, 0x4a0e, 0x1b27, 0xc4ee, // 0-3
     0xe478, 0xad2f, 0x1806, 0x2f43,
     0xd7a7, 0x3dfb, 0x0099, 0x2b4d,
     0xdf0b, 0x4fc1, 0x2480, 0x2b83
-  ];
+  ]);
 
   static void _ts64(Uint8List x, final int i, int uh, int ul) {
     x[i + 0] = (uh >> 24) & 0xff;
@@ -126,7 +130,7 @@ class TweetNaCl {
   }
 
   static void _core_salsa20(
-      Uint8List o, List<int> p, Uint8List k, List<int> c) {
+      Uint8List o, Uint8List p, Uint8List k, Uint8List c) {
     final j0 = c[0] & 0xff |
             (c[1] & 0xff) << 8 |
             (c[2] & 0xff) << 16 |
@@ -370,7 +374,7 @@ class TweetNaCl {
   }
 
   static void _core_hsalsa20(
-      Uint8List o, List<int> p, Uint8List k, List<int> c) {
+      Uint8List o, Uint8List p, Uint8List k, Uint8List c) {
     final j0 = c[0] & 0xff |
             (c[1] & 0xff) << 8 |
             (c[2] & 0xff) << 16 |
@@ -557,24 +561,24 @@ class TweetNaCl {
   }
 
   static int crypto_core_salsa20(
-      Uint8List out, Uint8List input, Uint8List k, List<int> c) {
+      Uint8List out, Uint8List input, Uint8List k, Uint8List c) {
     _core_salsa20(out, input, k, c);
     return 0;
   }
 
   static Uint8List crypto_core_hsalsa20(
-      Uint8List out, List<int> input, Uint8List k, List<int> c) {
+      Uint8List out, Uint8List input, Uint8List k, Uint8List c) {
     _core_hsalsa20(out, input, k, c);
     return out;
   }
 
 // "expand 32-byte k"
-  static const _sigma = [
+  static final _sigma = Uint8List.fromList([
     101, 120, 112, 97, //0-7
     110, 100, 32, 51,
     50, 45, 98, 121,
     116, 101, 32, 107
-  ];
+  ]);
 
   static int crypto_stream_salsa20_xor(Uint8List c, int cpos, Uint8List m,
       int mpos, int b, Uint8List n, Uint8List k,
@@ -741,30 +745,31 @@ class TweetNaCl {
     return m.sublist(32);
   }
 
-  static void _set25519(List<int> r, List<int> a) {
+  static void _set25519(Int32List r, Int32List a) {
     int i;
     for (i = 0; i < 16; i++) {
       r[i] = a[i];
     }
   }
 
-  static void _car25519(List<int> o) {
+// FIXME: no carry required
+  static void _car25519(Int32List o) {
     int i;
     int v, c = 1;
     for (i = 0; i < 16; i++) {
-      v = o[i] + c + 65535;
-      c = v ~/ 65536; // c = v >> 16;
-      o[i] = v - c * 65536;
+      v = o[i] + c + 0xFFFF;
+      c = v ~/ 0x10000;
+      o[i] = v - c * 0x10000;
     }
     o[0] += c - 1 + 37 * (c - 1);
   }
 
-  static void _sel25519(List<int> p, List<int> q, int b) {
+  static void _sel25519(Int32List p, Int32List q, int b) {
     _sel25519_off(p, 0, q, 0, b);
   }
 
   static void _sel25519_off(
-      List<int> p, final int poff, List<int> q, final int qoff, int b) {
+      Int32List p, final int poff, Int32List q, final int qoff, int b) {
     int t, c = ~(b - 1);
     for (var i = 0; i < 16; i++) {
       t = c & (p[i + poff] ^ q[i + qoff]).toInt32();
@@ -773,8 +778,8 @@ class TweetNaCl {
     }
   }
 
-  static void _pack25519(Uint8List o, List<int> n, final int noff) {
-    var m = List<int>.filled(16, 0), t = List<int>.filled(16, 0);
+  static void _pack25519(Uint8List o, Int32List n, final int noff) {
+    var m = Int32List(16), t = Int32List(16);
 
     for (var i = 0; i < 16; i++) {
       t[i] = n[i + noff];
@@ -800,12 +805,12 @@ class TweetNaCl {
     }
   }
 
-  static int _neq25519(List<int> a, List<int> b) {
+  static int _neq25519(Int32List a, Int32List b) {
     return _neq25519_off(a, 0, b, 0);
   }
 
   static int _neq25519_off(
-      List<int> a, final int aoff, List<int> b, final int boff) {
+      Int32List a, final int aoff, Int32List b, final int boff) {
     var c = Uint8List(32), d = Uint8List(32);
 
     _pack25519(c, a, aoff);
@@ -813,17 +818,17 @@ class TweetNaCl {
     return _crypto_verify_32(c, 0, d, 0);
   }
 
-  static int _par25519(List<int> a) {
+  static int _par25519(Int32List a) {
     return _par25519_off(a, 0);
   }
 
-  static int _par25519_off(List<int> a, final int aoff) {
+  static int _par25519_off(Int32List a, final int aoff) {
     var d = Uint8List(32);
     _pack25519(d, a, aoff);
     return (d[0] & 1);
   }
 
-  static void _unpack25519(List<int> o, Uint8List n) {
+  static void _unpack25519(Int32List o, Uint8List n) {
     int i;
     for (i = 0; i < 16; i++) {
       o[i] = (n[2 * i] & 0xff) + (((n[2 * i + 1] << 8) & 0xffff));
@@ -831,41 +836,44 @@ class TweetNaCl {
     o[15] &= 0x7fff;
   }
 
-  static void _A(List<int> o, List<int> a, List<int> b) {
+  static void _A(Int32List o, Int32List a, Int32List b) {
     _A_off(o, 0, a, 0, b, 0);
   }
 
-  static void _A_off(List<int> o, final int ooff, List<int> a, final int aoff,
-      List<int> b, final int boff) {
+  static void _A_off(Int32List o, final int ooff, Int32List a, final int aoff,
+      Int32List b, final int boff) {
     int i;
     for (i = 0; i < 16; i++) {
       o[i + ooff] = a[i + aoff] + b[i + boff];
     }
   }
 
-  static void _Z(List<int> o, List<int> a, List<int> b) {
+  static void _Z(Int32List o, Int32List a, Int32List b) {
     _Z_off(o, 0, a, 0, b, 0);
   }
 
-  static void _Z_off(List<int> o, final int ooff, List<int> a, final int aoff,
-      List<int> b, final int boff) {
+  static void _Z_off(Int32List o, final int ooff, Int32List a, final int aoff,
+      Int32List b, final int boff) {
     int i;
     for (i = 0; i < 16; i++) {
       o[i + ooff] = a[i + aoff] - b[i + boff];
     }
   }
 
-  static void _M(Int32List o, List<int> a, List<int> b) {
+  static void _M(Int32List o, Int32List a, Int32List b) {
     _M_off(o, 0, a, 0, b, 0);
   }
 
-  // Issue with converted javascript or web dart.
-  // As bitwise operations are only 32 bits ones.
-  static void _M_off(Int32List o, final int ooff, List<int> a, final int aoff,
-      List<int> b, final int boff) {
-    int v,
-        c,
-        t0 = 0,
+  ///
+  /// It Calculates the `(a * b) mod (2^256 - 38)` instead of the `2^255-19`.
+  /// The reason is explained in the following paper
+
+  /// Reference:
+  /// High-speed Curve25519 on 8-bit, 16-bit, and 32-bit microcontrollers
+  /// https://link.springer.com/article/10.1007/s10623-015-0087-1
+  static void _M_off(Int32List o, final int ooff, Int32List a, final int aoff,
+      Int32List b, final int boff) {
+    var t0 = 0,
         t1 = 0,
         t2 = 0,
         t3 = 0,
@@ -913,7 +921,7 @@ class TweetNaCl {
         b14 = b[14 + boff],
         b15 = b[15 + boff];
 
-    v = a[0 + aoff];
+    var v = a[0 + aoff];
     t0 += v * b0;
     t1 += v * b1;
     t2 += v * b2;
@@ -1201,140 +1209,137 @@ class TweetNaCl {
     t12 += 38 * t28;
     t13 += 38 * t29;
     t14 += 38 * t30;
-// t15 left as is
 
-// first car
+    var c = 1;
+    v = t0 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t0 = v - c * 0x10000;
+    v = t1 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t1 = v - c * 0x10000;
+    v = t2 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t2 = v - c * 0x10000;
+    v = t3 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t3 = v - c * 0x10000;
+    v = t4 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t4 = v - c * 0x10000;
+    v = t5 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t5 = v - c * 0x10000;
+    v = t6 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t6 = v - c * 0x10000;
+    v = t7 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t7 = v - c * 0x10000;
+    v = t8 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t8 = v - c * 0x10000;
+    v = t9 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t9 = v - c * 0x10000;
+    v = t10 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t10 = v - c * 0x10000;
+    v = t11 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t11 = v - c * 0x10000;
+    v = t12 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t12 = v - c * 0x10000;
+    v = t13 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t13 = v - c * 0x10000;
+    v = t14 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t14 = v - c * 0x10000;
+    v = t15 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t15 = v - c * 0x10000;
+    t0 += 38 * (c - 1);
+
     c = 1;
-    v = t0 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t0 = v - c * 65536;
-    v = t1 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t1 = v - c * 65536;
-    v = t2 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t2 = v - c * 65536;
-    v = t3 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t3 = v - c * 65536;
-    v = t4 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t4 = v - c * 65536;
-    v = t5 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t5 = v - c * 65536;
-    v = t6 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t6 = v - c * 65536;
-    v = t7 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t7 = v - c * 65536;
-    v = t8 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t8 = v - c * 65536;
-    v = t9 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t9 = v - c * 65536;
-    v = t10 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t10 = v - c * 65536;
-    v = t11 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t11 = v - c * 65536;
-    v = t12 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t12 = v - c * 65536;
-    v = t13 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t13 = v - c * 65536;
-    v = t14 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t14 = v - c * 65536;
-    v = t15 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t15 = v - c * 65536;
-    t0 += c - 1 + 37 * (c - 1);
+    v = t0 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t0 = v - c * 0x10000;
+    v = t1 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t1 = v - c * 0x10000;
+    v = t2 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t2 = v - c * 0x10000;
+    v = t3 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t3 = v - c * 0x10000;
+    v = t4 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t4 = v - c * 0x10000;
+    v = t5 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t5 = v - c * 0x10000;
+    v = t6 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t6 = v - c * 0x10000;
+    v = t7 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t7 = v - c * 0x10000;
+    v = t8 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t8 = v - c * 0x10000;
+    v = t9 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t9 = v - c * 0x10000;
+    v = t10 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t10 = v - c * 0x10000;
+    v = t11 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t11 = v - c * 0x10000;
+    v = t12 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t12 = v - c * 0x10000;
+    v = t13 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t13 = v - c * 0x10000;
+    v = t14 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t14 = v - c * 0x10000;
+    v = t15 + c + 0xFFFF;
+    c = v ~/ 0x10000;
+    t15 = v - c * 0x10000;
+    t0 += 38 * (c - 1);
 
-// second car
-    c = 1;
-    v = t0 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t0 = v - c * 65536;
-    v = t1 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t1 = v - c * 65536;
-    v = t2 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t2 = v - c * 65536;
-    v = t3 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t3 = v - c * 65536;
-    v = t4 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t4 = v - c * 65536;
-    v = t5 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t5 = v - c * 65536;
-    v = t6 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t6 = v - c * 65536;
-    v = t7 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t7 = v - c * 65536;
-    v = t8 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t8 = v - c * 65536;
-    v = t9 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t9 = v - c * 65536;
-    v = t10 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t10 = v - c * 65536;
-    v = t11 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t11 = v - c * 65536;
-    v = t12 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t12 = v - c * 65536;
-    v = t13 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t13 = v - c * 65536;
-    v = t14 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t14 = v - c * 65536;
-    v = t15 + c + 65535;
-    c = v ~/ 65536; // c = v >> 16;
-    t15 = v - c * 65536;
-    t0 += c - 1 + 37 * (c - 1);
-
-    o[0 + ooff] = t0.toInt32();
-    o[1 + ooff] = t1.toInt32();
-    o[2 + ooff] = t2.toInt32();
-    o[3 + ooff] = t3.toInt32();
-    o[4 + ooff] = t4.toInt32();
-    o[5 + ooff] = t5.toInt32();
-    o[6 + ooff] = t6.toInt32();
-    o[7 + ooff] = t7.toInt32();
-    o[8 + ooff] = t8.toInt32();
-    o[9 + ooff] = t9.toInt32();
-    o[10 + ooff] = t10.toInt32();
-    o[11 + ooff] = t11.toInt32();
-    o[12 + ooff] = t12.toInt32();
-    o[13 + ooff] = t13.toInt32();
-    o[14 + ooff] = t14.toInt32();
-    o[15 + ooff] = t15.toInt32();
+    o[0 + ooff] = t0;
+    o[1 + ooff] = t1;
+    o[2 + ooff] = t2;
+    o[3 + ooff] = t3;
+    o[4 + ooff] = t4;
+    o[5 + ooff] = t5;
+    o[6 + ooff] = t6;
+    o[7 + ooff] = t7;
+    o[8 + ooff] = t8;
+    o[9 + ooff] = t9;
+    o[10 + ooff] = t10;
+    o[11 + ooff] = t11;
+    o[12 + ooff] = t12;
+    o[13 + ooff] = t13;
+    o[14 + ooff] = t14;
+    o[15 + ooff] = t15;
   }
 
-  static void _S(Int32List o, List<int> a) {
+  static void _S(Int32List o, Int32List a) {
     _S_off(o, 0, a, 0);
   }
 
-  static void _S_off(Int32List o, final int ooff, List<int> a, final int aoff) {
+  static void _S_off(Int32List o, final int ooff, Int32List a, final int aoff) {
     _M_off(o, ooff, a, aoff, a, aoff);
   }
 
   static void _inv25519(
-      List<int> o, final int ooff, List<int> i, final int ioff) {
+      Int32List o, final int ooff, Int32List i, final int ioff) {
     var c = Int32List(16);
 
     int a;
@@ -1350,7 +1355,7 @@ class TweetNaCl {
     }
   }
 
-  static void _pow2523(List<int> o, List<int> i) {
+  static void _pow2523(Int32List o, Int32List i) {
     var c = Int32List(16);
 
     int a;
@@ -1369,7 +1374,7 @@ class TweetNaCl {
     }
   }
 
-  static Uint8List crypto_scalarmult(Uint8List q, Uint8List n, List<int> p) {
+  static Uint8List crypto_scalarmult(Uint8List q, Uint8List n, Uint8List p) {
     var z = Int8List(32);
     var x = Int32List(80);
     int r, i;
@@ -1408,7 +1413,7 @@ class TweetNaCl {
       _Z(a, a, c);
       _S(b, a);
       _Z(c, d, f);
-      _M(a, c, List<int>.from(_121665));
+      _M(a, c, _121665);
       _A(a, a, d);
       _M(c, c, a);
       _M(a, d, f);
@@ -2086,7 +2091,7 @@ class TweetNaCl {
     _A_off(t, 0, q0, 0, q1, 0);
     _M_off(b, 0, b, 0, t, 0);
     _M_off(c, 0, p3, 0, q3, 0);
-    _M_off(c, 0, c, 0, List<int>.from(_D2), 0);
+    _M_off(c, 0, c, 0, _D2, 0);
     _M_off(d, 0, p2, 0, q2, 0);
 
     _A_off(d, 0, d, 0, d, 0);
@@ -2101,7 +2106,7 @@ class TweetNaCl {
     _M_off(p3, 0, e, 0, h, 0);
   }
 
-  static void _cswap(List<List<int>> p, List<List<int>> q, int b) {
+  static void _cswap(List<Int32List> p, List<Int32List> q, int b) {
     int i;
 
     for (i = 0; i < 4; i++) {
@@ -2352,7 +2357,7 @@ class TweetNaCl {
     _set25519(r[2], _gf1);
     _unpack25519(r[1], p);
     _S(inum, r[1]);
-    _M(den, inum, List<int>.from(_D));
+    _M(den, inum, Int32List.fromList(_D));
     _Z(inum, inum, r[2]);
     _A(den, r[2], den);
 
@@ -2370,14 +2375,14 @@ class TweetNaCl {
 
     _S(chk, r[0]);
     _M(chk, chk, den);
-    if (_neq25519(chk, inum) != 0) _M(r[0], r[0], List<int>.from(_I));
+    if (_neq25519(chk, inum) != 0) _M(r[0], r[0], _I);
 
     _S(chk, r[0]);
     _M(chk, chk, den);
     if (_neq25519(chk, inum) != 0) return -1;
 
     if (_par25519(r[0]) == _shr32((p[31] & 0xFF), 7)) {
-      _Z(r[0], List<int>.from(_gf0), r[0]);
+      _Z(r[0], _gf0, r[0]);
     }
 
     _M(r[3], r[0], r[1]);

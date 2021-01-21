@@ -16,6 +16,12 @@ Original AOT
 Javascript
 500 iterations of ED25519 Signing took 6.009 sec(s) // 19/01/2021
 500 iterations of ED25519 Verifying took 17.237 sec(s) // 19/01/2021
+
+
+macOS - Big Sur
+| Signatures | Ed25519 - sign | 3.44 MB/s | 18 iterations | 5231 ms | 18.00 MB |
+| Signatures | Ed25519 - verify | 5.03 MB/s | 26 iterations | 5163 ms | 26.00 MB |
+
 */
 
 void main() {
