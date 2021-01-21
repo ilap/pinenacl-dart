@@ -14,11 +14,13 @@ class SignatureBenchmark extends RateBenchmark {
   late final SigningKey _signer;
   SignedMessage? _signature;
 
+  @override
   void setup() {
     _signer = SigningKey.generate();
     _signature = _signer.sign(_data);
   }
 
+  @override
   void run() {
     if (_forSigning) {
       _signer.sign(_data);

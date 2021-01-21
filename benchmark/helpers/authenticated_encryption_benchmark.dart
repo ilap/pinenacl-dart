@@ -4,7 +4,7 @@ import 'rate_benchmark.dart';
 
 class EncryptionBenchmark extends RateBenchmark {
   EncryptionBenchmark(
-      BoxBase this._cryptor, String cryptorName, bool forEncryption,
+      this._cryptor, String cryptorName, bool forEncryption,
       [int dataLength = 1024 * 1024])
       : _forEncryption = forEncryption,
         _data = Uint8List(dataLength),
@@ -17,10 +17,12 @@ class EncryptionBenchmark extends RateBenchmark {
 
   EncryptedMessage? encrypted;
 
+  @override
   void setup() {
     encrypted = _forEncryption ? null : _cryptor.encrypt(_data);
   }
 
+  @override
   void run() {
     if (_forEncryption) {
       _cryptor.encrypt(_data);
