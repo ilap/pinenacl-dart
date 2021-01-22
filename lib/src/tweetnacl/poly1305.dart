@@ -4,45 +4,45 @@ import 'dart:typed_data';
 /// https://github.com/floodyberry/poly1305-donna
 class Poly1305 {
   Poly1305(Uint8List key) {
-    int t0, t1, t2, t3, t4, t5, t6, t7;
+    final t0 = key[0] | key[1] << 8,
+        t1 = key[2] | key[3] << 8,
+        t2 = key[4] | key[5] << 8,
+        t3 = key[6] | key[7] << 8,
+        t4 = key[8] | key[9] << 8,
+        t5 = key[10] | key[11] << 8,
+        t6 = key[12] | key[13] << 8,
+        t7 = key[14] | key[15] << 8;
 
-    t0 = key[0] & 0xff | (key[1] & 0xff) << 8;
     _r[0] = t0 & 0x1fff;
-    t1 = key[2] & 0xff | (key[3] & 0xff) << 8;
     _r[1] = ((t0 >> 13) | (t1 << 3)) & 0x1fff;
-    t2 = key[4] & 0xff | (key[5] & 0xff) << 8;
     _r[2] = ((t1 >> 10) | (t2 << 6)) & 0x1f03;
-    t3 = key[6] & 0xff | (key[7] & 0xff) << 8;
     _r[3] = ((t2 >> 7) | (t3 << 9)) & 0x1fff;
-    t4 = key[8] & 0xff | (key[9] & 0xff) << 8;
     _r[4] = ((t3 >> 4) | (t4 << 12)) & 0x00ff;
     _r[5] = (t4 >> 1) & 0x1ffe;
-    t5 = key[10] & 0xff | (key[11] & 0xff) << 8;
     _r[6] = ((t4 >> 14) | (t5 << 2)) & 0x1fff;
-    t6 = key[12] & 0xff | (key[13] & 0xff) << 8;
     _r[7] = ((t5 >> 11) | (t6 << 5)) & 0x1f81;
-    t7 = key[14] & 0xff | (key[15] & 0xff) << 8;
     _r[8] = ((t6 >> 8) | (t7 << 8)) & 0x1fff;
     _r[9] = (t7 >> 5) & 0x007f;
 
-    _pad[0] = key[16] & 0xff | (key[17] & 0xff) << 8;
-    _pad[1] = key[18] & 0xff | (key[19] & 0xff) << 8;
-    _pad[2] = key[20] & 0xff | (key[21] & 0xff) << 8;
-    _pad[3] = key[22] & 0xff | (key[23] & 0xff) << 8;
-    _pad[4] = key[24] & 0xff | (key[25] & 0xff) << 8;
-    _pad[5] = key[26] & 0xff | (key[27] & 0xff) << 8;
-    _pad[6] = key[28] & 0xff | (key[29] & 0xff) << 8;
-    _pad[7] = key[30] & 0xff | (key[31] & 0xff) << 8;
+    _pad[0] = key[16] | key[17] << 8;
+    _pad[1] = key[18] | key[19] << 8;
+    _pad[2] = key[20] | key[21] << 8;
+    _pad[3] = key[22] | key[23] << 8;
+    _pad[4] = key[24] | key[25] << 8;
+    _pad[5] = key[26] | key[27] << 8;
+    _pad[6] = key[28] | key[29] << 8;
+    _pad[7] = key[30] | key[31] << 8;
   }
+
   final _buffer = Uint8List(16);
-  final _r = List<int>.filled(10, 0);
-  final _h = List<int>.filled(10, 0);
+  final _r = Int32List(10);
+  final _h = Int32List(10);
   final _pad = Int32List(8);
   int _leftover = 0;
   int _fin = 0;
 
-  Poly1305 blocks(Uint8List m, int mpos, int bytes) {
-    var hibit = _fin != 0 ? 0 : (1 << 11);
+  Poly1305 _blocks(Uint8List m, int mpos, int bytes) {
+    final hibit = _fin != 0 ? 0 : (1 << 11);
     int t0, t1, t2, t3, t4, t5, t6, t7, c;
     int d0, d1, d2, d3, d4, d5, d6, d7, d8, d9;
 
@@ -57,7 +57,7 @@ class Poly1305 {
         h8 = _h[8],
         h9 = _h[9];
 
-    var r0 = _r[0],
+    final r0 = _r[0],
         r1 = _r[1],
         r2 = _r[2],
         r3 = _r[3],
@@ -285,7 +285,7 @@ class Poly1305 {
   }
 
   Poly1305 finish(Uint8List mac, int macpos) {
-    final g = List<int>.filled(10, 0);
+    final g = Int32List(10);
     int i;
     int c, mask, f;
 
@@ -296,7 +296,7 @@ class Poly1305 {
         _buffer[i] = 0;
       }
       _fin = 1;
-      blocks(_buffer, 0, 16);
+      _blocks(_buffer, 0, 16);
     }
 
     c = _h[1] >> 13;
@@ -395,13 +395,13 @@ class Poly1305 {
       mpos += want;
       _leftover += want;
       if (_leftover < 16) return this;
-      blocks(_buffer, 0, 16);
+      _blocks(_buffer, 0, 16);
       _leftover = 0;
     }
 
     if (bytes >= 16) {
       want = bytes - (bytes % 16);
-      blocks(m, mpos, want);
+      _blocks(m, mpos, want);
       mpos += want;
       bytes -= want;
     }

@@ -1,9 +1,7 @@
 part of pinenacl.tweetnacl;
 
 extension ToInt32 on int {
-  int toInt32() {
-    return (this & 0x7fffffff) - (this & 0x80000000);
-  }
+  int toInt32() => (this & 0x7fffffff) - (this & 0x80000000);
 }
 
 typedef Hasher = void Function(Uint8List out, Uint8List m);
@@ -138,7 +136,7 @@ extension TweetNaClExt on TweetNaCl {
   /// key is compromised then it will be easy for attackers to create unauthorized messages.
   ///
   /// `ipad` Inner pad; the byte x‘36’ repeated B times.
-  static const ipad = <int>[
+  static const _ipad = <int>[
     0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, // 16*8 = 128
     0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36,
     0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36, 0x36,
@@ -158,7 +156,7 @@ extension TweetNaClExt on TweetNaCl {
   ];
 
   /// `opad `Outer pad; the byte x‘5c’ repeated B times.
-  static const opad = <int>[
+  static const _opad = <int>[
     0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, // 16*8 = 128
     0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c,
     0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c, 0x5c,
@@ -179,6 +177,7 @@ extension TweetNaClExt on TweetNaCl {
 
   static void _crypto_auth(Hasher hasher, int blockSize, Uint8List out,
       Uint8List message, Uint8List key) {
+
     final k0 = Uint8List(blockSize);
     final k0i = Uint8List.fromList([...Uint8List(blockSize), ...message]);
     final k0o = Uint8List(blockSize);
@@ -189,13 +188,13 @@ extension TweetNaClExt on TweetNaCl {
       hasher(k0, key);
     }
 
-    _xor(k0i, k0, blockSize, ipad);
-    _xor(k0o, k0, blockSize, opad);
+    _xor(k0i, k0, blockSize, _ipad);
+    _xor(k0o, k0, blockSize, _opad);
 
     hasher(out, k0i);
     hasher(out, Uint8List.fromList([...k0o, ...out]));
 
-    // For safeness clear the key's data
+    // For safety clear the key's data
     // Check Dart's GC what does it do /w local variables.
     PineNaClUtils.listZero(k0);
     PineNaClUtils.listZero(k0o, blockSize);
