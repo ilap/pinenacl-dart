@@ -210,7 +210,7 @@ extension TweetNaClExt on TweetNaCl {
   ///
   /// SHA-256 Implementation
   ///
-  static const K = [
+  static const _K = [
     // 4x16
     0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,
     0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
@@ -247,7 +247,7 @@ extension TweetNaClExt on TweetNaCl {
 
   static Uint8List _crypto_hash_sha256(Uint8List out, Uint8List m, int l) {
     /// It assumes at least 32-byte long sequence.
-    if (out.length < 32) {
+    if (out.length < 32 && out.length % 32 != 0) {
       throw Exception('Invalid block for the message to digest.');
     }
 
@@ -295,7 +295,7 @@ extension TweetNaClExt on TweetNaCl {
           w[j] = _gamma1(w[j - 2]) + w[j - 7] + _gamma0(w[j - 15]) + w[j - 16];
         }
 
-        T1 = _sigma1(e) + _ch(e, f, g) + h + K[j] + w[j];
+        T1 = _sigma1(e) + _ch(e, f, g) + h + _K[j] + w[j];
         T2 = _sigma0(a) + _maj(a, b, c);
 
         h = g;
