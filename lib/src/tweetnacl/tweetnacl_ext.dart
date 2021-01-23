@@ -177,7 +177,6 @@ extension TweetNaClExt on TweetNaCl {
 
   static void _crypto_auth(Hasher hasher, int blockSize, Uint8List out,
       Uint8List message, Uint8List key) {
-
     final k0 = Uint8List(blockSize);
     final k0i = Uint8List.fromList([...Uint8List(blockSize), ...message]);
     final k0o = Uint8List(blockSize);

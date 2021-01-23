@@ -3,8 +3,7 @@ import 'package:pinenacl/x25519.dart';
 import 'rate_benchmark.dart';
 
 class EncryptionBenchmark extends RateBenchmark {
-  EncryptionBenchmark(
-      this._cryptor, String cryptorName, bool forEncryption,
+  EncryptionBenchmark(this._cryptor, String cryptorName, bool forEncryption,
       [int dataLength = 1024 * 1024])
       : _forEncryption = forEncryption,
         _data = Uint8List(dataLength),
