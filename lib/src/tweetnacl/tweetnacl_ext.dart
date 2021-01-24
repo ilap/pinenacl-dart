@@ -229,16 +229,17 @@ extension TweetNaClExt on TweetNaCl {
     0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2,
   ];
 
-  static int _rotr(int x, int n) => _shr(x, n) | _shl(x, (32 - n));
-  static int _shr(int x, int n) =>
-      (x >= 0 ? x >>= n : (x >> n) & ((1 << (32 - n)) - 1)).toInt32();
-  static int _shl(int x, int n) => (x <<= n).toInt32();
-  static int _ch(int x, int y, int z) => ((x & y) ^ ((~x) & z));
-  static int _maj(int x, int y, int z) => ((x & y) ^ (x & z) ^ (y & z));
-  static int _sigma0(int x) => (_rotr(x, 2) ^ _rotr(x, 13) ^ _rotr(x, 22));
-  static int _sigma1(int x) => (_rotr(x, 6) ^ _rotr(x, 11) ^ _rotr(x, 25));
-  static int _gamma0(int x) => (_rotr(x, 7) ^ _rotr(x, 18) ^ _shr(x, 3));
-  static int _gamma1(int x) => (_rotr(x, 17) ^ _rotr(x, 19) ^ _shr(x, 10));
+  static int _rotr32(int x, int n) => _shr32(x, n) | x << (32 - n);
+  static int _shr32(int x, int n) => (x & 0xffffffff) >> n;
+  static int _ch32(int x, int y, int z) => (x & y) ^ (~x & z);
+  static int _maj32(int x, int y, int z) => (x & y) ^ (x & z) ^ (y & z);
+  static int _sigma0_32(int x) =>
+      _rotr32(x, 2) ^ _rotr32(x, 13) ^ _rotr32(x, 22);
+  static int _sigma1_32(int x) =>
+      _rotr32(x, 6) ^ _rotr32(x, 11) ^ _rotr32(x, 25);
+  static int _gamma0_32(int x) => _rotr32(x, 7) ^ _rotr32(x, 18) ^ _shr32(x, 3);
+  static int _gamma1_32(int x) =>
+      _rotr32(x, 17) ^ _rotr32(x, 19) ^ _shr32(x, 10);
 
   static Uint8List crypto_hash_sha256(Uint8List out, Uint8List m) {
     return _crypto_hash_sha256(out, m, m.length);
@@ -253,7 +254,7 @@ extension TweetNaClExt on TweetNaCl {
     final w = Uint32List(64);
     int a, b, c, d, e, f, g, h, T1, T2;
 
-    final hh = Int32List.fromList([
+    final hh = Uint32List.fromList([
       0x6a09e667,
       0xbb67ae85,
       0x3c6ef372,
@@ -277,6 +278,7 @@ extension TweetNaClExt on TweetNaCl {
     padded[dataLength] |= 0x80 << (24 - bitLength % 32);
     padded[paddedLen - 1] = bitLength;
 
+    // for Each 512-bit chunk
     for (var i = 0; i < padded.length; i += 16) {
       a = hh[0];
       b = hh[1];
@@ -291,20 +293,25 @@ extension TweetNaClExt on TweetNaCl {
         if (j < 16) {
           w[j] = padded[j + i];
         } else {
-          w[j] = _gamma1(w[j - 2]) + w[j - 7] + _gamma0(w[j - 15]) + w[j - 16];
+          w[j] = _gamma1_32(w[j - 2]) +
+              w[j - 7] +
+              _gamma0_32(w[j - 15]) +
+              w[j - 16];
         }
 
-        T1 = _sigma1(e) + _ch(e, f, g) + h + _K[j] + w[j];
-        T2 = _sigma0(a) + _maj(a, b, c);
+        T1 = (_sigma1_32(e) + _ch32(e, f, g) + h + _K[j] + w[j]);
+        // Leave this `& 0xfffffffff` is it's extremely decrease performance
+        // if it's removed.
+        T2 = (_sigma0_32(a) + _maj32(a, b, c)) & 0xffffffff;
 
         h = g;
         g = f;
         f = e;
-        e = d + T1.toInt32();
+        e = d + T1;
         d = c;
         c = b;
         b = a;
-        a = (T1.toInt32() + T2.toInt32()).toInt32();
+        a = T1 + T2;
       }
 
       hh[0] = a + hh[0];
@@ -318,10 +325,10 @@ extension TweetNaClExt on TweetNaCl {
     }
 
     for (var i = 0; i < hh.length; i++) {
-      out[4 * i + 0] = (hh[i] >> 24) & 0xff;
-      out[4 * i + 1] = (hh[i] >> 16) & 0xff;
-      out[4 * i + 2] = (hh[i] >> 8) & 0xff;
-      out[4 * i + 3] = hh[i] & 0xff;
+      out[4 * i + 0] = hh[i] >> 24;
+      out[4 * i + 1] = hh[i] >> 16;
+      out[4 * i + 2] = hh[i] >> 8;
+      out[4 * i + 3] = hh[i];
     }
 
     return out;

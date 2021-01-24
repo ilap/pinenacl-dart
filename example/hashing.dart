@@ -1,14 +1,23 @@
 import 'dart:typed_data';
+import 'dart:convert';
 
 import 'package:pinenacl/api.dart';
 import 'package:pinenacl/src/digests/digests.dart';
 import 'package:pinenacl/tweetnacl.dart';
 
 void main() {
+  const hex = HexCoder.instance;
+
+  final hout = Uint8List(64);
+  //final mesg = Uint8List.fromList([0x8c, 0x4e]);
+  final mesg = Uint8List.fromList(List<int>.filled(200, 0x17));
+
+  TweetNaCl.crypto_hash(hout, mesg);
+  print('SHA-512: ${hex.encode(hout)}');
+
   print('\n### Hashing - Blake2b Example ###\n');
 
   final hasher = Hash.blake2b;
-  const hex = HexCoder.instance;
 
   /// # Hashing
   print('Hash example\nH(\'\'): ${hex.encode(hasher(''))}');

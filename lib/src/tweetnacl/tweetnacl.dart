@@ -1385,7 +1385,7 @@ class TweetNaCl {
     return crypto_box_open_afternm(m, c, d, n, k);
   }
 
-  static const K = <int>[
+  static const _K = <int>[
     0x428a2f98, 0xd728ae22, // 0-2
     0x71374491, 0x23ef65cd,
     0xb5c0fbcf, 0xec4d3b2f,
@@ -1468,31 +1468,26 @@ class TweetNaCl {
     0x6c44198c, 0x4a475817
   ];
 
-  static int _shr32(int x, int n) =>
-      (x >= 0 ? x >>= n : (x >> n) & ((1 << (32 - n)) - 1)).toInt32();
+  static int _shr32(int x, int n) => (x & 0xffffffff) >> n;
 
   static int crypto_hashblocks_hl(
-      Int32List hh, Int32List hl, Uint8List m, final int moff, int n) {
-    final wh = Int32List(16), wl = Int32List(16);
-    final bh = Int32List(8), bl = Int32List(8);
-    final ah = Int32List.fromList(hh), al = Int32List.fromList(hl);
+      Uint32List hh, Uint32List hl, Uint8List m, final int moff, int n) {
+    final wh = Uint32List(16), wl = Uint32List(16);
+    final bh = Uint32List(8), bl = Uint32List(8);
+    final ah = Uint32List.fromList(hh), al = Uint32List.fromList(hl);
 
     int i, j, th, tl, h, l, a, b, c, d;
 
     var pos = 0;
     while (n >= 128) {
-      for (i = 0; i < 16; i++) {
-        j = 8 * i + pos;
-        wh[i] = ((m[j + 0 + moff] & 0xff) << 24) |
-            ((m[j + 1 + moff] & 0xff) << 16) |
-            ((m[j + 2 + moff] & 0xff) << 8) |
-            ((m[j + 3 + moff] & 0xff) << 0);
-        wl[i] = ((m[j + 4 + moff] & 0xff) << 24) |
-            ((m[j + 5 + moff] & 0xff) << 16) |
-            ((m[j + 6 + moff] & 0xff) << 8) |
-            ((m[j + 7 + moff] & 0xff) << 0);
-      }
       for (i = 0; i < 80; i++) {
+        if (i < 16) {
+          j = (i << 3) + pos + moff;
+          wh[i] =
+              (m[j + 0] << 24) | (m[j + 1] << 16) | (m[j + 2] << 8) | m[j + 3];
+          wl[i] =
+              (m[j + 4] << 24) | (m[j + 5] << 16) | (m[j + 6] << 8) | m[j + 7];
+        }
         bh[0] = ah[0];
         bh[1] = ah[1];
         bh[2] = ah[2];
@@ -1521,14 +1516,13 @@ class TweetNaCl {
         d = _shr32(h, 16);
 
         // Sigma1
-        h = (((_shr32(ah[4], 14)) | (al[4] << (32 - 14))) ^
-                ((_shr32(ah[4], 18)) | (al[4] << (32 - 18))) ^
-                ((_shr32(al[4], (41 - 32))) | (ah[4] << (32 - (41 - 32)))))
-            .toInt32();
-        l = (((_shr32(al[4], 14)) | (ah[4] << (32 - 14))) ^
-                ((_shr32(al[4], 18)) | (ah[4] << (32 - 18))) ^
-                ((_shr32(ah[4], (41 - 32))) | (al[4] << (32 - (41 - 32)))))
-            .toInt32();
+        h = (_shr32(ah[4], 14) | (al[4] << (32 - 14))) ^
+            (_shr32(ah[4], 18) | (al[4] << (32 - 18))) ^
+            (_shr32(al[4], 41 - 32) | (ah[4] << (32 - (41 - 32))));
+
+        l = (_shr32(al[4], 14) | (ah[4] << (32 - 14))) ^
+            (_shr32(al[4], 18) | (ah[4] << (32 - 18))) ^
+            (_shr32(ah[4], 41 - 32) | (al[4] << (32 - (41 - 32))));
 
         a = a + (l & 0xffff);
         b = b + _shr32(l, 16);
@@ -1536,8 +1530,8 @@ class TweetNaCl {
         d = d + _shr32(h, 16);
 
         // Ch
-        h = ((ah[4] & ah[5]) ^ (~ah[4] & ah[6])).toInt32();
-        l = ((al[4] & al[5]) ^ (~al[4] & al[6])).toInt32();
+        h = (ah[4] & ah[5]) ^ (~ah[4] & ah[6]);
+        l = (al[4] & al[5]) ^ (~al[4] & al[6]);
 
         a = a + (l & 0xffff);
         b = b + _shr32(l, 16);
@@ -1545,8 +1539,8 @@ class TweetNaCl {
         d = d + _shr32(h, 16);
 
         // K
-        h = K[i * 2].toInt32();
-        l = K[i * 2 + 1].toInt32();
+        h = _K[i * 2];
+        l = _K[i * 2 + 1];
 
         a = a + (l & 0xffff);
         b = b + _shr32(l, 16);
@@ -1570,8 +1564,8 @@ class TweetNaCl {
         tl = a & 0xffff | b << 16;
 
         // add
-        h = th.toInt32();
-        l = tl.toInt32();
+        h = th & 0xffffffff;
+        l = tl & 0xffffffff;
 
         a = l & 0xffff;
         b = _shr32(l, 16);
@@ -1579,14 +1573,12 @@ class TweetNaCl {
         d = _shr32(h, 16);
 
         // Sigma0
-        h = (((_shr32(ah[0], 28)) | (al[0] << (32 - 28))) ^
-                ((_shr32(al[0], (34 - 32))) | (ah[0] << (32 - (34 - 32)))) ^
-                ((_shr32(al[0], (39 - 32))) | (ah[0] << (32 - (39 - 32)))))
-            .toInt32();
-        l = (((_shr32(al[0], 28)) | (ah[0] << (32 - 28))) ^
-                ((_shr32(ah[0], (34 - 32))) | (al[0] << (32 - (34 - 32)))) ^
-                ((_shr32(ah[0], (39 - 32))) | (al[0] << (32 - (39 - 32)))))
-            .toInt32();
+        h = (_shr32(ah[0], 28) | (al[0] << (32 - 28))) ^
+            (_shr32(al[0], 34 - 32) | (ah[0] << (32 - (34 - 32)))) ^
+            (_shr32(al[0], 39 - 32) | (ah[0] << (32 - (39 - 32))));
+        l = (_shr32(al[0], 28) | (ah[0] << (32 - 28))) ^
+            (_shr32(ah[0], 34 - 32) | (al[0] << (32 - (34 - 32)))) ^
+            (_shr32(ah[0], 39 - 32) | (al[0] << (32 - (39 - 32))));
 
         a = a + (l & 0xffff);
         b = b + _shr32(l, 16);
@@ -1594,8 +1586,8 @@ class TweetNaCl {
         d = d + _shr32(h, 16);
 
         // Maj
-        h = ((ah[0] & ah[1]) ^ (ah[0] & ah[2]) ^ (ah[1] & ah[2])).toInt32();
-        l = ((al[0] & al[1]) ^ (al[0] & al[2]) ^ (al[1] & al[2])).toInt32();
+        h = (ah[0] & ah[1]) ^ (ah[0] & ah[2]) ^ (ah[1] & ah[2]);
+        l = (al[0] & al[1]) ^ (al[0] & al[2]) ^ (al[1] & al[2]);
 
         a = a + (l & 0xffff);
         b = b + _shr32(l, 16);
@@ -1606,8 +1598,8 @@ class TweetNaCl {
         c = c + _shr32(b, 16);
         d = d + _shr32(c, 16);
 
-        bh[7] = ((c & 0xffff) | (d << 16)).toInt32();
-        bl[7] = ((a & 0xffff) | (b << 16)).toInt32();
+        bh[7] = (c & 0xffff) | (d << 16);
+        bl[7] = (a & 0xffff) | (b << 16);
 
         // add
         h = bh[3];
@@ -1618,8 +1610,8 @@ class TweetNaCl {
         c = h & 0xffff;
         d = _shr32(h, 16);
 
-        h = th.toInt32();
-        l = tl.toInt32();
+        h = th;
+        l = tl;
 
         a = a + (l & 0xffff);
         b = b + _shr32(l, 16);
@@ -1630,8 +1622,8 @@ class TweetNaCl {
         c = c + _shr32(b, 16);
         d = d + _shr32(c, 16);
 
-        bh[3] = ((c & 0xffff) | (d << 16)).toInt32();
-        bl[3] = ((a & 0xffff) | (b << 16)).toInt32();
+        bh[3] = (c & 0xffff) | (d << 16);
+        bl[3] = (a & 0xffff) | (b << 16);
 
         ah[1] = bh[0];
         ah[2] = bh[1];
@@ -1673,14 +1665,12 @@ class TweetNaCl {
             // sigma0
             th = wh[(j + 1) % 16];
             tl = wl[(j + 1) % 16];
-            h = (((_shr32(th, 1)) | (tl << (32 - 1))) ^
-                    ((_shr32(th, 8)) | (tl << (32 - 8))) ^
-                    (_shr32(th, 7)))
-                .toInt32();
-            l = (((_shr32(tl, 1)) | (th << (32 - 1))) ^
-                    ((_shr32(tl, 8)) | (th << (32 - 8))) ^
-                    ((_shr32(tl, 7)) | (th << (32 - 7))))
-                .toInt32();
+            h = (_shr32(th, 1) | (tl << (32 - 1))) ^
+                (_shr32(th, 8) | (tl << (32 - 8))) ^
+                _shr32(th, 7);
+            l = (_shr32(tl, 1) | (th << (32 - 1))) ^
+                (_shr32(tl, 8) | (th << (32 - 8))) ^
+                (_shr32(tl, 7) | (th << (32 - 7)));
 
             a = a + (l & 0xffff);
             b = b + _shr32(l, 16);
@@ -1690,14 +1680,12 @@ class TweetNaCl {
             // sigma1
             th = wh[(j + 14) % 16];
             tl = wl[(j + 14) % 16];
-            h = (((_shr32(th, 19)) | (tl << (32 - 19))) ^
-                    ((_shr32(tl, (61 - 32))) | (th << (32 - (61 - 32)))) ^
-                    (_shr32(th, 6)))
-                .toInt32();
-            l = (((_shr32(tl, 19)) | (th << (32 - 19))) ^
-                    ((_shr32(th, (61 - 32))) | (tl << (32 - (61 - 32)))) ^
-                    ((_shr32(tl, 6)) | (th << (32 - 6))))
-                .toInt32();
+            h = (_shr32(th, 19) | (tl << (32 - 19))) ^
+                (_shr32(tl, 61 - 32) | (th << (32 - (61 - 32)))) ^
+                _shr32(th, 6);
+            l = (_shr32(tl, 19) | (th << (32 - 19))) ^
+                (_shr32(th, 61 - 32) | (tl << (32 - (61 - 32)))) ^
+                (_shr32(tl, 6) | (th << (32 - 6)));
 
             a = a + (l & 0xffff);
             b = b + _shr32(l, 16);
@@ -1919,7 +1907,7 @@ class TweetNaCl {
     int i;
     final b = n;
 
-    final hh = Int32List.fromList([
+    final hh = Uint32List.fromList([
       0x6a09e667,
       0xbb67ae85,
       0x3c6ef372,
@@ -1930,7 +1918,7 @@ class TweetNaCl {
       0x5be0cd19
     ]);
 
-    final hl = Int32List.fromList([
+    final hl = Uint32List.fromList([
       0xf3bcc908,
       0x84caa73b,
       0xfe94f82b,
