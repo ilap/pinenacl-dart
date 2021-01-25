@@ -1,9 +1,5 @@
 part of pinenacl.tweetnacl;
 
-extension ToInt32 on int {
-  int toInt32() => (this & 0x7fffffff) - (this & 0x80000000);
-}
-
 typedef Hasher = void Function(Uint8List out, Uint8List m);
 typedef MacHasher = void Function(Uint8List out, Uint8List m, Uint8List k);
 
@@ -89,7 +85,7 @@ extension TweetNaClExt on TweetNaCl {
 
     if (TweetNaCl._unpackneg(q, ed25519_pk) != 0) return -1;
 
-    var y = q[1];
+    final y = q[1];
 
     // b = 1 + Yed
     TweetNaCl._A(a, TweetNaCl._gf1, y);
