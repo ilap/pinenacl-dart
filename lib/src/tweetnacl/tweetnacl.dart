@@ -91,9 +91,6 @@ class TweetNaCl {
     0xdf0b, 0x4fc1, 0x2480, 0x2b83
   ]);
 
-  static int _fs32(Uint8List x) =>
-      x[0] | x[1] << 8 | x[2] << 16 | x[3] & 0xff << 24;
-
   static void _ts64(Uint8List x, final int i, int uh, int ul) {
     x[i + 0] = (uh >> 24) & 0xff;
     x[i + 1] = (uh >> 16) & 0xff;
@@ -1468,469 +1465,212 @@ class TweetNaCl {
     0x6c44198c, 0x4a475817
   ];
 
+  static int _rotr32(int x, int y, int n) => _shr32(x, n) | y << (32 - n);
+
   static int _shr32(int x, int n) => (x & 0xffffffff) >> n;
 
-  static int crypto_hashblocks_hl(
-      Uint32List hh, Uint32List hl, Uint8List m, final int moff, int n) {
-    final wh = Uint32List(16), wl = Uint32List(16);
-    final bh = Uint32List(8), bl = Uint32List(8);
-    final ah = Uint32List.fromList(hh), al = Uint32List.fromList(hl);
-
-    int i, j, th, tl, h, l, a, b, c, d;
-
-    var pos = 0;
-    while (n >= 128) {
-      for (i = 0; i < 80; i++) {
-        if (i < 16) {
-          j = (i << 3) + pos + moff;
-          wh[i] =
-              (m[j + 0] << 24) | (m[j + 1] << 16) | (m[j + 2] << 8) | m[j + 3];
-          wl[i] =
-              (m[j + 4] << 24) | (m[j + 5] << 16) | (m[j + 6] << 8) | m[j + 7];
-        }
-        bh[0] = ah[0];
-        bh[1] = ah[1];
-        bh[2] = ah[2];
-        bh[3] = ah[3];
-        bh[4] = ah[4];
-        bh[5] = ah[5];
-        bh[6] = ah[6];
-        bh[7] = ah[7];
-
-        bl[0] = al[0];
-        bl[1] = al[1];
-        bl[2] = al[2];
-        bl[3] = al[3];
-        bl[4] = al[4];
-        bl[5] = al[5];
-        bl[6] = al[6];
-        bl[7] = al[7];
-
-        // add
-        h = ah[7];
-        l = al[7];
-
-        a = l & 0xffff;
-        b = _shr32(l, 16);
-        c = h & 0xffff;
-        d = _shr32(h, 16);
-
-        // Sigma1
-        h = (_shr32(ah[4], 14) | (al[4] << (32 - 14))) ^
-            (_shr32(ah[4], 18) | (al[4] << (32 - 18))) ^
-            (_shr32(al[4], 41 - 32) | (ah[4] << (32 - (41 - 32))));
-
-        l = (_shr32(al[4], 14) | (ah[4] << (32 - 14))) ^
-            (_shr32(al[4], 18) | (ah[4] << (32 - 18))) ^
-            (_shr32(ah[4], 41 - 32) | (al[4] << (32 - (41 - 32))));
-
-        a = a + (l & 0xffff);
-        b = b + _shr32(l, 16);
-        c = c + (h & 0xffff);
-        d = d + _shr32(h, 16);
-
-        // Ch
-        h = (ah[4] & ah[5]) ^ (~ah[4] & ah[6]);
-        l = (al[4] & al[5]) ^ (~al[4] & al[6]);
-
-        a = a + (l & 0xffff);
-        b = b + _shr32(l, 16);
-        c = c + (h & 0xffff);
-        d = d + _shr32(h, 16);
-
-        // K
-        h = _K[i * 2];
-        l = _K[i * 2 + 1];
-
-        a = a + (l & 0xffff);
-        b = b + _shr32(l, 16);
-        c = c + (h & 0xffff);
-        d = d + _shr32(h, 16);
-
-        // w
-        h = wh[i % 16];
-        l = wl[i % 16];
-
-        a = a + (l & 0xffff);
-        b = b + _shr32(l, 16);
-        c = c + (h & 0xffff);
-        d = d + _shr32(h, 16);
-
-        b = b + _shr32(a, 16);
-        c = c + _shr32(b, 16);
-        d = d + _shr32(c, 16);
-
-        th = c & 0xffff | d << 16;
-        tl = a & 0xffff | b << 16;
-
-        // add
-        h = th & 0xffffffff;
-        l = tl & 0xffffffff;
-
-        a = l & 0xffff;
-        b = _shr32(l, 16);
-        c = h & 0xffff;
-        d = _shr32(h, 16);
-
-        // Sigma0
-        h = (_shr32(ah[0], 28) | (al[0] << (32 - 28))) ^
-            (_shr32(al[0], 34 - 32) | (ah[0] << (32 - (34 - 32)))) ^
-            (_shr32(al[0], 39 - 32) | (ah[0] << (32 - (39 - 32))));
-        l = (_shr32(al[0], 28) | (ah[0] << (32 - 28))) ^
-            (_shr32(ah[0], 34 - 32) | (al[0] << (32 - (34 - 32)))) ^
-            (_shr32(ah[0], 39 - 32) | (al[0] << (32 - (39 - 32))));
-
-        a = a + (l & 0xffff);
-        b = b + _shr32(l, 16);
-        c = c + (h & 0xffff);
-        d = d + _shr32(h, 16);
-
-        // Maj
-        h = (ah[0] & ah[1]) ^ (ah[0] & ah[2]) ^ (ah[1] & ah[2]);
-        l = (al[0] & al[1]) ^ (al[0] & al[2]) ^ (al[1] & al[2]);
-
-        a = a + (l & 0xffff);
-        b = b + _shr32(l, 16);
-        c = c + (h & 0xffff);
-        d = d + _shr32(h, 16);
-
-        b = b + _shr32(a, 16);
-        c = c + _shr32(b, 16);
-        d = d + _shr32(c, 16);
-
-        bh[7] = (c & 0xffff) | (d << 16);
-        bl[7] = (a & 0xffff) | (b << 16);
-
-        // add
-        h = bh[3];
-        l = bl[3];
-
-        a = l & 0xffff;
-        b = _shr32(l, 16);
-        c = h & 0xffff;
-        d = _shr32(h, 16);
-
-        h = th;
-        l = tl;
-
-        a = a + (l & 0xffff);
-        b = b + _shr32(l, 16);
-        c = c + (h & 0xffff);
-        d = d + _shr32(h, 16);
-
-        b = b + _shr32(a, 16);
-        c = c + _shr32(b, 16);
-        d = d + _shr32(c, 16);
-
-        bh[3] = (c & 0xffff) | (d << 16);
-        bl[3] = (a & 0xffff) | (b << 16);
-
-        ah[1] = bh[0];
-        ah[2] = bh[1];
-        ah[3] = bh[2];
-        ah[4] = bh[3];
-        ah[5] = bh[4];
-        ah[6] = bh[5];
-        ah[7] = bh[6];
-        ah[0] = bh[7];
-
-        al[1] = bl[0];
-        al[2] = bl[1];
-        al[3] = bl[2];
-        al[4] = bl[3];
-        al[5] = bl[4];
-        al[6] = bl[5];
-        al[7] = bl[6];
-        al[0] = bl[7];
-
-        if (i % 16 == 15) {
-          for (j = 0; j < 16; j++) {
-            // add
-            h = wh[j];
-            l = wl[j];
-
-            a = l & 0xffff;
-            b = _shr32(l, 16);
-            c = h & 0xffff;
-            d = _shr32(h, 16);
-
-            h = wh[(j + 9) % 16];
-            l = wl[(j + 9) % 16];
-
-            a = a + (l & 0xffff);
-            b = b + _shr32(l, 16);
-            c = c + (h & 0xffff);
-            d = d + _shr32(h, 16);
-
-            // sigma0
-            th = wh[(j + 1) % 16];
-            tl = wl[(j + 1) % 16];
-            h = (_shr32(th, 1) | (tl << (32 - 1))) ^
-                (_shr32(th, 8) | (tl << (32 - 8))) ^
-                _shr32(th, 7);
-            l = (_shr32(tl, 1) | (th << (32 - 1))) ^
-                (_shr32(tl, 8) | (th << (32 - 8))) ^
-                (_shr32(tl, 7) | (th << (32 - 7)));
-
-            a = a + (l & 0xffff);
-            b = b + _shr32(l, 16);
-            c = c + (h & 0xffff);
-            d = d + _shr32(h, 16);
-
-            // sigma1
-            th = wh[(j + 14) % 16];
-            tl = wl[(j + 14) % 16];
-            h = (_shr32(th, 19) | (tl << (32 - 19))) ^
-                (_shr32(tl, 61 - 32) | (th << (32 - (61 - 32)))) ^
-                _shr32(th, 6);
-            l = (_shr32(tl, 19) | (th << (32 - 19))) ^
-                (_shr32(th, 61 - 32) | (tl << (32 - (61 - 32)))) ^
-                (_shr32(tl, 6) | (th << (32 - 6)));
-
-            a = a + (l & 0xffff);
-            b = b + _shr32(l, 16);
-            c = c + (h & 0xffff);
-            d = d + _shr32(h, 16);
-
-            b = b + _shr32(a, 16);
-            c = c + _shr32(b, 16);
-            d = d + _shr32(c, 16);
-
-            wh[j] = ((c & 0xffff) | (d << 16));
-            wl[j] = ((a & 0xffff) | (b << 16));
-          }
-        }
-      }
-
-      // add
-      h = ah[0];
-      l = al[0];
-
-      a = l & 0xffff;
-      b = _shr32(l, 16);
-      c = h & 0xffff;
-      d = _shr32(h, 16);
-      h = hh[0];
-      l = hl[0];
-
-      a = a + (l & 0xffff);
-      b = b + _shr32(l, 16);
-      c = c + (h & 0xffff);
-      d = d + _shr32(h, 16);
-
-      b = b + _shr32(a, 16);
-      c = c + _shr32(b, 16);
-      d = d + _shr32(c, 16);
-
-      hh[0] = ah[0] = (c & 0xffff) | (d << 16);
-      hl[0] = al[0] = (a & 0xffff) | (b << 16);
-
-      h = ah[1];
-      l = al[1];
-
-      a = l & 0xffff;
-      b = _shr32(l, 16);
-      c = h & 0xffff;
-      d = _shr32(h, 16);
-
-      h = hh[1];
-      l = hl[1];
-
-      a = a + (l & 0xffff);
-      b = b + _shr32(l, 16);
-      c = c + (h & 0xffff);
-      d = d + _shr32(h, 16);
-
-      b = b + _shr32(a, 16);
-      c = c + _shr32(b, 16);
-      d = d + _shr32(c, 16);
-
-      hh[1] = ah[1] = (c & 0xffff) | (d << 16);
-      hl[1] = al[1] = (a & 0xffff) | (b << 16);
-
-      h = ah[2];
-      l = al[2];
-
-      a = l & 0xffff;
-      b = _shr32(l, 16);
-      c = h & 0xffff;
-      d = _shr32(h, 16);
-
-      h = hh[2];
-      l = hl[2];
-
-      a = a + (l & 0xffff);
-      b = b + _shr32(l, 16);
-      c = c + (h & 0xffff);
-      d = d + _shr32(h, 16);
-
-      b = b + _shr32(a, 16);
-      c = c + _shr32(b, 16);
-      d = d + _shr32(c, 16);
-
-      hh[2] = ah[2] = (c & 0xffff) | (d << 16);
-      hl[2] = al[2] = (a & 0xffff) | (b << 16);
-
-      h = ah[3];
-      l = al[3];
-
-      a = l & 0xffff;
-      b = _shr32(l, 16);
-      c = h & 0xffff;
-      d = _shr32(h, 16);
-
-      h = hh[3];
-      l = hl[3];
-
-      a = a + (l & 0xffff);
-      b = b + _shr32(l, 16);
-      c = c + (h & 0xffff);
-      d = d + _shr32(h, 16);
-
-      b = b + _shr32(a, 16);
-      c = c + _shr32(b, 16);
-      d = d + _shr32(c, 16);
-
-      hh[3] = ah[3] = (c & 0xffff) | (d << 16);
-      hl[3] = al[3] = (a & 0xffff) | (b << 16);
-
-      h = ah[4];
-      l = al[4];
-
-      a = l & 0xffff;
-      b = _shr32(l, 16);
-      c = h & 0xffff;
-      d = _shr32(h, 16);
-
-      h = hh[4];
-      l = hl[4];
-
-      a = a + (l & 0xffff);
-      b = b + _shr32(l, 16);
-      c = c + (h & 0xffff);
-      d = d + _shr32(h, 16);
-
-      b = b + _shr32(a, 16);
-      c = c + _shr32(b, 16);
-      d = d + _shr32(c, 16);
-
-      hh[4] = ah[4] = (c & 0xffff) | (d << 16);
-      hl[4] = al[4] = (a & 0xffff) | (b << 16);
-
-      h = ah[5];
-      l = al[5];
-
-      a = l & 0xffff;
-      b = _shr32(l, 16);
-      c = h & 0xffff;
-      d = _shr32(h, 16);
-
-      h = hh[5];
-      l = hl[5];
-
-      a = a + (l & 0xffff);
-      b = b + _shr32(l, 16);
-      c = c + (h & 0xffff);
-      d = d + _shr32(h, 16);
-
-      b = b + _shr32(a, 16);
-      c = c + _shr32(b, 16);
-      d = d + _shr32(c, 16);
-
-      hh[5] = ah[5] = (c & 0xffff) | (d << 16);
-      hl[5] = al[5] = (a & 0xffff) | (b << 16);
-
-      h = ah[6];
-      l = al[6];
-
-      a = l & 0xffff;
-      b = _shr32(l, 16);
-      c = h & 0xffff;
-      d = _shr32(h, 16);
-
-      h = hh[6];
-      l = hl[6];
-
-      a = a + (l & 0xffff);
-      b = b + _shr32(l, 16);
-      c = c + (h & 0xffff);
-      d = d + _shr32(h, 16);
-
-      b = b + _shr32(a, 16);
-      c = c + _shr32(b, 16);
-      d = d + _shr32(c, 16);
-
-      hh[6] = ah[6] = (c & 0xffff) | (d << 16);
-      hl[6] = al[6] = (a & 0xffff) | (b << 16);
-
-      h = ah[7];
-      l = al[7];
-
-      a = l & 0xffff;
-      b = _shr32(l, 16);
-      c = h & 0xffff;
-      d = _shr32(h, 16);
-
-      h = hh[7];
-      l = hl[7];
-
-      a = a + (l & 0xffff);
-      b = b + _shr32(l, 16);
-      c = c + (h & 0xffff);
-      d = d + _shr32(h, 16);
-
-      b = b + _shr32(a, 16);
-      c = c + _shr32(b, 16);
-      d = d + _shr32(c, 16);
-
-      hh[7] = ah[7] = (c & 0xffff) | (d << 16);
-      hl[7] = al[7] = (a & 0xffff) | (b << 16);
-
-      pos += 128;
-      n -= 128;
-    }
-
-    return n;
+  static int _ch32(int x, int y, int z) => (x & y) ^ (~x & z);
+  static int _maj32(int x, int y, int z) => (x & y) ^ (x & z) ^ (y & z);
+
+  static int _sigma0(int h, int l) =>
+      (_rotr32(h, l, 28) ^ _rotr32(l, h, 34 - 32) ^ _rotr32(l, h, 39 - 32));
+  static int _sigma1(int h, int l) =>
+      (_rotr32(h, l, 14) ^ _rotr32(h, l, 18) ^ _rotr32(l, h, 41 - 32));
+
+  static int _gamma0h(int h, int l) =>
+      (_rotr32(h, l, 1) ^ _rotr32(h, l, 8) ^ _shr32(h, 7));
+  static int _gamma0l(int h, int l) =>
+      (_rotr32(h, l, 1) ^ _rotr32(h, l, 8) ^ _rotr32(h, l, 7));
+  static int _gamma1h(int h, int l) =>
+      (_rotr32(h, l, 19) ^ _rotr32(l, h, 61 - 32) ^ _shr32(h, 6));
+  static int _gamma1l(int h, int l) =>
+      (_rotr32(h, l, 19) ^ _rotr32(l, h, 61 - 32) ^ _rotr32(h, l, 6));
+
+  static void _initAdd64(Uint32List out, Uint32List a, int aoff) {
+    out[0] = a[aoff + 1] & 0xffff;
+    out[1] = a[aoff + 1] >> 16;
+    out[2] = a[aoff] & 0xffff;
+    out[3] = a[aoff] >> 16;
+  }
+
+  static void _updateAdd64(Uint32List out, int h, int l) {
+    out[0] += l & 0xffff;
+    out[1] += (l & 0xffffffff) >> 16;
+    out[2] += h & 0xffff;
+    out[3] += (h & 0xffffffff) >> 16;
+  }
+
+  static void _finalizeAdd64(Uint32List out, int ooff, Uint32List ins) {
+    ins[1] += ins[0] >> 16;
+    ins[2] += ins[1] >> 16;
+    ins[3] += ins[2] >> 16;
+    out[ooff] = ins[2] & 0xffff | ins[3] << 16;
+    out[ooff + 1] = ins[0] & 0xffff | ins[1] << 16;
   }
 
   /// Though the maximum SHA-512 message length is 2^128, we set it to
   /// the maximum 2^53-1 for javascript compatibility.
   ///
   /// TODO: It should be tested whether it works or not.
-  static int _crypto_hash_off(
-      Uint8List out, Uint8List m, final int moff, int n) {
+  static void crypto_hashblocks_hl(
+      Uint32List IV, Uint8List m, final int moff, int n) {
     if (n > 0x20000000000000) {
       throw Exception('Maximum message length is 2^53');
     }
 
+    const iteration = 80;
+
+    final w = Uint32List(iteration * 2);
+
+    final a = Uint32List(2),
+        b = Uint32List(2),
+        c = Uint32List(2),
+        d = Uint32List(2),
+        e = Uint32List(2),
+        f = Uint32List(2),
+        g = Uint32List(2),
+        h = Uint32List(2),
+        T1 = Uint32List(2),
+        T2 = Uint32List(2),
+        partial = Uint32List(4);
+
+    var pos = 0;
+    while (n >= 128) {
+      a[0] = IV[0];
+      b[0] = IV[2];
+      c[0] = IV[4];
+      d[0] = IV[6];
+      e[0] = IV[8];
+      f[0] = IV[10];
+      g[0] = IV[12];
+      h[0] = IV[14];
+      a[1] = IV[1];
+      b[1] = IV[3];
+      c[1] = IV[5];
+      d[1] = IV[7];
+      e[1] = IV[9];
+      f[1] = IV[11];
+      g[1] = IV[13];
+      h[1] = IV[15];
+
+      for (var j = 0; j < iteration; j++) {
+        if (j < 16) {
+          var i = (j << 3) + pos + moff;
+
+          w[j * 2] =
+              (m[i + 0] << 24) | (m[i + 1] << 16) | (m[i + 2] << 8) | m[i + 3];
+          w[j * 2 + 1] =
+              (m[i + 4] << 24) | (m[i + 5] << 16) | (m[i + 6] << 8) | m[i + 7];
+        } else {
+          final s0h = _gamma0h(w[(j - 15) * 2], w[(j - 15) * 2 + 1]);
+          final s0l = _gamma0l(w[(j - 15) * 2 + 1], w[(j - 15) * 2]);
+          final s1h = _gamma1h(w[(j - 2) * 2], w[(j - 2) * 2 + 1]);
+          final s1l = _gamma1l(w[(j - 2) * 2 + 1], w[(j - 2) * 2]);
+
+          _initAdd64(partial, w, (j - 16) * 2);
+          _updateAdd64(partial, s0h, s0l);
+          _updateAdd64(partial, s1h, s1l);
+          _updateAdd64(partial, w[(j - 7) * 2], w[(j - 7) * 2 + 1]);
+          _finalizeAdd64(w, j * 2, partial);
+        }
+
+        _initAdd64(partial, h, 0);
+        _updateAdd64(partial, _sigma1(e[0], e[1]), _sigma1(e[1], e[0]));
+        _updateAdd64(partial, _ch32(e[0], f[0], g[0]), _ch32(e[1], f[1], g[1]));
+        _updateAdd64(partial, _K[j * 2], _K[j * 2 + 1]);
+        _updateAdd64(partial, w[j * 2], w[j * 2 + 1]);
+        _finalizeAdd64(T1, 0, partial);
+
+        _initAdd64(partial, T1, 0);
+        _updateAdd64(partial, _sigma0(a[0], a[1]), _sigma0(a[1], a[0]));
+        _updateAdd64(
+            partial, _maj32(a[0], b[0], c[0]), _maj32(a[1], b[1], c[1]));
+        _finalizeAdd64(T2, 0, partial);
+
+        h[0] = g[0];
+        h[1] = g[1];
+        g[0] = f[0];
+        g[1] = f[1];
+        f[0] = e[0];
+        f[1] = e[1];
+
+        _initAdd64(partial, d, 0);
+        _updateAdd64(partial, T1[0], T1[1]);
+        _finalizeAdd64(e, 0, partial);
+
+        d[0] = c[0];
+        d[1] = c[1];
+        c[0] = b[0];
+        c[1] = b[1];
+        b[0] = a[0];
+        b[1] = a[1];
+        a[0] = T2[0];
+        a[1] = T2[1];
+      }
+      _initAdd64(partial, IV, 0);
+      _updateAdd64(partial, a[0], a[1]);
+      _finalizeAdd64(IV, 0, partial);
+      _initAdd64(partial, IV, 2);
+      _updateAdd64(partial, b[0], b[1]);
+      _finalizeAdd64(IV, 2, partial);
+
+      _initAdd64(partial, IV, 4);
+      _updateAdd64(partial, c[0], c[1]);
+      _finalizeAdd64(IV, 4, partial);
+
+      _initAdd64(partial, IV, 6);
+      _updateAdd64(partial, d[0], d[1]);
+      _finalizeAdd64(IV, 6, partial);
+
+      _initAdd64(partial, IV, 8);
+      _updateAdd64(partial, e[0], e[1]);
+      _finalizeAdd64(IV, 8, partial);
+
+      _initAdd64(partial, IV, 10);
+      _updateAdd64(partial, f[0], f[1]);
+      _finalizeAdd64(IV, 10, partial);
+
+      _initAdd64(partial, IV, 12);
+      _updateAdd64(partial, g[0], g[1]);
+      _finalizeAdd64(IV, 12, partial);
+
+      _initAdd64(partial, IV, 14);
+      _updateAdd64(partial, h[0], h[1]);
+      _finalizeAdd64(IV, 14, partial);
+
+      pos += 128;
+      n -= 128;
+    }
+  }
+
+  static int _crypto_hash_off(Uint8List out, Uint8List m, int moff, int n) {
     final x = Uint8List(256);
+
     int i;
+
     final b = n;
 
-    final hh = Uint32List.fromList([
+    final iv = Uint32List.fromList([
       0x6a09e667,
-      0xbb67ae85,
-      0x3c6ef372,
-      0xa54ff53a,
-      0x510e527f,
-      0x9b05688c,
-      0x1f83d9ab,
-      0x5be0cd19
-    ]);
-
-    final hl = Uint32List.fromList([
       0xf3bcc908,
+      0xbb67ae85,
       0x84caa73b,
+      0x3c6ef372,
       0xfe94f82b,
+      0xa54ff53a,
       0x5f1d36f1,
+      0x510e527f,
       0xade682d1,
+      0x9b05688c,
       0x2b3e6c1f,
+      0x1f83d9ab,
       0xfb41bd6b,
+      0x5be0cd19,
       0x137e2179
     ]);
 
     if (n >= 128) {
-      crypto_hashblocks_hl(hh, hl, m, moff, n);
+      crypto_hashblocks_hl(iv, m, moff, n);
       n %= 128;
     }
 
@@ -1945,12 +1685,11 @@ class TweetNaCl {
     // FIXME:  Split it to two int32
     _ts64(x, n - 8, b ~/ 0x20000000, b << 3);
 
-    crypto_hashblocks_hl(hh, hl, x, 0, n);
+    crypto_hashblocks_hl(iv, x, 0, n);
 
     for (i = 0; i < 8; i++) {
-      _ts64(out, 8 * i, hh[i], hl[i]);
+      _ts64(out, 8 * i, iv[i * 2], iv[i * 2 + 1]);
     }
-
     return 0;
   }
 

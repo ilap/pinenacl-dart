@@ -209,6 +209,7 @@ extension TweetNaClExt on TweetNaCl {
   ///
   /// SHA-256 Implementation
   ///
+  // ignore: constant_identifier_names
   static const _K = [
     // 4x16
     0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,
