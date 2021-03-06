@@ -17,7 +17,7 @@ jobs:
       uses: vanesyan/setup-dart@v1
       with:
         version: latest
-        channel: beta
+        channel: stable
     - uses: actions/checkout@v1
     - name: Install dependencies
       run: pub get
