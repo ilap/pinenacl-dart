@@ -94,10 +94,15 @@ class SigningKey extends AsymmetricPrivateKey implements Sign {
 
   static const seedSize = TweetNaCl.seedSize;
 
+  @override
+  final int prefixLength = seedSize;
+
+  ByteList get seed => keyBytes;
+
   VerifyKey? _verifyKey;
 
   @override
-  VerifyKey get verifyKey => _verifyKey ??= VerifyKey(sublist(32));
+  VerifyKey get verifyKey => _verifyKey ??= VerifyKey(suffix);
 
   @override
   AsymmetricPublicKey get publicKey => verifyKey;
@@ -140,7 +145,7 @@ class SignedMessage extends ByteList with Suffix implements EncryptionMessage {
       : super(signedMessage);
 
   @override
-  int prefixLength = signatureLength;
+  final int prefixLength = signatureLength;
 
   static const signatureLength = TweetNaCl.signatureLength;
 

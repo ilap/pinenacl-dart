@@ -106,7 +106,7 @@ class ByteList with ListMixin<int>, Encodable implements Uint8List {
 }
 
 mixin Suffix on ByteList {
-  late int prefixLength;
+  late final int prefixLength;
   ByteList get prefix => ByteList(take(prefixLength), prefixLength);
   ByteList get suffix => ByteList(skip(prefixLength), length - prefixLength);
 }
