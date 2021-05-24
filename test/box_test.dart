@@ -74,16 +74,16 @@ void main() {
       final x25519Pub = Uint8List(32);
 
       TweetNaClExt.crypto_sign_ed25519_pk_to_x25519_pk(
-          x25519Pub, hex.decode(ed25519_pk));
+          x25519Pub, hex.decode(ed25519_pk).toUint8List());
 
       final x25519PubHex = hex.encode(x25519Pub);
       assert(x25519PubHex == x25519_pk);
 
       final x25519Pub1 = Uint8List(32);
-      TweetNaClExt.crypto_sign_ed25519_pk_to_x25519_pk(x25519Pub1, ed25519Pub);
+      TweetNaClExt.crypto_sign_ed25519_pk_to_x25519_pk(x25519Pub1, ed25519Pub.toUint8List());
 
       final x25519Prv = Uint8List(32);
-      TweetNaClExt.crypto_sign_ed25519_sk_to_x25519_sk(x25519Prv, ed25519Priv);
+      TweetNaClExt.crypto_sign_ed25519_sk_to_x25519_sk(x25519Prv, ed25519Priv.toUint8List());
 
       final ed25519Prv2 = PrivateKey(x25519Prv);
       final ed25519Pub2 = PublicKey(x25519Pub);
@@ -111,7 +111,7 @@ void main() {
 
     test('Test Box decode', () {
       final b1 = Box(myPrivateKey: priv, theirPublicKey: pub);
-      final b2 = Box.decode(b1.sharedKey);
+      final b2 = Box.decode(b1.sharedKey.toUint8List());
       assert(b1.sharedKey == b2.sharedKey);
     });
 
@@ -214,7 +214,7 @@ void main() {
       expect(() => PublicKey(_31), throwsException);
 
       // Valid combinations
-      expect(() => Box.decode(k32), returnsNormally);
+      expect(() => Box.decode(k32.toUint8List()), returnsNormally);
       expect(() => Box(myPrivateKey: priv, theirPublicKey: priv.publicKey),
           returnsNormally);
 

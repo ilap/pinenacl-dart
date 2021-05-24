@@ -58,7 +58,7 @@ class HexCoder implements Encoder {
   }
 
   @override
-  String encode(Uint8List data) {
+  String encode(List<int> data) {
     return _encode(data);
   }
 

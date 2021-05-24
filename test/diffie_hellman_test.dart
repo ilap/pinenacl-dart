@@ -17,7 +17,7 @@ void _doShared(String sk, String pk, String sharedSecret) {
 
   /// The expected shared secret, the
   /// K = X25519(a, X25519(b, 9)) = X25519(b, X25519(a, 9))
-  TweetNaCl.crypto_scalarmult(expected, bobpriv, alicepub);
+  TweetNaCl.crypto_scalarmult(expected, bobpriv.toUint8List(), alicepub.toUint8List());
   assert(sharedSecret == hex.encode(expected));
 }
 
@@ -52,8 +52,8 @@ void main() {
 
         /// The expected shared secret, the
         /// K = X25519(a, X25519(b, 9)) = X25519(b, X25519(a, 9))
-        TweetNaCl.crypto_scalarmult(sharedSecret1, bobPriv, alicePub);
-        TweetNaCl.crypto_scalarmult(sharedSecret2, alicePriv, bobPub);
+        TweetNaCl.crypto_scalarmult(sharedSecret1, bobPriv.toUint8List(), alicePub.toUint8List());
+        TweetNaCl.crypto_scalarmult(sharedSecret2, alicePriv.toUint8List(), bobPub.toUint8List());
 
         assert(hex.encode(sharedSecret1) == hex.encode(sharedSecret2));
         assert(hex.encode(sharedSecret1) == sharedSecret);

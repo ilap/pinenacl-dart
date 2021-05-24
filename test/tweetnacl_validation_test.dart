@@ -53,28 +53,28 @@ void main() {
       test('Alice\'s SecretKey to PublicKey to', () {
         final pk = Uint8List(TweetNaCl.publicKeyLength);
 
-        TweetNaCl.crypto_scalarmult_base(pk, hex.decode(aliceSk));
+        TweetNaCl.crypto_scalarmult_base(pk, Uint8List.fromList(hex.decode(aliceSk)));
 
         assert(hex.encode(pk) == alicePk);
       });
       test('Bob\'s SecretKey to PublicKey test', () {
         final pk = Uint8List(TweetNaCl.publicKeyLength);
 
-        TweetNaCl.crypto_scalarmult_base(pk, hex.decode(bobSk));
+        TweetNaCl.crypto_scalarmult_base(pk, Uint8List.fromList(hex.decode(bobSk)));
 
         assert(hex.encode(pk) == bobPk);
       });
       test('Shared secret (Alice Secret, Bob pulic) test', () {
         final k = Uint8List(TweetNaCl.secretKeyLength);
 
-        TweetNaCl.crypto_scalarmult(k, hex.decode(aliceSk), hex.decode(bobPk));
+        TweetNaCl.crypto_scalarmult(k, Uint8List.fromList(hex.decode(aliceSk)), Uint8List.fromList(hex.decode(bobPk)));
 
         assert(hex.encode(k) == sharedSecret);
       });
       test('Shared secret (Bob secret, Alice pulic) test', () {
         final k = Uint8List(TweetNaCl.secretKeyLength);
 
-        TweetNaCl.crypto_scalarmult(k, hex.decode(bobSk), hex.decode(alicePk));
+        TweetNaCl.crypto_scalarmult(k, Uint8List.fromList(hex.decode(bobSk)), Uint8List.fromList(hex.decode(alicePk)));
 
         assert(hex.encode(k) == sharedSecret);
       });
@@ -82,7 +82,7 @@ void main() {
         final _1k = Uint8List(TweetNaCl.secretKeyLength);
 
         TweetNaCl.crypto_core_hsalsa20(
-            _1k, zero, hex.decode(sharedSecret), hex.decode(c));
+            _1k, zero, Uint8List.fromList(hex.decode(sharedSecret)), Uint8List.fromList(hex.decode(c)));
 
         assert(hex.encode(_1k) == firstKey);
       });
@@ -93,7 +93,7 @@ void main() {
 
         expect(
             () => TweetNaCl.crypto_stream_salsa20(
-                out, 0, outLen, hex.decode(nonce), hex.decode(firstKey)),
+                out, 0, outLen, Uint8List.fromList(hex.decode(nonce)), Uint8List.fromList(hex.decode(firstKey))),
             returnsNormally);
         final hexOut = TweetNaCl.crypto_hash(hashOut, out);
 

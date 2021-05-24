@@ -55,8 +55,8 @@ void main() {
       final ciphertext = _vectors['ciphertext']!;
       final plaintext = _vectors['plaintext']!;
 
-      final decrypted = box.decrypt(Uint8List.fromList(hex.decode(ciphertext)),
-          nonce: Uint8List.fromList(hex.decode(nonce)));
+      final decrypted = box.decrypt(hex.decode(ciphertext),
+          nonce: hex.decode(nonce));
 
       assert(hex.encode(decrypted) == plaintext);
     });

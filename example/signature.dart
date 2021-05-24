@@ -19,7 +19,7 @@ void main() {
   final verifyKey = signingKey.verifyKey;
   final publicKey = VerifyKey(hex.decode(publ));
   assert(publicKey == verifyKey);
-  print('Verify Key: ${hex.encode(verifyKey)}');
+  print('Verify Key: ${hex.encode(Uint8List.fromList(verifyKey))}');
 
   final signed = signingKey.sign(hex.decode(mesg));
   final encoded = hex.encode(signed);
