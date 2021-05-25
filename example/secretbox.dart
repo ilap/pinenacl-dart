@@ -9,7 +9,7 @@ void main() {
   final message =
       'Change is a tricky thing, it threatens what we find familiar with...';
 
-  final encrypted = box.encrypt(message.codeUnits);
+  final encrypted = box.encrypt(Uint8List.fromList(message.codeUnits));
 
   final decrypted = box.decrypt(encrypted);
 

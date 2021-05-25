@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:pinenacl/x25519.dart' show Box, PrivateKey, EncryptedMessage;
 
 void main() {
@@ -27,7 +28,7 @@ void main() {
   // Encrypt our message, it will be exactly 40 bytes longer than the
   // original message as it stores authentication information and the
   // nonce alongside it.
-  final encryptedAsList = bobBox.encrypt(message.codeUnits).sublist(0);
+  final encryptedAsList = bobBox.encrypt(Uint8List.fromList(message.codeUnits)).sublist(0);
 
   // Finally, the message is decrypted (regardless of how the nonce was generated):
   // Alice creates a second box with her private key to decrypt the message

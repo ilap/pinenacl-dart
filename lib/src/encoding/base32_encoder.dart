@@ -19,7 +19,7 @@ class Base32Encoder implements Encoder {
   }
 
   @override
-  ByteList decode(String data) {
+  Uint8List decode(String data) {
     final result = _convertBits(
         data.codeUnits.fold([], (prev, item) {
           return prev..add(_alphabetMap[item]!);
@@ -27,7 +27,7 @@ class Base32Encoder implements Encoder {
         5,
         8,
         false);
-    return ByteList(result);
+    return Uint8List.fromList(result);
   }
 
   static List<int> _convertBits(List<int> data, int from, int to, bool pad) {

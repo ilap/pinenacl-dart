@@ -31,7 +31,7 @@ class ByteList with ListMixin<int>, Encodable { //implements Uint8List {
       : _u8l = _constructList(list, minLength, maxLength);
 
   factory ByteList.decode(String data, [Encoder defaultDecoder = decoder]) {
-    return defaultDecoder.decode(data);
+    return ByteList(defaultDecoder.decode(data));
   }
 
   static const _minLength = 0;

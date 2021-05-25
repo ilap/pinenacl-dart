@@ -41,10 +41,10 @@ class Box extends BoxBase {
       {required AsymmetricPrivateKey myPrivateKey,
       required AsymmetricPublicKey theirPublicKey})
       : super.fromList(
-            _beforeNm(theirPublicKey, myPrivateKey, null) as List<int>);
+            _beforeNm(theirPublicKey, myPrivateKey, null) as Uint8List);
 
   Box._fromSharedKey(Uint8List sharedKey)
-      : super.fromList(_beforeNm(null, null, sharedKey) as List<int>);
+      : super.fromList(_beforeNm(null, null, sharedKey) as Uint8List);
 
   factory Box.decode(Uint8List encoded) {
     return Box._fromSharedKey(encoded);

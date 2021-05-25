@@ -6,16 +6,16 @@ typedef Crypting = Uint8List Function(
     Uint8List out, Uint8List text, int textLen, Uint8List nonce, Uint8List k);
 
 abstract class BoxBase extends ByteList {
-  BoxBase.fromList(List<int> list) : super.fromList(list);
+  BoxBase.fromList(Uint8List list) : super.fromList(list);
 
   late Crypting doEncrypt;
   late Crypting doDecrypt;
   ByteList get key;
 
-  Uint8List decrypt(ByteList encryptedMessage, {ByteList? nonce}) {
+  Uint8List decrypt(ByteList encryptedMessage, {Uint8List? nonce}) {
     ByteList ciphertext;
     if (encryptedMessage is EncryptedMessage) {
-      nonce = encryptedMessage.nonce;
+      nonce = encryptedMessage.nonce.asTypedList;
       ciphertext = encryptedMessage.cipherText;
     } else if (nonce != null) {
       ciphertext = encryptedMessage;
@@ -26,11 +26,11 @@ abstract class BoxBase extends ByteList {
     final c =
         Uint8List(TweetNaCl.boxzerobytesLength).toList() + ciphertext.toList();
     final m = Uint8List(c.length);
-    final plaintext = doDecrypt(m, Uint8List.fromList(c), c.length, nonce.asTypedList, key.asTypedList);
+    final plaintext = doDecrypt(m, Uint8List.fromList(c), c.length, nonce, key.asTypedList);
     return Uint8List.fromList(plaintext);
   }
 
-  EncryptedMessage encrypt(List<int> plainText, {List<int>? nonce}) {
+  EncryptedMessage encrypt(Uint8List plainText, {Uint8List? nonce}) {
     final nonce1 = nonce ?? TweetNaCl.randombytes(TweetNaCl.nonceLength);
 
     final m = Uint8List(TweetNaCl.zerobytesLength).toList() + plainText;
@@ -40,12 +40,12 @@ abstract class BoxBase extends ByteList {
         c, Uint8List.fromList(m), m.length, Uint8List.fromList(nonce1), key.asTypedList);
 
     return EncryptedMessage(
-        nonce: nonce1.toList(), cipherText: cipherText.toList());
+        nonce: nonce1, cipherText: cipherText);
   }
 }
 
 class EncryptedMessage extends ByteList with Suffix {
-  EncryptedMessage({required List<int> nonce, required List<int> cipherText})
+  EncryptedMessage({required Uint8List nonce, required Uint8List cipherText})
       : super.fromList(
             nonce + cipherText, nonceLength, nonce.length + cipherText.length);
 

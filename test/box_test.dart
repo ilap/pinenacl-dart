@@ -74,7 +74,7 @@ void main() {
       final x25519Pub = Uint8List(32);
 
       TweetNaClExt.crypto_sign_ed25519_pk_to_x25519_pk(
-          x25519Pub, hex.decode(ed25519_pk).asTypedList);
+          x25519Pub, hex.decode(ed25519_pk));
 
       final x25519PubHex = hex.encode(x25519Pub);
       assert(x25519PubHex == x25519_pk);
@@ -158,7 +158,7 @@ void main() {
       final box = Box(myPrivateKey: privAlice, theirPublicKey: pubBob);
 
       final decrypted =
-          box.decrypt(hex.decode(ciphertext), nonce: hex.decode(nonce));
+          box.decrypt(ByteList(hex.decode(ciphertext)), nonce: hex.decode(nonce));
 
       assert(hex.encode(ByteList.fromList(decrypted)) == plaintext);
     });

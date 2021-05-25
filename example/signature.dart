@@ -42,7 +42,7 @@ void main() {
   // concatenated together.  These are equivalent:
   var isVerified = verifyKey.verifySignedMessage(signedMessage: signed);
   isVerified &=
-      verifyKey.verify(signature: signed.signature, message: signed.message);
+      verifyKey.verify(signature: signed.signature, message: signed.message.asTypedList);
 
   final resString = isVerified ? '' : 'UN';
   print('Verification of the signature was: ${resString}SUCCESSFULL ');

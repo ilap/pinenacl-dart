@@ -2,7 +2,7 @@ part of pinenacl.api;
 
 abstract class Encoder {
   String encode(ByteList data);
-  ByteList decode(String data);
+  Uint8List decode(String data);
 }
 
 mixin Encodable {

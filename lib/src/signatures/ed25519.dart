@@ -5,12 +5,12 @@ import 'package:pinenacl/api/signatures.dart';
 import 'package:pinenacl/src/tweetnacl/tweetnacl.dart';
 
 class Signature extends ByteList implements SignatureBase {
-  Signature(List<int> bytes) : super(bytes, signatureLength);
+  Signature(Uint8List bytes) : super(bytes, signatureLength);
   static const signatureLength = TweetNaCl.signatureLength;
 }
 
 class VerifyKey extends AsymmetricPublicKey implements Verify {
-  VerifyKey(List<int> bytes, [int keyLength = keyLength])
+  VerifyKey(Uint8List bytes, [int keyLength = keyLength])
       : super(bytes, keyLength);
   VerifyKey.decode(String keyString, {Encoder coder = decoder})
       : this(coder.decode(keyString), coder.decode(keyString).length);
@@ -28,24 +28,24 @@ class VerifyKey extends AsymmetricPublicKey implements Verify {
   @override
   bool verifySignedMessage({required EncryptionMessage signedMessage}) =>
       verify(
-          signature: signedMessage.signature, message: signedMessage.message);
+          signature: signedMessage.signature, message: signedMessage.message.asTypedList);
   @override
-  bool verify({required SignatureBase signature, required List<int> message}) {
+  bool verify({required SignatureBase signature, required Uint8List message}) {
     if (signature.length != TweetNaCl.signatureLength) {
       throw Exception(
           'Signature length (${signature.length}) is invalid, expected "${TweetNaCl.signatureLength}"');
     }
-    message = signature + message;
+    final newmessage = signature.asTypedList + message;
 
-    if (message.length < TweetNaCl.signatureLength) {
+    if (newmessage.length < TweetNaCl.signatureLength) {
       throw Exception(
-          'Signature length (${message.length}) is invalid, expected "${TweetNaCl.signatureLength}"');
+          'Signature length (${newmessage.length}) is invalid, expected "${TweetNaCl.signatureLength}"');
     }
 
-    var m = Uint8List(message.length);
+    var m = Uint8List(newmessage.length);
 
     final result = TweetNaCl.crypto_sign_open(
-        m, -1, Uint8List.fromList(message), 0, message.length, this.asTypedList);
+        m, -1, Uint8List.fromList(newmessage), 0, newmessage.length, this.asTypedList);
     if (result != 0) {
       throw Exception(
           'The message is forged or malformed or the signature is invalid');
@@ -72,13 +72,13 @@ class SigningKey extends AsymmetricPrivateKey implements Sign {
   /// seed as a private key.
   ///
   /// seed (i.e. private key) is a random 32-byte value.
-  SigningKey({required List<int> seed}) : this.fromSeed(seed);
+  SigningKey({required Uint8List seed}) : this.fromSeed(seed);
 
-  SigningKey.fromValidBytes(List<int> secret,
+  SigningKey.fromValidBytes(Uint8List secret,
       {int keyLength = TweetNaCl.signingKeyLength})
       : super(secret, keyLength);
 
-  SigningKey.fromSeed(List<int> seed)
+  SigningKey.fromSeed(Uint8List seed)
       : this.fromValidBytes(_seedToSecret(seed));
 
   SigningKey.generate()
@@ -102,30 +102,30 @@ class SigningKey extends AsymmetricPrivateKey implements Sign {
   VerifyKey? _verifyKey;
 
   @override
-  VerifyKey get verifyKey => _verifyKey ??= VerifyKey(suffix);
+  VerifyKey get verifyKey => _verifyKey ??= VerifyKey(suffix.asTypedList);
 
   @override
   AsymmetricPublicKey get publicKey => verifyKey;
 
-  static List<int> _seedToSecret(List<int> seed) {
+  static Uint8List _seedToSecret(Uint8List seed) {
     if (seed.length != seedSize) {
       throw Exception('SigningKey must be created from a $seedSize byte seed');
     }
 
-    if (seed is Uint8List) {
-      seed = seed.toList();
-    }
+    //if (seed is Uint8List) {
+    //  seed = seed.toList();
+    //}
 
     final priv = Uint8List.fromList(
-        seed + List<int>.filled(TweetNaCl.publicKeyLength, 0));
+        seed + Uint8List(TweetNaCl.publicKeyLength));
     final pub = Uint8List(TweetNaCl.publicKeyLength);
     TweetNaCl.crypto_sign_keypair(pub, priv, Uint8List.fromList(seed));
 
-    return SigningKey.fromValidBytes(priv);
+    return SigningKey.fromValidBytes(priv).asTypedList;
   }
 
   @override
-  SignedMessage sign(List<int> message) {
+  SignedMessage sign(Uint8List message) {
     // signed message
     var sm = Uint8List(message.length + TweetNaCl.signatureLength);
     final result = TweetNaCl.crypto_sign(
@@ -139,9 +139,9 @@ class SigningKey extends AsymmetricPrivateKey implements Sign {
 }
 
 class SignedMessage extends ByteList with Suffix implements EncryptionMessage {
-  SignedMessage({required SignatureBase signature, required List<int> message})
+  SignedMessage({required SignatureBase signature, required Uint8List message})
       : super(signature + message, signatureLength);
-  SignedMessage.fromList({required List<int> signedMessage})
+  SignedMessage.fromList({required Uint8List signedMessage})
       : super(signedMessage);
 
   @override
@@ -150,7 +150,7 @@ class SignedMessage extends ByteList with Suffix implements EncryptionMessage {
   static const signatureLength = TweetNaCl.signatureLength;
 
   @override
-  SignatureBase get signature => Signature(prefix);
+  SignatureBase get signature => Signature(prefix.asTypedList);
 
   @override
   ByteList get message => suffix;

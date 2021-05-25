@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:pinenacl/encoding.dart';
+import 'package:pinenacl/api.dart';
+
 import 'package:test/test.dart';
 
 import 'package:pinenacl/src/signatures/ed25519.dart';
@@ -49,7 +51,7 @@ void main() {
             signedMessage: hex.decode(_vectors['expected']!));
 
         final signingKey = SigningKey.decode(seed, hex);
-        final signed = signingKey.sign(hex.decode(message).toList());
+        final signed = signingKey.sign(hex.decode(message));
 
         final publicKey = VerifyKey(hex.decode(public!));
         final verifyKey = signingKey.verifyKey;
@@ -109,7 +111,7 @@ void main() {
               returnsNormally);
           expect(
               () => verifyKey.verify(
-                  signature: signed.signature, message: signed.message),
+                  signature: signed.signature, message: signed.message.asTypedList),
               returnsNormally);
 
           assert(signed == expected);
@@ -123,7 +125,7 @@ void main() {
         final sk = SigningKey.generate();
         final _31 = Uint8List(31);
 
-        expect(() => SigningKey(seed: sk), throwsException);
+        expect(() => SigningKey(seed: sk.asTypedList), throwsException);
         expect(() => SigningKey.fromSeed(_31), throwsException);
 
         /// Any validlength bytes (except private key) or

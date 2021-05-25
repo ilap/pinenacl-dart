@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:pinenacl/encoding.dart';
+import 'package:pinenacl/api.dart';
 import 'package:test/test.dart';
 
 import 'package:pinenacl/src/authenticated_encryption/secret.dart'
@@ -55,7 +55,7 @@ void main() {
       final ciphertext = _vectors['ciphertext']!;
       final plaintext = _vectors['plaintext']!;
 
-      final decrypted = box.decrypt(hex.decode(ciphertext),
+      final decrypted = box.decrypt(ByteList(hex.decode(ciphertext)),
           nonce: hex.decode(nonce));
 
       assert(hex.encode(decrypted) == plaintext);

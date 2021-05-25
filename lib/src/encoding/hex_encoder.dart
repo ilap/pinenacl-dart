@@ -63,7 +63,7 @@ class HexCoder implements Encoder {
   }
 
   @override
-  ByteList decode(String data) {
-    return ByteList(_decode(data));
+  Uint8List decode(String data) {
+    return Uint8List.fromList(_decode(data));
   }
 }

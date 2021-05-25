@@ -2,11 +2,11 @@ import 'package:pinenacl/api.dart';
 
 abstract class Sign {
   Verify get verifyKey;
-  EncryptionMessage sign(List<int> message);
+  EncryptionMessage sign(Uint8List message);
 }
 
 abstract class Verify implements ByteList {
-  bool verify({required SignatureBase signature, required List<int> message});
+  bool verify({required SignatureBase signature, required Uint8List message});
   bool verifySignedMessage({required EncryptionMessage signedMessage});
 }
 
