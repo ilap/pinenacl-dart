@@ -21,7 +21,7 @@ abstract class AsymmetricPrivateKey extends AsymmetricKey {
 
 /// `ByteList` is the base of the PineNaCl cryptographic library,
 /// which is based on the unmodifiable Uin8List class
-class ByteList with ListMixin<int>, Encodable implements Uint8List {
+class ByteList with ListMixin<int>, Encodable { //implements Uint8List {
   ByteList(Iterable<int> bytes, [int? bytesLength])
       : _u8l = _constructList(
             bytes, bytesLength ?? bytes.length, bytesLength ?? bytes.length);
@@ -109,6 +109,10 @@ mixin Suffix on ByteList {
   late final int prefixLength;
   ByteList get prefix => ByteList(take(prefixLength), prefixLength);
   ByteList get suffix => ByteList(skip(prefixLength), length - prefixLength);
+}
+
+extension ByteListExtension on ByteList {
+  Uint8List get asTypedList => _u8l;
 }
 
 /// Add a global extension for converting List<int> to Uint8List.

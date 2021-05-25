@@ -20,12 +20,12 @@ void main() {
 */
 
   //final out224 = Uint8List(28);
-  final out256 = Uint8List(32);
+  final out256 = ByteList(Uint8List(32));
   //final out384 = Uint8List(48);
-  final out512 = Uint8List(64);
+  final out512 = ByteList(Uint8List(64));
 
-  TweetNaClExt.crypto_auth_hmacsha512(out512, data, key);
-  TweetNaClExt.crypto_auth_hmacsha256(out256, data, key);
+  TweetNaClExt.crypto_auth_hmacsha512(out512.asTypedList, data, key);
+  TweetNaClExt.crypto_auth_hmacsha256(out256.asTypedList, data, key);
 
   print(hex.encode(out512));
   print(hex.encode(out256));

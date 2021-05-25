@@ -45,7 +45,7 @@ class VerifyKey extends AsymmetricPublicKey implements Verify {
     var m = Uint8List(message.length);
 
     final result = TweetNaCl.crypto_sign_open(
-        m, -1, Uint8List.fromList(message), 0, message.length, this);
+        m, -1, Uint8List.fromList(message), 0, message.length, this.asTypedList);
     if (result != 0) {
       throw Exception(
           'The message is forged or malformed or the signature is invalid');
@@ -129,7 +129,7 @@ class SigningKey extends AsymmetricPrivateKey implements Sign {
     // signed message
     var sm = Uint8List(message.length + TweetNaCl.signatureLength);
     final result = TweetNaCl.crypto_sign(
-        sm, -1, Uint8List.fromList(message), 0, message.length, this);
+        sm, -1, Uint8List.fromList(message), 0, message.length, this.asTypedList);
     if (result != 0) {
       throw Exception('Signing the massage is failed');
     }

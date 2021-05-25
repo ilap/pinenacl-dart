@@ -9,7 +9,7 @@ class Base32Encoder implements Encoder {
   static const Base32Encoder instance = Base32Encoder._singleton();
 
   @override
-  String encode(Uint8List data) {
+  String encode(List<int> data) {
     final result =
         _convertBits(data, 8, 5, true).fold<String>('', (prev, item) {
       prev += _alphabet[item];

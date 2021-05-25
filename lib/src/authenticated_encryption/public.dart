@@ -189,10 +189,10 @@ class SealedBox extends ByteList {
     TweetNaCl.crypto_box_keypair(epk, esk);
 
     final nonce = Uint8List(_nonceLength);
-    _generateNonce(nonce, epk, pk);
+    _generateNonce(nonce, epk, pk.asTypedList);
 
     final k = Uint8List(_secretLength);
-    TweetNaCl.crypto_box_beforenm(k, pk, esk);
+    TweetNaCl.crypto_box_beforenm(k, pk.asTypedList, esk);
 
     var mac = ciphertext.sublist(_pubLength, _pubLength + _macBytes);
 
@@ -249,9 +249,9 @@ class SealedBox extends ByteList {
     final epk = ciphertext.sublist(0, _pubLength);
 
     final k = Uint8List(_secretLength);
-    TweetNaCl.crypto_box_beforenm(k, epk, _privateKey!);
+    TweetNaCl.crypto_box_beforenm(k, epk, _privateKey!.asTypedList);
     final nonce = Uint8List(_nonceLength);
-    _generateNonce(nonce, epk, this);
+    _generateNonce(nonce, epk, this.asTypedList);
 
     var x = Uint8List(_secretLength);
     TweetNaCl.crypto_stream(x, 0, _zerobytesLength, nonce, k);

@@ -10,7 +10,7 @@ class Bech32Coder implements Encoder {
   static const maxLength = maxHrpLength + 160 + checksumLength;
 
   @override
-  String encode(Uint8List data) {
+  String encode(List<int> data) {
     var be = Base32Encoder._convertBits(data, 8, 5, true);
     return Bech32Codec().encode(Bech32(hrp, be), maxLength);
   }

@@ -1,7 +1,7 @@
 part of pinenacl.api;
 
 abstract class Encoder {
-  String encode(Uint8List data);
+  String encode(ByteList data);
   ByteList decode(String data);
 }
 
