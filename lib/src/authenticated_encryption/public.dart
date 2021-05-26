@@ -111,7 +111,7 @@ class SealedBox extends ByteList {
   SealedBox._fromKeyPair(
       AsymmetricPrivateKey? privateKey, AsymmetricPublicKey publicKey)
       : _privateKey = privateKey,
-        super.fromList(publicKey);
+        super.fromList(publicKey.asTypedList);
 
   factory SealedBox(AsymmetricKey key) {
     if (key is AsymmetricPrivateKey) {
@@ -158,8 +158,8 @@ class SealedBox extends ByteList {
   /// The private part of the ephemeral key-pair will be scrubbed before
   /// returning the ciphertext, therefore, the sender will not be able to
   /// decrypt the generated ciphertext.
-  Uint8List encrypt(List<int> plaintext) {
-    return _cryptoBoxSeal(Uint8List.fromList(plaintext), this);
+  Uint8List encrypt(Uint8List plaintext) {
+    return _cryptoBoxSeal(plaintext, this);
   }
 
   static void _generateNonce(Uint8List out, Uint8List in1, Uint8List in2) {

@@ -1,32 +1,32 @@
 part of pinenacl.api;
 
 abstract class AsymmetricKey extends ByteList with Encodable, Suffix {
-  AsymmetricKey(List<int> data, [int? keyLength]) : super(data, keyLength);
-  AsymmetricKey.fromList(List<int> data) : super.fromList(data);
+  AsymmetricKey(Uint8List data, [int? keyLength]) : super(data, keyLength);
+  AsymmetricKey.fromList(Uint8List data) : super.fromList(data);
   //TODO: Check its requirements
   ByteList get keyBytes => prefix;
   AsymmetricPublicKey get publicKey;
 }
 
 abstract class AsymmetricPublicKey extends AsymmetricKey {
-  AsymmetricPublicKey(List<int> data, [int? bytesLength])
+  AsymmetricPublicKey(Uint8List data, [int? bytesLength])
       : super(data, bytesLength);
-  AsymmetricPublicKey.fromList(List<int> data) : super.fromList(data);
+  AsymmetricPublicKey.fromList(Uint8List data) : super.fromList(data);
 }
 
 abstract class AsymmetricPrivateKey extends AsymmetricKey {
-  AsymmetricPrivateKey(List<int> data, [int? keyLength])
+  AsymmetricPrivateKey(Uint8List data, [int? keyLength])
       : super(data, keyLength);
 }
 
 /// `ByteList` is the base of the PineNaCl cryptographic library,
 /// which is based on the unmodifiable Uin8List class
-class ByteList with ListMixin<int>, Encodable { //implements Uint8List {
+class ByteList with ListMixin<int>, Encodable {
   ByteList(Iterable<int> bytes, [int? bytesLength])
       : _u8l = _constructList(
             bytes, bytesLength ?? bytes.length, bytesLength ?? bytes.length);
 
-  ByteList.fromList(List<int> list,
+  ByteList.fromList(Uint8List list,
       [int minLength = _minLength, int maxLength = _maxLength])
       : _u8l = _constructList(list, minLength, maxLength);
 

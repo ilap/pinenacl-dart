@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'dart:typed_data';
+import 'package:pinenacl/api.dart';
 
 /// Add to js
 /// var self = global;

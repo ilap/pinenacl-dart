@@ -208,7 +208,7 @@ void main() {
       // expect(() => PrivateKey(priv.publicKey), throwsA(predicate((e) => e is Error)))
       // expect(() => PrivateKey(), throwsA(predicate((e) => e is ArgumentError && e.message == 'Error')));
       // expect(() => PrivateKey(), throwsA(allOf(isArgumentError, predicate((e) => e.message == 'Error'))));
-      expect(() => PrivateKey(priv), returnsNormally);
+      expect(() => PrivateKey(priv.asTypedList), returnsNormally);
       expect(() => PrivateKey.fromSeed(_31), throwsException);
       expect(() => PublicKey(_32), returnsNormally);
       expect(() => PublicKey(_31), throwsException);

@@ -47,9 +47,9 @@ abstract class BoxBase extends ByteList {
 class EncryptedMessage extends ByteList with Suffix {
   EncryptedMessage({required Uint8List nonce, required Uint8List cipherText})
       : super.fromList(
-            nonce + cipherText, nonceLength, nonce.length + cipherText.length);
+            (nonce + cipherText).toUint8List(), nonceLength, nonce.length + cipherText.length);
 
-  EncryptedMessage.fromList(List<int> list) : super.fromList(list, nonceLength);
+  EncryptedMessage.fromList(Uint8List list) : super.fromList(list, nonceLength);
 
   static const nonceLength = 24;
 
@@ -61,7 +61,7 @@ class EncryptedMessage extends ByteList with Suffix {
 }
 
 class PublicKey extends AsymmetricPublicKey {
-  PublicKey(List<int> bytes) : super(bytes, keyLength);
+  PublicKey(Uint8List bytes) : super(bytes, keyLength);
 
   PublicKey.decode(String keyString, [Encoder coder = decoder])
       : this(coder.decode(keyString));
@@ -84,9 +84,9 @@ class PublicKey extends AsymmetricPublicKey {
 /// ECDH
 ///
 class PrivateKey extends AsymmetricPrivateKey {
-  PrivateKey(List<int> secret) : super(secret, keyLength);
+  PrivateKey(Uint8List secret) : super(secret, keyLength);
 
-  PrivateKey.fromSeed(List<int> seed) : this(_seedToHash(seed));
+  PrivateKey.fromSeed(Uint8List seed) : this(_seedToHash(seed));
 
   PrivateKey.generate() : this(TweetNaCl.randombytes(seedSize));
 
@@ -103,9 +103,9 @@ class PrivateKey extends AsymmetricPrivateKey {
   PublicKey? _publicKey;
 
   @override
-  PublicKey get publicKey => _publicKey ??= PublicKey(_secretToPublic(this));
+  PublicKey get publicKey => _publicKey ??= PublicKey(_secretToPublic(this.asTypedList));
 
-  static Uint8List _secretToPublic(List<int> secret) {
+  static Uint8List _secretToPublic(Uint8List secret) {
     if (secret.length != keyLength) {
       throw Exception(
           'PrivateKey\'s seed must be a $seedSize bytes long binary sequence');
@@ -115,7 +115,7 @@ class PrivateKey extends AsymmetricPrivateKey {
     return TweetNaCl.crypto_scalarmult_base(public, Uint8List.fromList(secret));
   }
 
-  static Uint8List _seedToHash(List<int> seed) {
+  static Uint8List _seedToHash(Uint8List seed) {
     if (seed.length != seedSize) {
       throw Exception(
           'PrivateKey\'s seed must be a $seedSize bytes long binary sequence');
@@ -128,7 +128,7 @@ class PrivateKey extends AsymmetricPrivateKey {
 }
 
 class SealedMessage extends ByteList with Suffix {
-  SealedMessage({required List<int> public, required List<int> cipherText})
+  SealedMessage({required Uint8List public, required Uint8List cipherText})
       : super(public + cipherText);
 
   @override

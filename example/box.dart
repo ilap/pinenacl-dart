@@ -1,5 +1,7 @@
 import 'dart:typed_data';
+
 import 'package:pinenacl/x25519.dart' show Box, PrivateKey, EncryptedMessage;
+import 'package:pinenacl/api.dart';
 
 void main() {
   print('\n### Public Key Encryption - Box Example ###\n');
@@ -37,6 +39,6 @@ void main() {
   // Decrypt our message, an exception will be raised if the encryption was
   // tampered with or there was otherwise an error.
   final decrypted =
-      aliceBox.decrypt(EncryptedMessage.fromList(encryptedAsList));
+      aliceBox.decrypt(EncryptedMessage.fromList(encryptedAsList.asTypedList));
   print(String.fromCharCodes(decrypted));
 }

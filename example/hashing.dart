@@ -57,10 +57,13 @@ void main() {
       'Expected: 3935959adc03ef044edba6e0c69dc7322e34668c2ca74470e4d39f20362b977a');
 
   final macOut = Uint8List(64);
-  final k = List<int>.generate(128, (i) => i);
+  final k = List<int>.generate(128, (i) => i).toUint8List();
   final text =
       Uint8List.fromList('Sample message for keylen=blocklen'.codeUnits);
 
-  TweetNaClExt.crypto_auth_hmacsha256(macOut, text, Uint8List.fromList(k));
-  print('MAC: ${hex.encode(macOut)}');
+  TweetNaClExt.crypto_auth_hmacsha256(macOut, text, k);
+  print('MAC 256: ${hex.encode(macOut)}');
+
+  TweetNaClExt.crypto_auth_hmacsha512(macOut, text, k);
+  print('MAC 512: ${hex.encode(macOut)}');
 }

@@ -1,4 +1,5 @@
 import 'package:pinenacl/x25519.dart' show SealedBox, PrivateKey;
+import 'package:pinenacl/api.dart';
 
 void main() {
   print('\n### Public Key Encryption - SealedBox Example ###\n');
@@ -15,7 +16,7 @@ void main() {
   final message = 'The world is changing around us and we can either get '
       'with the change or we can try to resist it';
 
-  final encrypted = sealedBox.encrypt(message.codeUnits);
+  final encrypted = sealedBox.encrypt(message.codeUnits.toUint8List());
   try {
     sealedBox.decrypt(encrypted);
   } on Exception catch (e) {

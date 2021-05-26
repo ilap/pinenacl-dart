@@ -6,7 +6,7 @@ void main() {
   group('Base Classes Test', () {
     group('ByteList', () {
       test('Immutability', () {
-        final _l32 = List<int>.generate(32, (i) => 0xb);
+        final _l32 = List<int>.generate(32, (i) => 0xb).toUint8List();
         final byteList = ByteList(_l32, 32);
         final sk = PrivateKey(_l32);
 
@@ -26,7 +26,7 @@ void main() {
       });
 
       test('Growing', () {
-        final _l32 = List<int>.generate(32, (i) => 0xb);
+        final _l32 = List<int>.generate(32, (i) => 0xb).toUint8List();
         final byteList = ByteList(_l32, 32);
         final sk = PrivateKey(_l32);
 
