@@ -80,10 +80,12 @@ void main() {
       assert(x25519PubHex == x25519_pk);
 
       final x25519Pub1 = Uint8List(32);
-      TweetNaClExt.crypto_sign_ed25519_pk_to_x25519_pk(x25519Pub1, ed25519Pub.asTypedList);
+      TweetNaClExt.crypto_sign_ed25519_pk_to_x25519_pk(
+          x25519Pub1, ed25519Pub.asTypedList);
 
       final x25519Prv = Uint8List(32);
-      TweetNaClExt.crypto_sign_ed25519_sk_to_x25519_sk(x25519Prv, ed25519Priv.asTypedList);
+      TweetNaClExt.crypto_sign_ed25519_sk_to_x25519_sk(
+          x25519Prv, ed25519Priv.asTypedList);
 
       final ed25519Prv2 = PrivateKey(x25519Prv);
       final ed25519Pub2 = PublicKey(x25519Pub);
@@ -157,8 +159,8 @@ void main() {
 
       final box = Box(myPrivateKey: privAlice, theirPublicKey: pubBob);
 
-      final decrypted =
-          box.decrypt(ByteList(hex.decode(ciphertext)), nonce: hex.decode(nonce));
+      final decrypted = box.decrypt(ByteList(hex.decode(ciphertext)),
+          nonce: hex.decode(nonce));
 
       assert(hex.encode(ByteList.fromList(decrypted)) == plaintext);
     });

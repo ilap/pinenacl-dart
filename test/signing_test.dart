@@ -111,7 +111,8 @@ void main() {
               returnsNormally);
           expect(
               () => verifyKey.verify(
-                  signature: signed.signature, message: signed.message.asTypedList),
+                  signature: signed.signature,
+                  message: signed.message.asTypedList),
               returnsNormally);
 
           assert(signed == expected);

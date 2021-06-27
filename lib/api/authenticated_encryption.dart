@@ -26,7 +26,8 @@ abstract class BoxBase extends ByteList {
     final c =
         Uint8List(TweetNaCl.boxzerobytesLength).toList() + ciphertext.toList();
     final m = Uint8List(c.length);
-    final plaintext = doDecrypt(m, Uint8List.fromList(c), c.length, nonce, key.asTypedList);
+    final plaintext =
+        doDecrypt(m, Uint8List.fromList(c), c.length, nonce, key.asTypedList);
     return Uint8List.fromList(plaintext);
   }
 
@@ -36,18 +37,17 @@ abstract class BoxBase extends ByteList {
     final m = Uint8List(TweetNaCl.zerobytesLength).toList() + plainText;
     final c = Uint8List(m.length);
 
-    final cipherText = doEncrypt(
-        c, Uint8List.fromList(m), m.length, Uint8List.fromList(nonce1), key.asTypedList);
+    final cipherText = doEncrypt(c, Uint8List.fromList(m), m.length,
+        Uint8List.fromList(nonce1), key.asTypedList);
 
-    return EncryptedMessage(
-        nonce: nonce1, cipherText: cipherText);
+    return EncryptedMessage(nonce: nonce1, cipherText: cipherText);
   }
 }
 
 class EncryptedMessage extends ByteList with Suffix {
   EncryptedMessage({required Uint8List nonce, required Uint8List cipherText})
-      : super.fromList(
-            (nonce + cipherText).toUint8List(), nonceLength, nonce.length + cipherText.length);
+      : super.fromList((nonce + cipherText).toUint8List(), nonceLength,
+            nonce.length + cipherText.length);
 
   EncryptedMessage.fromList(Uint8List list) : super.fromList(list, nonceLength);
 
@@ -103,7 +103,8 @@ class PrivateKey extends AsymmetricPrivateKey {
   PublicKey? _publicKey;
 
   @override
-  PublicKey get publicKey => _publicKey ??= PublicKey(_secretToPublic(this.asTypedList));
+  PublicKey get publicKey =>
+      _publicKey ??= PublicKey(_secretToPublic(this.asTypedList));
 
   static Uint8List _secretToPublic(Uint8List secret) {
     if (secret.length != keyLength) {

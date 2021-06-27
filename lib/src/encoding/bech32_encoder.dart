@@ -21,7 +21,8 @@ class Bech32Coder implements Encoder {
     if (be32.hrp != hrp) {
       throw Exception('Invalid `hrp`. Expected $hrp got ${be32.hrp}');
     }
-    return Uint8List.fromList(Base32Encoder._convertBits(be32.data, 5, 8, false));
+    return Uint8List.fromList(
+        Base32Encoder._convertBits(be32.data, 5, 8, false));
   }
 }
 

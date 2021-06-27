@@ -28,7 +28,8 @@ class VerifyKey extends AsymmetricPublicKey implements Verify {
   @override
   bool verifySignedMessage({required EncryptionMessage signedMessage}) =>
       verify(
-          signature: signedMessage.signature, message: signedMessage.message.asTypedList);
+          signature: signedMessage.signature,
+          message: signedMessage.message.asTypedList);
   @override
   bool verify({required SignatureBase signature, required Uint8List message}) {
     if (signature.length != TweetNaCl.signatureLength) {
@@ -44,8 +45,8 @@ class VerifyKey extends AsymmetricPublicKey implements Verify {
 
     var m = Uint8List(newmessage.length);
 
-    final result = TweetNaCl.crypto_sign_open(
-        m, -1, Uint8List.fromList(newmessage), 0, newmessage.length, this.asTypedList);
+    final result = TweetNaCl.crypto_sign_open(m, -1,
+        Uint8List.fromList(newmessage), 0, newmessage.length, this.asTypedList);
     if (result != 0) {
       throw Exception(
           'The message is forged or malformed or the signature is invalid');
@@ -116,8 +117,8 @@ class SigningKey extends AsymmetricPrivateKey implements Sign {
     //  seed = seed.toList();
     //}
 
-    final priv = Uint8List.fromList(
-        seed + Uint8List(TweetNaCl.publicKeyLength));
+    final priv =
+        Uint8List.fromList(seed + Uint8List(TweetNaCl.publicKeyLength));
     final pub = Uint8List(TweetNaCl.publicKeyLength);
     TweetNaCl.crypto_sign_keypair(pub, priv, Uint8List.fromList(seed));
 
@@ -128,8 +129,8 @@ class SigningKey extends AsymmetricPrivateKey implements Sign {
   SignedMessage sign(Uint8List message) {
     // signed message
     var sm = Uint8List(message.length + TweetNaCl.signatureLength);
-    final result = TweetNaCl.crypto_sign(
-        sm, -1, Uint8List.fromList(message), 0, message.length, this.asTypedList);
+    final result = TweetNaCl.crypto_sign(sm, -1, Uint8List.fromList(message), 0,
+        message.length, this.asTypedList);
     if (result != 0) {
       throw Exception('Signing the massage is failed');
     }

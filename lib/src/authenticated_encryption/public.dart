@@ -251,7 +251,7 @@ class SealedBox extends ByteList {
     final k = Uint8List(_secretLength);
     TweetNaCl.crypto_box_beforenm(k, epk, _privateKey!.asTypedList);
     final nonce = Uint8List(_nonceLength);
-    _generateNonce(nonce, epk, this.asTypedList);
+    _generateNonce(nonce, epk, asTypedList);
 
     var x = Uint8List(_secretLength);
     TweetNaCl.crypto_stream(x, 0, _zerobytesLength, nonce, k);
