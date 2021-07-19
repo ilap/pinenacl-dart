@@ -513,7 +513,7 @@ class TweetNaCl {
       }
       u = 1;
       for (i = 8; i < 16; i++) {
-        u = u + z[i] & 0xff;
+        u = u + z[i];// & 0xff;
         z[i] = u & 0xff;
         u = _shr32(u, 8);
       }

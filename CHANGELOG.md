@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.3.2
+Fixed #15 that caused the ciphertext differ from messages bigger than 16KB
+
 ## v0.3.0
 
 Breaking Changes
