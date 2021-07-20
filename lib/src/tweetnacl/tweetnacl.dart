@@ -509,12 +509,12 @@ class TweetNaCl {
     while (b >= 64) {
       crypto_core_salsa20(x, z, k, _sigma);
       for (i = 0; i < 64; i++) {
-        c[cpos + i] = (m[mpos + i] ^ x[i]) & 0xff;
+        c[cpos + i] = m[mpos + i] ^ x[i];
       }
       u = 1;
       for (i = 8; i < 16; i++) {
-        u = u + z[i];// & 0xff;
-        z[i] = u & 0xff;
+        u = u + z[i];
+        z[i] = u;
         u = _shr32(u, 8);
       }
       b -= 64;
@@ -524,7 +524,7 @@ class TweetNaCl {
     if (b > 0) {
       crypto_core_salsa20(x, z, k, _sigma);
       for (i = 0; i < b; i++) {
-        c[cpos + i] = (m[mpos + i] ^ x[i]) & 0xff;
+        c[cpos + i] = m[mpos + i] ^ x[i];
       }
     }
 
@@ -554,8 +554,8 @@ class TweetNaCl {
       u = 1;
 
       for (i = 8; i < 16; i++) {
-        u = u + (z[i] & 0xff);
-        z[i] = u & 0xff;
+        u = u + z[i];
+        z[i] = u;
         u = _shr32(u, 8);
       }
 
@@ -683,7 +683,7 @@ class TweetNaCl {
     int v, c = 1;
 
     for (i = 0; i < 16; i++) {
-      v = o[i] + c + 0xFFFF;
+      v = o[i] + c + 0xffff;
       c = v ~/ 0x10000;
       o[i] = v - c * 0x10000;
     }
@@ -1181,103 +1181,103 @@ class TweetNaCl {
     t14 += 38 * t30;
 
     var c = 1;
-    v = t0 + c + 0xFFFF;
+    v = t0 + c + 0xffff;
     c = v ~/ 0x10000;
     t0 = v - c * 0x10000;
-    v = t1 + c + 0xFFFF;
+    v = t1 + c + 0xffff;
     c = v ~/ 0x10000;
     t1 = v - c * 0x10000;
-    v = t2 + c + 0xFFFF;
+    v = t2 + c + 0xffff;
     c = v ~/ 0x10000;
     t2 = v - c * 0x10000;
-    v = t3 + c + 0xFFFF;
+    v = t3 + c + 0xffff;
     c = v ~/ 0x10000;
     t3 = v - c * 0x10000;
-    v = t4 + c + 0xFFFF;
+    v = t4 + c + 0xffff;
     c = v ~/ 0x10000;
     t4 = v - c * 0x10000;
-    v = t5 + c + 0xFFFF;
+    v = t5 + c + 0xffff;
     c = v ~/ 0x10000;
     t5 = v - c * 0x10000;
-    v = t6 + c + 0xFFFF;
+    v = t6 + c + 0xffff;
     c = v ~/ 0x10000;
     t6 = v - c * 0x10000;
-    v = t7 + c + 0xFFFF;
+    v = t7 + c + 0xffff;
     c = v ~/ 0x10000;
     t7 = v - c * 0x10000;
-    v = t8 + c + 0xFFFF;
+    v = t8 + c + 0xffff;
     c = v ~/ 0x10000;
     t8 = v - c * 0x10000;
-    v = t9 + c + 0xFFFF;
+    v = t9 + c + 0xffff;
     c = v ~/ 0x10000;
     t9 = v - c * 0x10000;
-    v = t10 + c + 0xFFFF;
+    v = t10 + c + 0xffff;
     c = v ~/ 0x10000;
     t10 = v - c * 0x10000;
-    v = t11 + c + 0xFFFF;
+    v = t11 + c + 0xffff;
     c = v ~/ 0x10000;
     t11 = v - c * 0x10000;
-    v = t12 + c + 0xFFFF;
+    v = t12 + c + 0xffff;
     c = v ~/ 0x10000;
     t12 = v - c * 0x10000;
-    v = t13 + c + 0xFFFF;
+    v = t13 + c + 0xffff;
     c = v ~/ 0x10000;
     t13 = v - c * 0x10000;
-    v = t14 + c + 0xFFFF;
+    v = t14 + c + 0xffff;
     c = v ~/ 0x10000;
     t14 = v - c * 0x10000;
-    v = t15 + c + 0xFFFF;
+    v = t15 + c + 0xffff;
     c = v ~/ 0x10000;
     t15 = v - c * 0x10000;
     t0 += 38 * (c - 1);
 
     c = 1;
-    v = t0 + c + 0xFFFF;
+    v = t0 + c + 0xffff;
     c = v ~/ 0x10000;
     t0 = v - c * 0x10000;
-    v = t1 + c + 0xFFFF;
+    v = t1 + c + 0xffff;
     c = v ~/ 0x10000;
     t1 = v - c * 0x10000;
-    v = t2 + c + 0xFFFF;
+    v = t2 + c + 0xffff;
     c = v ~/ 0x10000;
     t2 = v - c * 0x10000;
-    v = t3 + c + 0xFFFF;
+    v = t3 + c + 0xffff;
     c = v ~/ 0x10000;
     t3 = v - c * 0x10000;
-    v = t4 + c + 0xFFFF;
+    v = t4 + c + 0xffff;
     c = v ~/ 0x10000;
     t4 = v - c * 0x10000;
-    v = t5 + c + 0xFFFF;
+    v = t5 + c + 0xffff;
     c = v ~/ 0x10000;
     t5 = v - c * 0x10000;
-    v = t6 + c + 0xFFFF;
+    v = t6 + c + 0xffff;
     c = v ~/ 0x10000;
     t6 = v - c * 0x10000;
-    v = t7 + c + 0xFFFF;
+    v = t7 + c + 0xffff;
     c = v ~/ 0x10000;
     t7 = v - c * 0x10000;
-    v = t8 + c + 0xFFFF;
+    v = t8 + c + 0xffff;
     c = v ~/ 0x10000;
     t8 = v - c * 0x10000;
-    v = t9 + c + 0xFFFF;
+    v = t9 + c + 0xffff;
     c = v ~/ 0x10000;
     t9 = v - c * 0x10000;
-    v = t10 + c + 0xFFFF;
+    v = t10 + c + 0xffff;
     c = v ~/ 0x10000;
     t10 = v - c * 0x10000;
-    v = t11 + c + 0xFFFF;
+    v = t11 + c + 0xffff;
     c = v ~/ 0x10000;
     t11 = v - c * 0x10000;
-    v = t12 + c + 0xFFFF;
+    v = t12 + c + 0xffff;
     c = v ~/ 0x10000;
     t12 = v - c * 0x10000;
-    v = t13 + c + 0xFFFF;
+    v = t13 + c + 0xffff;
     c = v ~/ 0x10000;
     t13 = v - c * 0x10000;
-    v = t14 + c + 0xFFFF;
+    v = t14 + c + 0xffff;
     c = v ~/ 0x10000;
     t14 = v - c * 0x10000;
-    v = t15 + c + 0xFFFF;
+    v = t15 + c + 0xffff;
     c = v ~/ 0x10000;
     t15 = v - c * 0x10000;
     t0 += 38 * (c - 1);
@@ -1359,7 +1359,7 @@ class TweetNaCl {
       z[i] = n[i];
     }
 
-    z[31] = ((n[31] & 127) | 64) & 0xff;
+    z[31] = (n[31] & 127) | 64;
     z[0] &= 248;
 
     _unpack25519(x, Uint8List.fromList(p));
@@ -1924,7 +1924,7 @@ class TweetNaCl {
     int i;
 
     for (i = 0; i < 64; i++) {
-      x[i] = r[i] & 0xff;
+      x[i] = r[i];
     }
 
     for (i = 0; i < 64; i++) {
@@ -2008,12 +2008,12 @@ class TweetNaCl {
     }
 
     for (i = 0; i < 32; i++) {
-      x[i] = r[i] & 0xff;
+      x[i] = r[i];
     }
 
     for (i = 0; i < 32; i++) {
       for (j = 0; j < 32; j++) {
-        x[i + j] += (h[i] & 0xff) * (d[j] & 0xff);
+        x[i + j] += h[i] * d[j];
       }
     }
 
@@ -2058,7 +2058,7 @@ class TweetNaCl {
     _M(chk, chk, den);
     if (_neq25519(chk, inum) != 0) return -1;
 
-    if (_par25519(r[0]) == _shr32((p[31] & 0xff), 7)) {
+    if (_par25519(r[0]) == _shr32(p[31], 7)) {
       _Z(r[0], _gf0, r[0]);
     }
 
@@ -2133,7 +2133,7 @@ class TweetNaCl {
         rnd = _krandom.nextInt(0x100000000);
       }
 
-      x[i] = (rnd >> (iter << 3)) & 0xFF;
+      x[i] = rnd >> (iter << 3);
     }
 
     return x;
