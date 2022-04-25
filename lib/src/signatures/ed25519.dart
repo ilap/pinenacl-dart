@@ -86,7 +86,7 @@ class SigningKey extends AsymmetricPrivateKey implements Sign {
       : this.fromSeed(TweetNaCl.randombytes(TweetNaCl.seedSize));
 
   SigningKey.decode(String keyString, [Encoder coder = decoder])
-      : this(seed: coder.decode(keyString));
+  : this.fromValidBytes(coder.decode(keyString));
 
   static const decoder = Bech32Coder(hrp: 'ed25519_sk');
 

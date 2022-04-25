@@ -50,7 +50,7 @@ void main() {
         final expected = SignedMessage.fromList(
             signedMessage: hex.decode(_vectors['expected']!));
 
-        final signingKey = SigningKey.decode(seed, hex);
+        final signingKey = SigningKey(seed: hex.decode(seed));
         final signed = signingKey.sign(hex.decode(message));
 
         final publicKey = VerifyKey(hex.decode(public!));

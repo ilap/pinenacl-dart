@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.3.4
+Fixing SigningKey decode issue (#17).
+
 ## v0.3.3
 Remove unnecessry 0xff masks.
 
