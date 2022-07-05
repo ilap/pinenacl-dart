@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:pinenacl/encoding.dart';
 import 'package:pinenacl/api.dart';
 import 'package:test/test.dart';

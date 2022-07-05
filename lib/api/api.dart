@@ -1,10 +1,8 @@
 part of pinenacl.api;
 
-abstract class AsymmetricKey extends ByteList with Encodable, Suffix {
+abstract class AsymmetricKey extends ByteList with Encodable {
   AsymmetricKey(Uint8List data, [int? keyLength]) : super(data, keyLength);
   AsymmetricKey.fromList(Uint8List data) : super.fromList(data);
-  //TODO: Check its requirements
-  ByteList get keyBytes => prefix;
   AsymmetricPublicKey get publicKey;
 }
 
@@ -72,18 +70,6 @@ class ByteList with ListMixin<int>, Encodable {
   }
 
   @override
-  ByteBuffer get buffer => _u8l.buffer;
-
-  @override
-  int get elementSizeInBytes => _u8l.elementSizeInBytes;
-
-  @override
-  int get lengthInBytes => _u8l.lengthInBytes;
-
-  @override
-  int get offsetInBytes => _u8l.offsetInBytes;
-
-  @override
   bool operator ==(Object other) {
     var isEqual = identical(this, other) ||
         other is ByteList &&
@@ -106,7 +92,7 @@ class ByteList with ListMixin<int>, Encodable {
 }
 
 mixin Suffix on ByteList {
-  late final int prefixLength;
+  int get prefixLength;
   ByteList get prefix => ByteList(take(prefixLength), prefixLength);
   ByteList get suffix => ByteList(skip(prefixLength), length - prefixLength);
 }

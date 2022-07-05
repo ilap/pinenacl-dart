@@ -32,9 +32,6 @@ analyzer:
     missing_required_param: error
     missing_return: error
     must_be_immutable: error
-  enable-experiment:
-    - non-nullable
-
 
 # analyzer:
 #  implicit-casts: false

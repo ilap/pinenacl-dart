@@ -54,7 +54,7 @@ class EncryptedMessage extends ByteList with Suffix {
   static const nonceLength = 24;
 
   @override
-  int prefixLength = nonceLength;
+  int get prefixLength => nonceLength;
 
   ByteList get nonce => prefix;
   ByteList get cipherText => suffix;
@@ -104,7 +104,7 @@ class PrivateKey extends AsymmetricPrivateKey {
 
   @override
   PublicKey get publicKey =>
-      _publicKey ??= PublicKey(_secretToPublic(this.asTypedList));
+      _publicKey ??= PublicKey(_secretToPublic(asTypedList));
 
   static Uint8List _secretToPublic(Uint8List secret) {
     if (secret.length != keyLength) {
@@ -133,7 +133,7 @@ class SealedMessage extends ByteList with Suffix {
       : super(public + cipherText);
 
   @override
-  int prefixLength = publicLength;
+  int get prefixLength => publicLength;
 
   static const publicLength = 32;
   ByteList get public => prefix;

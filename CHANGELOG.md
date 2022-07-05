@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.3.5
+Fixing LateInitializationError: Field 'prefixLength' has not been initialized - take 2 (#18).
+
 ## v0.3.4
 Fixing SigningKey decode issue (#17).
 

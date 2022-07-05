@@ -2,7 +2,6 @@ library pinenacl.encoding;
 
 export 'dart:typed_data';
 
-import 'dart:typed_data';
 import 'dart:convert';
 
 import 'package:pinenacl/api.dart';

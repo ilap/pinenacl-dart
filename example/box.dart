@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:pinenacl/x25519.dart' show Box, PrivateKey, EncryptedMessage;
 import 'package:pinenacl/api.dart';
 

@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:pinenacl/api.dart';
 import 'package:pinenacl/api/signatures.dart';
 import 'package:pinenacl/src/tweetnacl/tweetnacl.dart';
@@ -46,7 +44,7 @@ class VerifyKey extends AsymmetricPublicKey implements Verify {
     var m = Uint8List(newmessage.length);
 
     final result = TweetNaCl.crypto_sign_open(m, -1,
-        Uint8List.fromList(newmessage), 0, newmessage.length, this.asTypedList);
+        Uint8List.fromList(newmessage), 0, newmessage.length, asTypedList);
     if (result != 0) {
       throw Exception(
           'The message is forged or malformed or the signature is invalid');
@@ -65,7 +63,7 @@ class VerifyKey extends AsymmetricPublicKey implements Verify {
 /// Cannot extends `AsymmetricPrivateKey` as it would have to implement
 /// the final `publicKey`.
 ///
-class SigningKey extends AsymmetricPrivateKey implements Sign {
+class SigningKey extends AsymmetricPrivateKey with Suffix implements Sign {
   /// An Ed25519 signingKey is the private key for producing digital signatures
   /// using the Ed25519 algorithm.
   ///  simply the concatenation of the seed and
@@ -86,7 +84,7 @@ class SigningKey extends AsymmetricPrivateKey implements Sign {
       : this.fromSeed(TweetNaCl.randombytes(TweetNaCl.seedSize));
 
   SigningKey.decode(String keyString, [Encoder coder = decoder])
-  : this.fromValidBytes(coder.decode(keyString));
+      : this.fromValidBytes(coder.decode(keyString));
 
   static const decoder = Bech32Coder(hrp: 'ed25519_sk');
 
@@ -96,9 +94,9 @@ class SigningKey extends AsymmetricPrivateKey implements Sign {
   static const seedSize = TweetNaCl.seedSize;
 
   @override
-  final int prefixLength = seedSize;
+  int get prefixLength => seedSize;
 
-  ByteList get seed => keyBytes;
+  ByteList get seed => prefix;
 
   VerifyKey? _verifyKey;
 
@@ -129,8 +127,8 @@ class SigningKey extends AsymmetricPrivateKey implements Sign {
   SignedMessage sign(Uint8List message) {
     // signed message
     var sm = Uint8List(message.length + TweetNaCl.signatureLength);
-    final result = TweetNaCl.crypto_sign(sm, -1, Uint8List.fromList(message), 0,
-        message.length, this.asTypedList);
+    final result = TweetNaCl.crypto_sign(
+        sm, -1, Uint8List.fromList(message), 0, message.length, asTypedList);
     if (result != 0) {
       throw Exception('Signing the massage is failed');
     }
@@ -146,7 +144,7 @@ class SignedMessage extends ByteList with Suffix implements EncryptionMessage {
       : super(signedMessage);
 
   @override
-  final int prefixLength = signatureLength;
+  int get prefixLength => signatureLength;
 
   static const signatureLength = TweetNaCl.signatureLength;
 

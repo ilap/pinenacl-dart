@@ -1,7 +1,6 @@
 library pinenacl.api;
 
 import 'dart:collection';
-import 'dart:typed_data';
 
 import 'package:pinenacl/encoding.dart';
 
