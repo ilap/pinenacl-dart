@@ -1,8 +1,6 @@
 # PineNaCl
 
-[![Pub Version (stable)](https://img.shields.io/pub/v/pinenacl?color=important&label=pub%20stable&logo=dart)](https://pub.dartlang.org/packages/pinenacl) 
-[![Pub Version (including pre-releases)](https://img.shields.io/pub/v/pinenacl?color=blueviolet&label=pub%20prerelease&include_prereleases&logo=dart)](https://pub.dartlang.org/packages/pinenacl)
-[![Dart Test CI](https://github.com/ilap/pinenacl-dart/workflows/Dart%20Test%20CI/badge.svg)](https://github.com/ilap/pinenacl-dart/actions?query=workflow%3A%22Dart+Test+CI%22)
+[![Pub Version (stable)](https://img.shields.io/pub/v/pinenacl?color=important&label=pub%20stable&logo=dart)](https://pub.dartlang.org/packages/pinenacl) [![Pub Version (including pre-releases)](https://img.shields.io/pub/v/pinenacl?color=blueviolet&label=pub%20prerelease&include_prereleases&logo=dart)](https://pub.dartlang.org/packages/pinenacl) [![Dart Test CI](https://github.com/ilap/pinenacl-dart/workflows/Dart%20Test%20CI/badge.svg)](https://github.com/ilap/pinenacl-dart/actions?query=workflow%3A%22Dart+Test+CI%22)
 
 
 PineNaCl is a Dart implementation of the [`TweetNaCl`](https://tweetnacl.cr.yp.to/) the world's first auditable [high-security cryptographic library](https://tweetnacl.cr.yp.to/tweetnacl-20140917.pdf).
@@ -20,7 +18,7 @@ Thes library has the aim of
 1. Add the following into the `pubspec.yaml` of your dart package:
 ``` yaml
 dependencies:
-  pinenacl: any
+  pinenacl: ^0.4.0
 ```
 
 2. You can install now from the command line with pub:
