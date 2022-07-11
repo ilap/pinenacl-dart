@@ -30,8 +30,8 @@ class ByteList with ListMixin<int>, Encodable {
       [int minLength = _minLength, int maxLength = _maxLength])
       : _u8l = _constructList(list, minLength, maxLength);
 
-  ByteList.decode(String data, [Encoder defaultDecoder = decoder])
-      : this(defaultDecoder.decode(data));
+  ByteList.decode(String data, {Encoder defaultDecoder = decoder, int? bytesLength})
+      : this(defaultDecoder.decode(data), bytesLength);
 
   static const _minLength = 0;
 
