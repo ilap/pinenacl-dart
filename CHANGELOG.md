@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.4.1
+Updated CHANGELOG
+Updated README.md
+Switched to lint
+
 ## v0.4.0
 Bumped to v0.4.0 due to the v0.3.5's API breaks
 
