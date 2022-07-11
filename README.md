@@ -18,7 +18,7 @@ Thes library has the aim of
 1. Add the following into the `pubspec.yaml` of your dart package:
 ``` yaml
 dependencies:
-  pinenacl: ^0.4.0
+  pinenacl: ^0.4.1
 ```
 
 2. You can install now from the command line with pub:
