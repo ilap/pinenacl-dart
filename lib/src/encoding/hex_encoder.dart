@@ -50,9 +50,9 @@ class HexCoder implements Encoder {
 
     var result = withHexString ? '0x' : '';
 
-    hexArray.forEach((element) {
+    for (var element in hexArray) {
       result += _alphabet[(element & 0xff) >> 4] + _alphabet[element & 0x0f];
-    });
+    }
 
     return result;
   }

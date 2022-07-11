@@ -1,3 +1,5 @@
+// ignore_for_file: hash_and_equals
+
 part of pinenacl.api;
 
 abstract class AsymmetricKey extends ByteList with Encodable {
@@ -28,9 +30,8 @@ class ByteList with ListMixin<int>, Encodable {
       [int minLength = _minLength, int maxLength = _maxLength])
       : _u8l = _constructList(list, minLength, maxLength);
 
-  factory ByteList.decode(String data, [Encoder defaultDecoder = decoder]) {
-    return ByteList(defaultDecoder.decode(data));
-  }
+  ByteList.decode(String data, [Encoder defaultDecoder = decoder])
+      : this(defaultDecoder.decode(data));
 
   static const _minLength = 0;
 

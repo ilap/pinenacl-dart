@@ -78,12 +78,12 @@ void main() {
         assert(hex.encode(k) == sharedSecret);
       });
       test('Nonce and stream (1st key) test', () {
-        final _1k = Uint8List(TweetNaCl.secretKeyLength);
+        final l1k = Uint8List(TweetNaCl.secretKeyLength);
 
         TweetNaCl.crypto_core_hsalsa20(
-            _1k, zero, hex.decode(sharedSecret), hex.decode(c));
+            l1k, zero, hex.decode(sharedSecret), hex.decode(c));
 
-        assert(hex.encode(_1k) == firstKey);
+        assert(hex.encode(l1k) == firstKey);
       });
       test('Nonce and stream (4194304 long output) test', () {
         final outLen = 4194304;

@@ -30,8 +30,8 @@ void main() {
         final password = vector['password']! as String;
         final salt = vector['salt']! as String;
         final iterations = vector['iterations']! as int;
-        final output_bytes = vector['output_bytes']! as int;
-        final hex_result = vector['hex_result']! as String;
+        final outputBytes = vector['output_bytes']! as int;
+        final hexResult = vector['hex_result']! as String;
 
         final passwordBytes = Uint8List.fromList(password.codeUnits);
         final saltBytes = Uint8List.fromList(salt.codeUnits);
@@ -40,10 +40,10 @@ void main() {
         // FIXME:
         if (iterations < 1) {
           final out = PBKDF2.hmac_sha512(
-              passwordBytes, saltBytes, iterations, output_bytes);
+              passwordBytes, saltBytes, iterations, outputBytes);
           final outHex = hex.encode(out);
 
-          assert(outHex == hex_result);
+          assert(outHex == hexResult);
         }
       });
     });
@@ -60,8 +60,8 @@ void main() {
         final password = vector['password']! as String;
         final salt = vector['salt']! as String;
         final iterations = vector['iterations']! as int;
-        final output_bytes = vector['output_bytes']! as int;
-        final hex_result = vector['hex_result']! as String;
+        final outputBytes = vector['output_bytes']! as int;
+        final hexResult = vector['hex_result']! as String;
 
         final passwordBytes = Uint8List.fromList(password.codeUnits);
         final saltBytes = Uint8List.fromList(salt.codeUnits);
@@ -70,10 +70,10 @@ void main() {
         // FIXME: 100000
         if (iterations < 1) {
           final out = PBKDF2.hmac_sha256(
-              passwordBytes, saltBytes, iterations, output_bytes);
+              passwordBytes, saltBytes, iterations, outputBytes);
           final outHex = hex.encode(out);
 
-          assert(outHex == hex_result);
+          assert(outHex == hexResult);
         }
       });
     });

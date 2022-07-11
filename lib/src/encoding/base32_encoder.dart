@@ -36,7 +36,7 @@ class Base32Encoder implements Encoder {
     var result = <int>[];
     var maxv = (1 << to) - 1;
 
-    data.forEach((v) {
+    for (var v in data) {
       if (v < 0 || (v >> from) != 0) {
         throw Exception('Bit conversion error - Invalid input value');
       }
@@ -46,7 +46,7 @@ class Base32Encoder implements Encoder {
         bits -= to;
         result.add((acc >> bits) & maxv);
       }
-    });
+    }
 
     if (pad) {
       if (bits > 0) {

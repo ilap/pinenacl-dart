@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 part of pinenacl.tweetnacl;
 
 typedef Hasher = void Function(Uint8List out, Uint8List m);

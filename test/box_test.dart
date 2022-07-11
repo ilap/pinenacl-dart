@@ -197,9 +197,9 @@ void main() {
 
     test('Test Wrong AsymmetricKey types', () {
       final priv = PrivateKey.generate();
-      final _31 = Uint8List(31);
-      final _32 = Uint8List(32);
-      final k32 = PublicKey(_32);
+      final v31 = Uint8List(31);
+      final v32 = Uint8List(32);
+      final k32 = PublicKey(v32);
 
       // TODO: Generalize and implement proper Error handling by implementing proper exception classes.
       // expect(() => PrivateKey(priv.publicKey), throwsException);
@@ -209,9 +209,9 @@ void main() {
       // expect(() => PrivateKey(), throwsA(predicate((e) => e is ArgumentError && e.message == 'Error')));
       // expect(() => PrivateKey(), throwsA(allOf(isArgumentError, predicate((e) => e.message == 'Error'))));
       expect(() => PrivateKey(priv.asTypedList), returnsNormally);
-      expect(() => PrivateKey.fromSeed(_31), throwsException);
-      expect(() => PublicKey(_32), returnsNormally);
-      expect(() => PublicKey(_31), throwsException);
+      expect(() => PrivateKey.fromSeed(v31), throwsException);
+      expect(() => PublicKey(v32), returnsNormally);
+      expect(() => PublicKey(v31), throwsException);
 
       // Valid combinations
       expect(() => Box.decode(k32.asTypedList), returnsNormally);

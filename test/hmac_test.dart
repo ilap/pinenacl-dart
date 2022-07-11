@@ -124,13 +124,13 @@ void main() {
   group('Hash-based message authentication code', () {
     group('HMAC-SHA-', () {
       var idx = 0;
-      vectors.forEach((vector) {
+      for (var vector in vectors) {
         final description = 'RFC4231\'s testvectors (${++idx})';
         final k = Uint8List.fromList(hex.decode(vector['key'] as String));
         final kLen = vector['key_length'];
         final data = Uint8List.fromList(hex.decode(vector['data'] as String));
 
-        test('512 ' + description, () {
+        test('512 $description', () {
           final mac = vector['hmac-sha-512'];
 
           assert(k.length == kLen);
@@ -140,7 +140,7 @@ void main() {
           assert(mac == hex.encode(out));
         });
 
-        test('256 ' + description, () {
+        test('256 $description', () {
           final mac = vector['hmac-sha-256'];
 
           assert(k.length == kLen);
@@ -151,7 +151,7 @@ void main() {
 
           assert(mac == hex.encode(out));
         });
-      });
+      }
     });
   });
 }

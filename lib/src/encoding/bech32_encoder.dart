@@ -69,15 +69,15 @@ class Bech32Codec extends Codec<Bech32, String> {
   Bech32Encoder get encoder => Bech32Encoder();
 
   @override
-  String encode(Bech32 data,
+  String encode(Bech32 input,
       [int maxLength = Bech32Validations.maxInputLength]) {
-    return Bech32Encoder().convert(data, maxLength);
+    return Bech32Encoder().convert(input, maxLength);
   }
 
   @override
-  Bech32 decode(String data,
+  Bech32 decode(String encoded,
       [int maxLength = Bech32Validations.maxInputLength]) {
-    return Bech32Decoder().convert(data, maxLength);
+    return Bech32Decoder().convert(encoded, maxLength);
   }
 }
 
@@ -268,7 +268,7 @@ const List<int> generator = [
 
 int _polymod(List<int> values) {
   var chk = 1;
-  values.forEach((v) {
+  for (var v in values) {
     var top = chk >> 25;
     chk = (chk & 0x1ffffff) << 5 ^ v;
     for (var i = 0; i < generator.length; i++) {
@@ -276,7 +276,7 @@ int _polymod(List<int> values) {
         chk ^= generator[i];
       }
     }
-  });
+  }
 
   return chk;
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: overridden_fields
+
 import 'package:pinenacl/api.dart';
 import 'package:pinenacl/src/tweetnacl/tweetnacl.dart';
 

@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:typed_data';
 
 import 'package:pinenacl/tweetnacl.dart';
@@ -33,7 +35,7 @@ class PBKDF2 {
     final block_count = (key_length / hash_length).ceil();
 
     final derived_key = Uint8List(key_length + hash_length);
-    final _U = Uint8List(hash_length);
+    final U = Uint8List(hash_length);
 
     final idx = [0, 0, 0, 0];
 
@@ -46,24 +48,24 @@ class PBKDF2 {
 
       final message = Uint8List.fromList([...salt, ...idx]);
 
-      hasher(_U, message, password);
+      hasher(U, message, password);
 
       final offset = (i - 1) * hash_length;
 
-      PineNaClUtils.listCopy(_U, hash_length, derived_key, offset);
+      PineNaClUtils.listCopy(U, hash_length, derived_key, offset);
 
       for (var j = 1; j < count; j++) {
-        hasher(_U, _U, password);
+        hasher(U, U, password);
 
         for (var k = 0; k < hash_length; k++) {
-          derived_key[k + offset] ^= _U[k];
+          derived_key[k + offset] ^= U[k];
         }
       }
     }
 
     var result = derived_key.sublist(0, key_length);
 
-    PineNaClUtils.listZero(_U);
+    PineNaClUtils.listZero(U);
     PineNaClUtils.listZero(derived_key);
 
     return result;

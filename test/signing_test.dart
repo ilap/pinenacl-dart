@@ -65,7 +65,7 @@ void main() {
 
     group('Sign Cardano\'s cryptoxide ed25519 testvectors', () {
       var idx = 0;
-      _cardanoVectors.forEach((vector) {
+      for (var vector in _cardanoVectors) {
         final description = ' (${++idx})';
         test(description, () {
           final seed = vector['seed']!;
@@ -78,7 +78,7 @@ void main() {
           assert(hex.encode(signed.message) == message);
           assert(hex.encode(signed.signature) == signature);
         });
-      });
+      }
     });
 
     group('Sign and verify Ed25519 (EdDSA RFC8032) testvectors', () {
@@ -122,10 +122,10 @@ void main() {
     group('Wrong types test', () {
       test('SigningKey and VerifyKey', () {
         final sk = SigningKey.generate();
-        final _31 = Uint8List(31);
+        final l31 = Uint8List(31);
 
         expect(() => SigningKey(seed: sk.asTypedList), throwsException);
-        expect(() => SigningKey.fromSeed(_31), throwsException);
+        expect(() => SigningKey.fromSeed(l31), throwsException);
 
         /// Any validlength bytes (except private key) or
         /// publicKey can be a VerifyKey

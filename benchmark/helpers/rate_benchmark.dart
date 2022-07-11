@@ -10,9 +10,6 @@ abstract class RateBenchmark extends BenchmarkBase {
   int _totalData = 0;
   int _iterations = 0;
 
-  @override
-  ScoreEmitter get emitter => super.emitter;
-
   void addSample(int processedData) {
     _totalData += processedData;
   }
