@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.4.2
+Added bytes length for decoding ByteList
+
 ## v0.4.1
 Updated CHANGELOG
 Updated README.md
