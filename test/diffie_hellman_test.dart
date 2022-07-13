@@ -6,7 +6,7 @@ import 'package:test/test.dart';
 import 'package:pinenacl/api.dart';
 import 'package:pinenacl/tweetnacl.dart';
 
-const hex = HexCoder.instance;
+const hex = Base16Encoder.instance;
 
 void _doShared(String sk, String pk, String sharedSecret) {
   final bobpriv = PrivateKey.decode(sk, hex);

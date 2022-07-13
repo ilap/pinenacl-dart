@@ -1,8 +1,8 @@
 part of pinenacl.encoding;
 
-class HexCoder implements Encoder {
-  const HexCoder._singleton();
-  static const HexCoder instance = HexCoder._singleton();
+class Base16Encoder implements Encoder {
+  const Base16Encoder._singleton();
+  static const Base16Encoder instance = Base16Encoder._singleton();
 
   static const _alphabet = '0123456789abcdef';
   static const _hexMap = <String, int>{

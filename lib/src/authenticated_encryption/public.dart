@@ -54,7 +54,7 @@ class Box extends BoxBase {
 
   ByteList get sharedKey => this;
 
-  static const decoder = HexCoder.instance;
+  static const decoder = Base16Encoder.instance;
 
   @override
   Encoder get encoder => decoder;
@@ -113,7 +113,7 @@ class SealedBox extends ByteList {
   SealedBox._fromKeyPair(
       AsymmetricPrivateKey? privateKey, AsymmetricPublicKey publicKey)
       : _privateKey = privateKey,
-        super.fromList(publicKey.asTypedList);
+        super(publicKey);
 
   factory SealedBox(AsymmetricKey key) {
     if (key is AsymmetricPrivateKey) {
@@ -136,7 +136,7 @@ class SealedBox extends ByteList {
   static const _macBytes = TweetNaCl.macBytes;
   static const _sealBytes = _pubLength + _macBytes;
 
-  static const decoder = HexCoder.instance;
+  static const decoder = Base16Encoder.instance;
 
   @override
   Encoder get encoder => decoder;

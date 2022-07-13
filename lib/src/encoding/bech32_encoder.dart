@@ -1,7 +1,7 @@
 part of pinenacl.encoding;
 
-class Bech32Coder implements Encoder {
-  const Bech32Coder({required this.hrp});
+class Bech32Encoder implements Encoder {
+  const Bech32Encoder({required this.hrp});
   final String hrp;
 
   static const maxHrpLength = 83;
@@ -12,15 +12,21 @@ class Bech32Coder implements Encoder {
   @override
   String encode(List<int> data) {
     var be = Base32Encoder._convertBits(data, 8, 5, true);
-    return Bech32Codec().encode(Bech32(hrp, be), maxLength);
+    return _Bech32Codec().encode(_Bech32(hrp, be), maxLength);
   }
 
   @override
   Uint8List decode(String data) {
-    final be32 = Bech32Codec().decode(data, maxLength);
+    final be32 = _Bech32Codec().decode(data, maxLength);
     if (be32.hrp != hrp) {
       throw Exception('Invalid `hrp`. Expected $hrp got ${be32.hrp}');
     }
+    return Uint8List.fromList(
+        Base32Encoder._convertBits(be32.data, 5, 8, false));
+  }
+
+  static Uint8List decodeNoHrpCheck(String data, int maxLenght) {
+    final be32 = _Bech32Codec().decode(data, maxLength);
     return Uint8List.fromList(
         Base32Encoder._convertBits(be32.data, 5, 8, false));
   }
@@ -51,40 +57,40 @@ class Bech32Coder implements Encoder {
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-class Bech32 {
-  Bech32(this.hrp, this.data);
+class _Bech32 {
+  _Bech32(this.hrp, this.data);
 
   final String hrp;
   final List<int> data;
 }
 
-const Bech32Codec bech32 = Bech32Codec();
+//const _Bech32Codec bech32 = _Bech32Codec();
 
-class Bech32Codec extends Codec<Bech32, String> {
-  const Bech32Codec();
-
-  @override
-  Bech32Decoder get decoder => Bech32Decoder();
-  @override
-  Bech32Encoder get encoder => Bech32Encoder();
+class _Bech32Codec extends Codec<_Bech32, String> {
+  const _Bech32Codec();
 
   @override
-  String encode(Bech32 input,
+  _Bech32Decoder get decoder => _Bech32Decoder();
+  @override
+  _Bech32Encoder get encoder => _Bech32Encoder();
+
+  @override
+  String encode(_Bech32 input,
       [int maxLength = Bech32Validations.maxInputLength]) {
-    return Bech32Encoder().convert(input, maxLength);
+    return _Bech32Encoder().convert(input, maxLength);
   }
 
   @override
-  Bech32 decode(String encoded,
+  _Bech32 decode(String encoded,
       [int maxLength = Bech32Validations.maxInputLength]) {
-    return Bech32Decoder().convert(encoded, maxLength);
+    return _Bech32Decoder().convert(encoded, maxLength);
   }
 }
 
 // This class converts a Bech32 class instance to a String.
-class Bech32Encoder extends Converter<Bech32, String> with Bech32Validations {
+class _Bech32Encoder extends Converter<_Bech32, String> with Bech32Validations {
   @override
-  String convert(Bech32 input,
+  String convert(_Bech32 input,
       [int maxLength = Bech32Validations.maxInputLength]) {
     var hrp = input.hrp;
     var data = input.data;
@@ -124,9 +130,9 @@ class Bech32Encoder extends Converter<Bech32, String> with Bech32Validations {
 }
 
 // This class converts a String to a Bech32 class instance.
-class Bech32Decoder extends Converter<String, Bech32> with Bech32Validations {
+class _Bech32Decoder extends Converter<String, _Bech32> with Bech32Validations {
   @override
-  Bech32 convert(String input,
+  _Bech32 convert(String input,
       [int maxLength = Bech32Validations.maxInputLength]) {
     if (input.length > maxLength) {
       throw TooLong(input.length);
@@ -182,7 +188,7 @@ class Bech32Decoder extends Converter<String, Bech32> with Bech32Validations {
       throw InvalidChecksum();
     }
 
-    return Bech32(hrp, dataBytes);
+    return _Bech32(hrp, dataBytes);
   }
 }
 
@@ -224,38 +230,14 @@ class Bech32Validations {
 const String separator = '1';
 
 const List<String> charset = [
-  'q',
-  'p',
-  'z',
-  'r',
-  'y',
-  '9',
-  'x',
-  '8',
-  'g',
-  'f',
-  '2',
-  't',
-  'v',
-  'd',
-  'w',
-  '0',
-  's',
-  '3',
-  'j',
-  'n',
-  '5',
-  '4',
-  'k',
-  'h',
-  'c',
-  'e',
-  '6',
-  'm',
-  'u',
-  'a',
-  '7',
-  'l',
+  'q', 'p', 'z', 'r', // Bech32 charset
+  'y', '9', 'x', '8',
+  'g', 'f', '2', 't',
+  'v', 'd', 'w', '0',
+  's', '3', 'j', 'n',
+  '5', '4', 'k', 'h',
+  'c', 'e', '6', 'm',
+  'u', 'a', '7', 'l',
 ];
 
 const List<int> generator = [

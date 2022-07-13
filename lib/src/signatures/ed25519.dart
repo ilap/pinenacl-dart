@@ -3,19 +3,21 @@ import 'package:pinenacl/api/signatures.dart';
 import 'package:pinenacl/src/tweetnacl/tweetnacl.dart';
 
 class Signature extends ByteList implements SignatureBase {
-  Signature(Uint8List bytes) : super(bytes, signatureLength);
+  Signature(Uint8List bytes)
+      : super.withConstraint(bytes, constraintLength: signatureLength);
   static const signatureLength = TweetNaCl.signatureLength;
 }
 
 class VerifyKey extends AsymmetricPublicKey implements Verify {
-  VerifyKey(Uint8List bytes, [int keyLength = keyLength])
-      : super(bytes, keyLength);
-  VerifyKey.decode(String keyString, {Encoder coder = decoder})
-      : this(coder.decode(keyString), coder.decode(keyString).length);
+  VerifyKey(Uint8List bytes, {int keyLength = keyLength})
+      : super(bytes, keyLength: keyLength);
+  VerifyKey.decode(String keyString,
+      {Encoder coder = decoder, int keyLength = keyLength})
+      : this(coder.decode(keyString), keyLength: keyLength);
 
   static const keyLength = TweetNaCl.publicKeyLength;
 
-  static const decoder = Bech32Coder(hrp: 'ed25519_pk');
+  static const decoder = Bech32Encoder(hrp: 'ed25519_pk');
 
   @override
   VerifyKey get publicKey => this;
@@ -75,7 +77,7 @@ class SigningKey extends AsymmetricPrivateKey with Suffix implements Sign {
 
   SigningKey.fromValidBytes(Uint8List secret,
       {int keyLength = TweetNaCl.signingKeyLength})
-      : super(secret, keyLength);
+      : super(secret, keyLength: keyLength);
 
   SigningKey.fromSeed(Uint8List seed)
       : this.fromValidBytes(_seedToSecret(seed));
@@ -86,7 +88,7 @@ class SigningKey extends AsymmetricPrivateKey with Suffix implements Sign {
   SigningKey.decode(String keyString, [Encoder coder = decoder])
       : this.fromValidBytes(coder.decode(keyString));
 
-  static const decoder = Bech32Coder(hrp: 'ed25519_sk');
+  static const decoder = Bech32Encoder(hrp: 'ed25519_sk');
 
   @override
   Encoder get encoder => decoder;
@@ -139,7 +141,8 @@ class SigningKey extends AsymmetricPrivateKey with Suffix implements Sign {
 
 class SignedMessage extends ByteList with Suffix implements EncryptionMessage {
   SignedMessage({required SignatureBase signature, required Uint8List message})
-      : super(signature + message, signatureLength);
+      : super.withConstraint(signature + message,
+            constraintLength: signatureLength);
   SignedMessage.fromList({required Uint8List signedMessage})
       : super(signedMessage);
 

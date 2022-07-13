@@ -7,7 +7,7 @@ import 'package:pinenacl/tweetnacl.dart' show TweetNaCl;
 /// The [`NaCl`](https://nacl.cr.yp.to/valid.html) official testvectors from the
 /// [Cryptography in NaCl](https://cr.yp.to/highspeed/naclcrypto-20090310.pdf) paper
 void main() {
-  const hex = HexCoder.instance;
+  const hex = Base16Encoder.instance;
   const aliceSk =
       '77076d0a7318a57d3c16c17251b26645df4c2f87ebc0992ab177fba51db92c2a';
   const alicePk =

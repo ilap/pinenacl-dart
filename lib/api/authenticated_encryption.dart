@@ -6,7 +6,7 @@ typedef Crypting = Uint8List Function(
     Uint8List out, Uint8List text, int textLen, Uint8List nonce, Uint8List k);
 
 abstract class BoxBase extends ByteList {
-  BoxBase.fromList(Uint8List list) : super.fromList(list);
+  BoxBase.fromList(Uint8List list) : super(list);
 
   late Crypting doEncrypt;
   late Crypting doDecrypt;
@@ -46,10 +46,11 @@ abstract class BoxBase extends ByteList {
 
 class EncryptedMessage extends ByteList with Suffix {
   EncryptedMessage({required Uint8List nonce, required Uint8List cipherText})
-      : super.fromList((nonce + cipherText).toUint8List(), nonceLength,
-            nonce.length + cipherText.length);
+      : super.withConstraintRange((nonce + cipherText).toUint8List(),
+            min: nonceLength, max: nonce.length + cipherText.length);
 
-  EncryptedMessage.fromList(Uint8List list) : super.fromList(list, nonceLength);
+  EncryptedMessage.fromList(Uint8List bytes)
+      : super.withConstraintRange(bytes, min: nonceLength);
 
   static const nonceLength = 24;
 
@@ -61,12 +62,12 @@ class EncryptedMessage extends ByteList with Suffix {
 }
 
 class PublicKey extends AsymmetricPublicKey {
-  PublicKey(Uint8List bytes) : super(bytes, keyLength);
+  PublicKey(Uint8List bytes) : super(bytes, keyLength: keyLength);
 
   PublicKey.decode(String keyString, [Encoder coder = decoder])
       : this(coder.decode(keyString));
 
-  static const decoder = Bech32Coder(hrp: 'x25519_pk');
+  static const decoder = Bech32Encoder(hrp: 'x25519_pk');
 
   @override
   PublicKey get publicKey => this;
@@ -84,7 +85,7 @@ class PublicKey extends AsymmetricPublicKey {
 /// ECDH
 ///
 class PrivateKey extends AsymmetricPrivateKey {
-  PrivateKey(Uint8List secret) : super(secret, keyLength);
+  PrivateKey(Uint8List secret) : super(secret, keyLength: keyLength);
 
   PrivateKey.fromSeed(Uint8List seed) : this(_seedToHash(seed));
 
@@ -93,7 +94,7 @@ class PrivateKey extends AsymmetricPrivateKey {
   PrivateKey.decode(String keyString, [Encoder coder = decoder])
       : this(coder.decode(keyString));
 
-  static const decoder = Bech32Coder(hrp: 'x25519_sk');
+  static const decoder = Bech32Encoder(hrp: 'x25519_sk');
   static const seedSize = TweetNaCl.seedSize;
   static const keyLength = TweetNaCl.secretKeyLength;
 

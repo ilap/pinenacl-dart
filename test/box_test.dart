@@ -27,7 +27,7 @@ const _vectors = {
 };
 
 void main() {
-  const hex = HexCoder.instance;
+  const hex = Base16Encoder.instance;
   group('Public Key Encryption', () {
     final pub = PublicKey.decode(
         'ec2bee2d5be613ca82e377c96a0bf2220d823ce980cdff6279473edc52862798',
@@ -96,7 +96,7 @@ void main() {
       // The x25519_pk must be the same as with the converted ed25519_pk
       assert(ed25519Pub2 == ed25519Pub3);
       assert(ed25519Pub2 == ed25519Prv3.publicKey);
-      assert(ed25519_sk == ed25519Priv.encode(HexCoder.instance));
+      assert(ed25519_sk == ed25519Priv.encode(Base16Encoder.instance));
     });
 
     test(
@@ -160,7 +160,7 @@ void main() {
       final decrypted = box.decrypt(ByteList(hex.decode(ciphertext)),
           nonce: hex.decode(nonce));
 
-      assert(hex.encode(ByteList.fromList(decrypted)) == plaintext);
+      assert(hex.encode(ByteList(decrypted)) == plaintext);
     });
 
     test('Test Box encryption and decryption combined', () {

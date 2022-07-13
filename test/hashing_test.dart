@@ -7,7 +7,7 @@ import 'package:pinenacl/digests.dart';
 import 'package:test/test.dart';
 
 void main() {
-  const hex = HexCoder.instance;
+  const hex = Base16Encoder.instance;
   group('Hashing', () {
     group('SHA-256', () {
       final dir = Directory.current;

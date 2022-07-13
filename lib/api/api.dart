@@ -3,35 +3,76 @@
 part of pinenacl.api;
 
 abstract class AsymmetricKey extends ByteList with Encodable {
-  AsymmetricKey(Uint8List data, [int? keyLength]) : super(data, keyLength);
-  AsymmetricKey.fromList(Uint8List data) : super.fromList(data);
+  AsymmetricKey(Uint8List bytes, {required int keyLength})
+      : super.withConstraint(bytes, constraintLength: keyLength);
   AsymmetricPublicKey get publicKey;
 }
 
 abstract class AsymmetricPublicKey extends AsymmetricKey {
-  AsymmetricPublicKey(Uint8List data, [int? bytesLength])
-      : super(data, bytesLength);
-  AsymmetricPublicKey.fromList(Uint8List data) : super.fromList(data);
+  AsymmetricPublicKey(Uint8List bytes, {required int keyLength})
+      : super(bytes, keyLength: keyLength);
 }
 
 abstract class AsymmetricPrivateKey extends AsymmetricKey {
-  AsymmetricPrivateKey(Uint8List data, [int? keyLength])
-      : super(data, keyLength);
+  AsymmetricPrivateKey(Uint8List bytes, {required int keyLength})
+      : super(bytes, keyLength: keyLength);
 }
 
+///
 /// `ByteList` is the base of the PineNaCl cryptographic library,
 /// which is based on the unmodifiable Uin8List class
+/// The bytelist can be created either from
+/// - hex string (with or without '0x' prefix) or
+/// - List of int's
+///
+/// ByteList can have a `min` and `max` length specified.
+/// - `minLength` means the length of the constructable ByteList must be equal
+/// of bigger.
+/// - `maxLength` means the ByteList length must be less (till `minLength`) or
+/// equal.
+///
+/// Theses two options can be used for creating a class with fixed-length ByteList or
+/// a class which has some constraints e.g., a class that can only create a ByteList
+/// that is longer or equal than 16 and shorter or equal than 32.
+///
 class ByteList with ListMixin<int>, Encodable {
-  ByteList(Iterable<int> bytes, [int? bytesLength])
-      : _u8l = _constructList(
-            bytes, bytesLength ?? bytes.length, bytesLength ?? bytes.length);
+  /// It creates an data's length ByteList
+  ByteList(Iterable<int> data)
+      : _u8l = _constructList(data, data.length, data.length);
 
-  ByteList.fromList(Uint8List list,
-      [int minLength = _minLength, int maxLength = _maxLength])
-      : _u8l = _constructList(list, minLength, maxLength);
+  /// It creates a ByteList and checks wheter the data's length is equal with
+  /// the specified constraint (min and max length equal).
 
-  ByteList.decode(String data, {Encoder defaultDecoder = decoder, int? bytesLength})
-      : this(defaultDecoder.decode(data), bytesLength);
+  ByteList.withConstraint(Iterable<int> data, {required int constraintLength})
+      : _u8l = _constructList(data, constraintLength, constraintLength);
+
+  /// It creates a ByteList and checks wheter the data's length is equal with
+  /// the specified constraints (allowed range i.e., min and max length)
+  ///
+  /// e.g. data.length >= min and data.length <= max.
+  ByteList.withConstraintRange(Iterable<int> data,
+      {int min = _minLength, int max = _maxLength})
+      : _u8l = _constructList(data, min, max);
+
+  /// Decoding encoded String to a ByteList. There is no size constraints for the
+  /// decoded bytes.
+  /// TODO: create unit tests for decoding constructors.
+  ByteList.decode(String encodedString, {Encoder coder = decoder})
+      : this(coder.decode(encodedString));
+
+  /// Decoding encoded string to a ByteList with the expected length of the
+  /// encoded bytes.
+  ByteList.decodeWithConstraint(String encodedString,
+      {Encoder coder = decoder, required int constraintLength})
+      : this.withConstraint(coder.decode(encodedString),
+            constraintLength: constraintLength);
+
+  /// Decoding encoded string to a ByteList with the expected min and max lengths of the
+  /// encoded bytes.
+  ByteList.decodeWithConstraintRange(String encodedString,
+      {Encoder coder = decoder, int min = _minLength, int max = _maxLength})
+      : this.withConstraintRange(coder.decode(encodedString),
+            min: min, max: max);
 
   static const _minLength = 0;
 
@@ -41,16 +82,16 @@ class ByteList with ListMixin<int>, Encodable {
   final Uint8List _u8l;
 
   static Uint8List _constructList(
-      Iterable<int> list, int minLength, int maxLength) {
-    if (list.length < minLength || list.length > maxLength) {
+      Iterable<int> data, int minLength, int maxLength) {
+    if (data.length < minLength || data.length > maxLength) {
       throw Exception(
-          'The list length (${list.length}) is invalid (min: $minLength, max: $maxLength)');
+          'The list length (${data.length}) is invalid (min: $minLength, max: $maxLength)');
     }
-    return UnmodifiableUint8ListView(Uint8List.fromList(list.toList()));
+    return UnmodifiableUint8ListView(Uint8List.fromList(data.toList()));
   }
 
   // Default encoder/decoder is the HexCoder()
-  static const decoder = HexCoder.instance;
+  static const decoder = Base16Encoder.instance;
 
   @override
   Encoder get encoder => decoder;
@@ -88,14 +129,16 @@ class ByteList with ListMixin<int>, Encodable {
   @override
   ByteList sublist(int start, [int? end]) {
     final sublist = _u8l.sublist(start, end ?? _u8l.length);
-    return ByteList(sublist, sublist.length);
+    return ByteList.withConstraint(sublist, constraintLength: sublist.length);
   }
 }
 
 mixin Suffix on ByteList {
   int get prefixLength;
-  ByteList get prefix => ByteList(take(prefixLength), prefixLength);
-  ByteList get suffix => ByteList(skip(prefixLength), length - prefixLength);
+  ByteList get prefix => ByteList.withConstraint(take(prefixLength),
+      constraintLength: prefixLength);
+  ByteList get suffix => ByteList.withConstraint(skip(prefixLength),
+      constraintLength: length - prefixLength);
 }
 
 extension ByteListExtension on ByteList {

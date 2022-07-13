@@ -21,7 +21,7 @@ const _vectors = {
 };
 
 void main() {
-  const hex = HexCoder.instance;
+  const hex = Base16Encoder.instance;
   group('Secret Key Encryption', () {
     test('SecretBox basic', () {
       final s = SecretBox.decode(

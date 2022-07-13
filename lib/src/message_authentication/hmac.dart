@@ -4,7 +4,7 @@ import 'package:pinenacl/tweetnacl.dart';
 void main() {
   final key = List<int>.generate(20, (index) => 0xb).toUint8List();
   final data = Uint8List.fromList('Hi There'.codeUnits);
-  final hex = HexCoder.instance;
+  final hex = Base16Encoder.instance;
   // Test case 1 fro https://www.rfc-editor.org/rfc/rfc4231.txt
 
   /*final hmac_sha_224 =

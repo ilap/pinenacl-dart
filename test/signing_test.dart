@@ -37,7 +37,7 @@ const _cardanoVectors = [
 ];
 
 void main() {
-  const hex = HexCoder.instance;
+  const hex = Base16Encoder.instance;
   group('Digital Signatures #1', () {
     group('Signing and/or Verifying tests', () {
       test('Simple signing and verifying test', () {

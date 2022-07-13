@@ -9,7 +9,7 @@ import 'package:pinenacl/encoding.dart';
 import 'package:pinenacl/key_derivation.dart';
 
 void main() {
-  const hex = HexCoder.instance;
+  const hex = Base16Encoder.instance;
 
   group('Password Based Key Derivation Function #2 (PBKDF2)', () {
     final dir = Directory.current;

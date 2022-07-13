@@ -120,7 +120,7 @@ const vectors = [
 ];
 
 void main() {
-  const hex = HexCoder.instance;
+  const hex = Base16Encoder.instance;
   group('Hash-based message authentication code', () {
     group('HMAC-SHA-', () {
       var idx = 0;

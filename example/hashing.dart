@@ -3,7 +3,7 @@ import 'package:pinenacl/src/digests/digests.dart';
 import 'package:pinenacl/tweetnacl.dart';
 
 void main() {
-  const hex = HexCoder.instance;
+  const hex = Base16Encoder.instance;
 
   print('\n### Hashing - Blake2b Example ###\n');
 

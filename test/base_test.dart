@@ -7,7 +7,7 @@ void main() {
     group('ByteList', () {
       test('Immutability', () {
         final l32 = List<int>.generate(32, (i) => 0xb).toUint8List();
-        final byteList = ByteList(l32, 32);
+        final byteList = ByteList(l32);
         final sk = PrivateKey(l32);
 
         expect(() {
@@ -27,7 +27,7 @@ void main() {
 
       test('Growing', () {
         final l32 = List<int>.generate(32, (i) => 0xb).toUint8List();
-        final byteList = ByteList(l32, 32);
+        final byteList = ByteList(l32);
         final sk = PrivateKey(l32);
 
         expect(() {

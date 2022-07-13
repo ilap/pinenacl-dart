@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.5.0
+API Break changes see details below:
+- Renamed HexCoder to Base16Encoder to align with Base32, Bech32 implementations
+- Rename Bech32Coder to Bech32Encoder for similar reasons above.
+- Added decodeNoHrpCheck static fucntion to Bech32Encoder for being able to decode and alreay encoded bech32 string.
+- Made internal Bech32 classes private.
+- Removed unnecessary fromList constructors, as ByteList based default constructors require Iterable
+- Added 
+  - ByteList.withConstraint: Create a ByteList wit min, max length set to constraint specified
+  - ByteList.decodeWithConstraint: Same as above but from (base16, bech32 etc) encoded strings.
+  - ByteList.withConstraintRange: Create a ByteList within the min, max length range i.e., 
+    the created ByteList mist be in the range.
+  - ByteList.decodeWithConstraintRange: Same as above but from (base16, bech32 etc) encoded strings.
+- Refactored the code based on these above changes.
 ## v0.4.2
 Added bytes length for decoding ByteList
 

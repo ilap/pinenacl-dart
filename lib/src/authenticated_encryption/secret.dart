@@ -43,7 +43,7 @@ class SecretBox extends BoxBase {
   static const keyLength = TweetNaCl.keyLength;
   static const macBytes = TweetNaCl.macBytes;
 
-  static const decoder = HexCoder.instance;
+  static const decoder = Base16Encoder.instance;
 
   @override
   Encoder get encoder => decoder;
