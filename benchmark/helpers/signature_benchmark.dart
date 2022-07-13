@@ -1,4 +1,5 @@
 import 'package:pinenacl/ed25519.dart';
+import 'package:pinenacl/src/tweetnacl/tweetnacl.dart';
 
 import 'rate_benchmark.dart';
 
@@ -6,8 +7,8 @@ class SignatureBenchmark extends RateBenchmark {
   SignatureBenchmark(String signerName, bool forSigning,
       [int dataLength = 1024 * 1024])
       : _forSigning = forSigning,
-        _data = Uint8List(dataLength),
-        super('Signatures | $signerName - ${forSigning ? 'sign' : 'verify'}');
+        _data = PineNaClUtils.randombytes(dataLength),
+        super('Signatures (${dataLength / 1024 / 1024 }MB) | $signerName - ${forSigning ? 'sign' : 'verify'}');
 
   final Uint8List _data;
   final bool _forSigning;

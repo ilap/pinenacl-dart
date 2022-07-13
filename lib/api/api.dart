@@ -76,8 +76,8 @@ class ByteList with ListMixin<int>, Encodable {
 
   static const _minLength = 0;
 
-  // Maximum message/bytes' length
-  static const _maxLength = 16384;
+  // Maximum message/bytes' length is 1MB currently
+  static const _maxLength = 1048576;
 
   final Uint8List _u8l;
 
