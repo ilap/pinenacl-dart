@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.1
+Increased ByteList's max length to 1MB
+
 ## v0.5.0
 API Break changes see details below:
 - Renamed HexCoder to Base16Encoder to align with Base32, Bech32 implementations
