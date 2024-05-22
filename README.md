@@ -1,6 +1,6 @@
 # PineNaCl
 
-[![Pub Version (stable)](https://img.shields.io/pub/v/pinenacl?color=important&label=pub%20stable&logo=dart)](https://pub.dartlang.org/packages/pinenacl) [![Pub Version (including pre-releases)](https://img.shields.io/pub/v/pinenacl?color=blueviolet&label=pub%20prerelease&include_prereleases&logo=dart)](https://pub.dartlang.org/packages/pinenacl) [![Dart Test CI](https://github.com/ilap/pinenacl-dart/workflows/Dart%20Test%20CI/badge.svg)](https://github.com/ilap/pinenacl-dart/actions?query=workflow%3A%22Dart+Test+CI%22)
+[![Pub Version (stable)](https://img.shields.io/pub/v/pinenacl?color=important&label=pub%20stable&logo=dart)](https://pub.dartlang.org/packages/pinenacl) [![Pub Version (including pre-releases)](https://img.shields.io/pub/v/pinenacl?color=blueviolet&label=pub%20prerelease&include_prereleases&logo=dart)](https://pub.dartlang.org/packages/pinenacl) [![Dart](https://github.com/ilap/pinenacl-dart/workflows/Dart/badge.svg)](https://github.com/ilap/pinenacl-dart/actions?query=workflow%3A%22Dart%22) [![Publish to pub.dev](https://github.com/ilap/pinenacl-dart/actions/workflows/publish.yml/badge.svg)](https://github.com/ilap/pinenacl-dart/actions/workflows/publish.yml)
 
 
 PineNaCl is a Dart implementation of the [`TweetNaCl`](https://tweetnacl.cr.yp.to/) the world's first auditable [high-security cryptographic library](https://tweetnacl.cr.yp.to/tweetnacl-20140917.pdf).
