@@ -1,4 +1,6 @@
 # Changelog
+## v0.6.0
+Updated for the 3.x SDK version.
 
 ## v0.5.1
 Increased ByteList's max length to 1MB

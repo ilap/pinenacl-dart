@@ -1,4 +1,4 @@
-part of pinenacl.encoding;
+part of '../../encoding.dart';
 
 class Base16Encoder implements Encoder {
   const Base16Encoder._singleton();

@@ -111,9 +111,8 @@ class Box extends BoxBase {
 /// Doc comment from: [PyNaCl's readthedocs](https://pynacl.readthedocs.io)
 class SealedBox extends ByteList {
   SealedBox._fromKeyPair(
-      AsymmetricPrivateKey? privateKey, AsymmetricPublicKey publicKey)
-      : _privateKey = privateKey,
-        super(publicKey);
+      AsymmetricPrivateKey? privateKey, AsymmetricPublicKey super.publicKey)
+      : _privateKey = privateKey;
 
   factory SealedBox(AsymmetricKey key) {
     if (key is AsymmetricPrivateKey) {

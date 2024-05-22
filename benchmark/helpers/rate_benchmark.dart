@@ -1,8 +1,8 @@
 import 'package:benchmark_harness/benchmark_harness.dart';
 
 abstract class RateBenchmark extends BenchmarkBase {
-  RateBenchmark(String name, {this.runLength = 5000})
-      : super(name, emitter: RateEmitter()) {
+  RateBenchmark(super.name, {this.runLength = 5000})
+      : super(emitter: RateEmitter()) {
     (emitter as RateEmitter).benchmark = this;
   }
 

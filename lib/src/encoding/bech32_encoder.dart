@@ -1,4 +1,4 @@
-part of pinenacl.encoding;
+part of '../../encoding.dart';
 
 class Bech32Encoder implements Encoder {
   const Bech32Encoder({required this.hrp});
@@ -193,7 +193,7 @@ class _Bech32Decoder extends Converter<String, _Bech32> with Bech32Validations {
 }
 
 /// Generic validations for Bech32 standard.
-class Bech32Validations {
+mixin Bech32Validations {
   static const int maxInputLength = 90;
   static const checksumLength = 6;
 

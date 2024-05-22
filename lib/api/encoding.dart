@@ -1,4 +1,4 @@
-part of pinenacl.api;
+part of '../api.dart';
 
 /// The Encoder interface for classes that are capable for encoding data,
 /// therefore they need decoding function too.

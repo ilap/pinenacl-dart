@@ -3,14 +3,13 @@ import 'package:pinenacl/api/signatures.dart';
 import 'package:pinenacl/src/tweetnacl/tweetnacl.dart';
 
 class Signature extends ByteList implements SignatureBase {
-  Signature(Uint8List bytes)
-      : super.withConstraint(bytes, constraintLength: signatureLength);
+  Signature(Uint8List super.bytes)
+      : super.withConstraint(constraintLength: signatureLength);
   static const signatureLength = TweetNaCl.signatureLength;
 }
 
 class VerifyKey extends AsymmetricPublicKey implements Verify {
-  VerifyKey(Uint8List bytes, {int keyLength = keyLength})
-      : super(bytes, keyLength: keyLength);
+  VerifyKey(super.bytes, {super.keyLength = keyLength});
   VerifyKey.decode(String keyString,
       {Encoder coder = decoder, int keyLength = keyLength})
       : this(coder.decode(keyString), keyLength: keyLength);
@@ -75,9 +74,8 @@ class SigningKey extends AsymmetricPrivateKey with Suffix implements Sign {
   /// seed (i.e. private key) is a random 32-byte value.
   SigningKey({required Uint8List seed}) : this.fromSeed(seed);
 
-  SigningKey.fromValidBytes(Uint8List secret,
-      {int keyLength = TweetNaCl.signingKeyLength})
-      : super(secret, keyLength: keyLength);
+  SigningKey.fromValidBytes(super.secret,
+      {super.keyLength = TweetNaCl.signingKeyLength});
 
   SigningKey.fromSeed(Uint8List seed)
       : this.fromValidBytes(_seedToSecret(seed));

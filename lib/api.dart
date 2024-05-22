@@ -9,7 +9,6 @@ export 'encoding.dart';
 
 export 'package:pinenacl/src/utils/utils.dart';
 export 'package:pinenacl/api/authenticated_encryption.dart';
-export 'package:pinenacl/src/utils/utils.dart';
 
 part 'api/api.dart';
 part 'api/encoding.dart';

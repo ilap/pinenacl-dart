@@ -1,12 +1,12 @@
 name: pinenacl
 description: The Dart implementation of the PyNaCl APIs with the TweetNaCl cryptographic library
-version: 0.5.1
+version: 0.6.0
 homepage: https://github.com/ilap/pinenacl-dart
 
 environment:
-  sdk: '>=2.17.0 <3.0.0'
+  sdk: '>=3.4.0 <4.0.0'
 
 dev_dependencies:
-  test: ^1.17.4
-  benchmark_harness: ^2.0.0
-  lints: ^2.0.0
+  test: ^1.25.5
+  benchmark_harness: ^2.2.0
+  lints: ^4.0.0

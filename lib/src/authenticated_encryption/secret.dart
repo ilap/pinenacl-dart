@@ -33,7 +33,7 @@ import 'package:pinenacl/src/tweetnacl/tweetnacl.dart';
 /// Thus large amounts of data should be chunked so that each message is small.
 /// (Each message still needs a unique nonce.) If in doubt, 16KB is a reasonable chunk size.
 class SecretBox extends BoxBase {
-  SecretBox(Uint8List secret) : super.fromList(secret);
+  SecretBox(super.secret) : super.fromList();
 
   factory SecretBox.decode(String data, [Encoder defaultDecoder = decoder]) {
     final decoded = defaultDecoder.decode(data);

@@ -108,7 +108,7 @@ class Blake2b {
 
     /// G Mixing function
     /// The ROTRs are inlined for speed
-    void _b2bG(int a, int b, int c, int d, int ix, int iy) {
+    void b2bG(int a, int b, int c, int d, int ix, int iy) {
       var x0 = m[ix];
       var x1 = m[ix + 1];
       var y0 = m[iy];
@@ -174,14 +174,14 @@ class Blake2b {
     }
 
     for (var i = 0; i < 12; i++) {
-      _b2bG(0, 8, 16, 24, _sigma82[i * 16 + 0], _sigma82[i * 16 + 1]);
-      _b2bG(2, 10, 18, 26, _sigma82[i * 16 + 2], _sigma82[i * 16 + 3]);
-      _b2bG(4, 12, 20, 28, _sigma82[i * 16 + 4], _sigma82[i * 16 + 5]);
-      _b2bG(6, 14, 22, 30, _sigma82[i * 16 + 6], _sigma82[i * 16 + 7]);
-      _b2bG(0, 10, 20, 30, _sigma82[i * 16 + 8], _sigma82[i * 16 + 9]);
-      _b2bG(2, 12, 22, 24, _sigma82[i * 16 + 10], _sigma82[i * 16 + 11]);
-      _b2bG(4, 14, 16, 26, _sigma82[i * 16 + 12], _sigma82[i * 16 + 13]);
-      _b2bG(6, 8, 18, 28, _sigma82[i * 16 + 14], _sigma82[i * 16 + 15]);
+      b2bG(0, 8, 16, 24, _sigma82[i * 16 + 0], _sigma82[i * 16 + 1]);
+      b2bG(2, 10, 18, 26, _sigma82[i * 16 + 2], _sigma82[i * 16 + 3]);
+      b2bG(4, 12, 20, 28, _sigma82[i * 16 + 4], _sigma82[i * 16 + 5]);
+      b2bG(6, 14, 22, 30, _sigma82[i * 16 + 6], _sigma82[i * 16 + 7]);
+      b2bG(0, 10, 20, 30, _sigma82[i * 16 + 8], _sigma82[i * 16 + 9]);
+      b2bG(2, 12, 22, 24, _sigma82[i * 16 + 10], _sigma82[i * 16 + 11]);
+      b2bG(4, 14, 16, 26, _sigma82[i * 16 + 12], _sigma82[i * 16 + 13]);
+      b2bG(6, 8, 18, 28, _sigma82[i * 16 + 14], _sigma82[i * 16 + 15]);
     }
 
     for (var i = 0; i < 16; i++) {

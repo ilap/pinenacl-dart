@@ -1,21 +1,19 @@
 // ignore_for_file: hash_and_equals
 
-part of pinenacl.api;
+part of '../api.dart';
 
 abstract class AsymmetricKey extends ByteList with Encodable {
-  AsymmetricKey(Uint8List bytes, {required int keyLength})
-      : super.withConstraint(bytes, constraintLength: keyLength);
+  AsymmetricKey(Uint8List super.bytes, {required int keyLength})
+      : super.withConstraint(constraintLength: keyLength);
   AsymmetricPublicKey get publicKey;
 }
 
 abstract class AsymmetricPublicKey extends AsymmetricKey {
-  AsymmetricPublicKey(Uint8List bytes, {required int keyLength})
-      : super(bytes, keyLength: keyLength);
+  AsymmetricPublicKey(super.bytes, {required super.keyLength});
 }
 
 abstract class AsymmetricPrivateKey extends AsymmetricKey {
-  AsymmetricPrivateKey(Uint8List bytes, {required int keyLength})
-      : super(bytes, keyLength: keyLength);
+  AsymmetricPrivateKey(super.bytes, {required super.keyLength});
 }
 
 ///
@@ -87,7 +85,8 @@ class ByteList with ListMixin<int>, Encodable {
       throw Exception(
           'The list length (${data.length}) is invalid (min: $minLength, max: $maxLength)');
     }
-    return UnmodifiableUint8ListView(Uint8List.fromList(data.toList()));
+
+    return Uint8List.fromList(data.toList()).asUnmodifiableView();
   }
 
   // Default encoder/decoder is the HexCoder()

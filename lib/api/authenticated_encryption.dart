@@ -6,7 +6,7 @@ typedef Crypting = Uint8List Function(
     Uint8List out, Uint8List text, int textLen, Uint8List nonce, Uint8List k);
 
 abstract class BoxBase extends ByteList {
-  BoxBase.fromList(Uint8List list) : super(list);
+  BoxBase.fromList(Uint8List super.list);
 
   late Crypting doEncrypt;
   late Crypting doDecrypt;
@@ -49,8 +49,8 @@ class EncryptedMessage extends ByteList with Suffix {
       : super.withConstraintRange((nonce + cipherText).toUint8List(),
             min: nonceLength, max: nonce.length + cipherText.length);
 
-  EncryptedMessage.fromList(Uint8List bytes)
-      : super.withConstraintRange(bytes, min: nonceLength);
+  EncryptedMessage.fromList(Uint8List super.bytes)
+      : super.withConstraintRange(min: nonceLength);
 
   static const nonceLength = 24;
 
@@ -62,7 +62,7 @@ class EncryptedMessage extends ByteList with Suffix {
 }
 
 class PublicKey extends AsymmetricPublicKey {
-  PublicKey(Uint8List bytes) : super(bytes, keyLength: keyLength);
+  PublicKey(super.bytes) : super(keyLength: keyLength);
 
   PublicKey.decode(String keyString, [Encoder coder = decoder])
       : this(coder.decode(keyString));
@@ -85,7 +85,7 @@ class PublicKey extends AsymmetricPublicKey {
 /// ECDH
 ///
 class PrivateKey extends AsymmetricPrivateKey {
-  PrivateKey(Uint8List secret) : super(secret, keyLength: keyLength);
+  PrivateKey(super.secret) : super(keyLength: keyLength);
 
   PrivateKey.fromSeed(Uint8List seed) : this(_seedToHash(seed));
 

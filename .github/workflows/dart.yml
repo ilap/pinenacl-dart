@@ -1,24 +1,72 @@
-name: Dart Test CI
+name: Dart
 
 on:
   push:
-    branches:
-      - master
-      - releases/*
+    branches: [main]
+  pull_request:
+    branches: [main]
+
 jobs:
-  stable-channel:
-    runs-on: ${{ matrix.operating-system }}
+
+  # Default test configurations.
+  test:
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: example
     strategy:
-      fail-fast: false
       matrix:
-        operating-system: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        sdk: [stable, beta, dev]
+        architecture: [x64, arm, arm64]
+      fail-fast: false
     steps:
-    - name: Setup Dart VM
-      uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
-    - uses: actions/checkout@v1
-    - name: Install dependencies
-      run: dart pub get
-    - name: Analyze project source
-      run: dart analyze
-    - name: Run tests
-      run: dart test
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          sdk: ${{ matrix.sdk }}
+
+      - name: Print DART_HOME
+        run: echo "Dart SDK installed in $DART_HOME"
+      - run: dart pub get
+      - run: dart format --output=none --set-exit-if-changed .
+      - run: dart run example/main.dart
+      - run: dart run example/box.dart
+      - run: dart run example/sealedbox.dart
+      - run: dart run example/secretbox.dart
+      - run: dart run example/secure.dart
+      - run: dart run example/signature.dart
+      - run: dart analyze
+      - run: dart test
+
+
+  # Default test configurations.
+  test_32bit:
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: example
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        sdk: [stable]
+        architecture: [ia32, arm]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          sdk: ${{ matrix.sdk }}
+
+      - name: Print DART_HOME
+        run: echo "Dart SDK installed in $DART_HOME"
+      - run: dart pub get
+      - run: dart format --output=none --set-exit-if-changed .
+      - run: dart run example/main.dart
+      - run: dart run example/box.dart
+      - run: dart run example/sealedbox.dart
+      - run: dart run example/secretbox.dart
+      - run: dart run example/secure.dart
+      - run: dart run example/signature.dart
+      - run: dart analyze
+      - run: dart test

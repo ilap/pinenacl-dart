@@ -1,6 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
-part of pinenacl.tweetnacl;
+part of 'tweetnacl.dart';
 
 typedef Hasher = void Function(Uint8List out, Uint8List m);
 typedef MacHasher = void Function(Uint8List out, Uint8List m, Uint8List k);
