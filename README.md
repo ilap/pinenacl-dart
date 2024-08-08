@@ -252,23 +252,25 @@ Implemented from [PyNaCl's example](https://pynacl.readthedocs.io/en/stable/priv
 
 ``` dart
 import 'package:pinenacl/api.dart';
-import 'package:pinenacl/secret.dart' show SecretBox;
+import 'package:pinenacl/x25519.dart' show SecretBox;
 
 void main() {
-  final key = Utils.randombytes(SecretBox.keyLength);
+  print('\n### Secret Key Encryption - SecretBox Example ###\n');
+  final key = PineNaClUtils.randombytes(SecretBox.keyLength);
   final box = SecretBox(key);
 
-  final message = 'Change is a tricky thing, it threatens what we find familiar with...';
+  final message =
+      'Change is a tricky thing, it threatens what we find familiar with...';
 
-  final encrypted = box.encrypt(message.codeUnits);
+  final encrypted = box.encrypt(Uint8List.fromList(message.codeUnits));
 
   final decrypted = box.decrypt(encrypted);
 
-  final ctext = encrypted.ciphertext;
+  final ctext = encrypted.cipherText;
 
   assert(ctext.length == message.length + SecretBox.macBytes);
 
-  final plaintext = String.fromCharCodes(decrypted.plaintext);
+  final plaintext = String.fromCharCodes(decrypted);
   print(plaintext);
   assert(message == plaintext);
 }
